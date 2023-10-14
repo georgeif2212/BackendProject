@@ -1,0 +1,38 @@
+[
+	{
+		"id": 1,
+		"title": "Producto prueba 1",
+		"description": "Este es un producto prueba 1",
+		"price": 432,
+		"thumbnail": "Sin imagen",
+		"code": "codeabc123",
+		"stock": 23
+	},
+	{
+		"id": 2,
+		"title": "Producto prueba 2",
+		"description": "Este es un producto prueba 2",
+		"price": 2924.45,
+		"thumbnail": "tres imagenes",
+		"code": "prueba",
+		"stock": 5
+	},
+	{
+		"id": 3,
+		"title": "Producto prueba 3",
+		"description": "Este es un producto prueba 3",
+		"price": 8672,
+		"thumbnail": "IMAGEN 423",
+		"code": "hoal33213",
+		"stock": 12
+	},
+	{
+		"id": 4,
+		"title": "Producto prueba 4",
+		"description": "Este es un producto prueba 4",
+		"price": 654,
+		"thumbnail": "Imagen 1235",
+		"code": "JorgeInfante",
+		"stock": 6
+	}
+]

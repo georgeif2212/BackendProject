@@ -2,7 +2,7 @@
   "name": "backend_project",
   "version": "1.0.0",
   "description": "backend project",
-  "main": "ProductManager.js",
+  "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -20,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/georgeif2212/BackendProject/issues"
   },
-  "homepage": "https://github.com/georgeif2212/BackendProject#readme"
+  "homepage": "https://github.com/georgeif2212/BackendProject#readme",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
 }

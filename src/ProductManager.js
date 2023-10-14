@@ -133,4 +133,5 @@ async function test() {
   console.log(await productManager.getProducts());
 }
 
-test();
+
+module.exports = ProductManager;

@@ -1,5 +1,5 @@
 const fs = require("fs");
-
+const { v4: uuidV4 } = require("uuid");
 class ProductManager {
   #priceBase = 0.15;
   constructor(path) {
@@ -9,6 +9,18 @@ class ProductManager {
   async getProducts() {
     const products = await getJsonFromFile(this.path);
     return products;
+  }
+
+  async productExists(code) {
+    let products;
+    if (!fs.existsSync(this.path)) {
+      products = [];
+    } else {
+      products = await getJsonFromFile(this.path);
+    }
+    let product = products.find((product) => product.code === code);
+    if (product) return true;
+    else return false;
   }
 
   async addProduct(data) {
@@ -33,7 +45,7 @@ class ProductManager {
 
     if (!product) {
       const newProduct = {
-        id: products.length + 1,
+        id: uuidV4(),
         title,
         description,
         price: price + this.#priceBase * price,
@@ -44,6 +56,7 @@ class ProductManager {
       products.push(newProduct);
       await saveJsonInFile(this.path, products);
       console.log("Product added");
+      return newProduct;
     } else {
       console.error("ERROR: Product already registered");
     }
@@ -132,6 +145,5 @@ async function test() {
   await productManager.deleteProductById(1);
   console.log(await productManager.getProducts());
 }
-
 
 module.exports = ProductManager;

@@ -46,7 +46,7 @@ router.get("/products/:productId", async (req, res) => {
   const { productId } = req.params;
   const products = await productManager.getProducts();
   const product = products.find((product) => {
-    return product.id === parseInt(productId);
+    return product.id == productId;
   });
 
   if (!product) {
@@ -56,6 +56,19 @@ router.get("/products/:productId", async (req, res) => {
   } else {
     res.json(product);
   }
+});
+
+router.put("/products/:productId", async (req, res) => {
+  const { productId } = req.params;
+  const { body } = req;
+  const message = await productManager.updateProduct(productId, body);
+  res.status(200).json(message);
+});
+
+router.delete("/products/:productId", async (req, res) => {
+  const { productId } = req.params;
+  const message = await productManager.deleteProductById(productId);
+  res.status(200).json(message);
 });
 
 module.exports = router;

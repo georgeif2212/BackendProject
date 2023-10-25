@@ -31,6 +31,7 @@ class ProductManager {
       thumbnail = "Sin imagen",
       code,
       stock,
+      status = true,
     } = data;
 
     let products;
@@ -52,6 +53,7 @@ class ProductManager {
         thumbnail,
         code,
         stock,
+        status,
       };
       products.push(newProduct);
       await saveJsonInFile(this.path, products);
@@ -74,9 +76,9 @@ class ProductManager {
   async updateProduct(id, data) {
     const { title, description, price, stock } = data;
     const products = await getJsonFromFile(this.path);
-    const position = products.findIndex((product) => product.id === id);
+    const position = products.findIndex((product) => product.id == id);
     if (position === -1) {
-      throw new Error(`ERROR: Product with ID: ${id} not found:`);
+      return [{ error: `ERROR: Product with ID: ${id} not found:` }];
     }
     if (title) {
       products[position].title = title;
@@ -92,18 +94,21 @@ class ProductManager {
     }
     await saveJsonInFile(this.path, products);
     console.log("Product updated");
+    return [{ message: `Product with ID: ${id} updated` }];
   }
 
   async deleteProductById(id) {
     let products = await getJsonFromFile(this.path);
-    const productIndex = products.findIndex((product) => product.id === id);
+    const productIndex = products.findIndex((product) => product.id == id);
 
     if (productIndex !== -1) {
       products.splice(productIndex, 1);
       await saveJsonInFile(this.path, products);
       console.log(`Product with ID ${id} has been deleted`);
+      return [{ message: `Product with ID: ${id} has been deleted:` }];
     } else {
       console.error(`ERROR: Product with ID ${id} not found`);
+      return [{ error: `ERROR: Product with ID: ${id} not found:` }];
     }
   }
 }

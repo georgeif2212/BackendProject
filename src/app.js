@@ -1,8 +1,11 @@
-const express = require("express");
-const path = require("path");
+import express from "express";
+import handlebars from "express-handlebars";
+import path from "path";
+import { __dirname } from "./utils.js";
 
-const productsRouter = require("./routers/products.router");
-const cartsRouter = require("./routers/carts.router");
+import productsRouter from "./routers/products.router.js";
+import cartsRouter from "./routers/carts.router.js";
+
 
 const app = express();
 const PORT = 8080;

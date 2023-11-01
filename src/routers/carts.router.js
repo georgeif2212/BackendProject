@@ -1,5 +1,6 @@
-const { Router } = require("express");
-const { v4: uuidV4 } = require("uuid");
+import { Router } from 'express';
+import { v4 as uuidV4 } from 'uuid';
+
 const router = Router();
 
 const carts = [
@@ -99,4 +100,4 @@ router.post("/carts/:cartId/products/:productId", (req, res) => {
   });
 });
 
-module.exports = router;
+export default router;

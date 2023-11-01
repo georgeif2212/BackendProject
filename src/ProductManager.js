@@ -1,5 +1,5 @@
-const fs = require("fs");
-const { v4: uuidV4 } = require("uuid");
+import fs from "fs";
+import { v4 as uuidV4 } from 'uuid';
 class ProductManager {
   #priceBase = 0.15;
   constructor(path) {
@@ -114,7 +114,7 @@ class ProductManager {
 }
 
 const getJsonFromFile = async (path) => {
-  if (!fs.existsSync(path)) return [];
+  if (!fs.existsSync(path)) return [{message:"NOF "}];
   const content = await fs.promises.readFile(path, "utf-8");
   return JSON.parse(content);
 };
@@ -151,4 +151,4 @@ async function test() {
   console.log(await productManager.getProducts());
 }
 
-module.exports = ProductManager;
+export default ProductManager;

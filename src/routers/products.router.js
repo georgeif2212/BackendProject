@@ -12,12 +12,12 @@ const productManager = new ProductManager(
 router.get("/products", async (req, res) => {
   const { query } = req;
   const { limit } = query;
-  const products = await productManager.getProducts();
+  let products = await productManager.getProducts();
   if (!limit) {
-    res.status(200).json(products);
+    res.status(200).render("home", { title: "Products 🧴", products });
   } else {
-    const limitedProducts = products.slice(0, parseInt(limit));
-    res.status(200).json(limitedProducts);
+    products = products.slice(0, parseInt(limit));
+    res.status(200).render("home", { title: "Limited Products 🧴", products });
   }
 });
 

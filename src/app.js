@@ -12,11 +12,14 @@ const PORT = 8080;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
 app.use(express.static(path.join(__dirname, "../public")));
 
-app.use("/api", productsRouter, cartsRouter);
+app.engine('handlebars', handlebars.engine());
+app.set('views', path.join(__dirname, './views'));
+app.set('view engine', 'handlebars');
 
+app.use("/api", productsRouter, cartsRouter);
+// ! Middleware de error
 app.use((error, req, res, next) => {
   const message = `Ha ocurrido un error desconocido 😨: ${error.message}`;
   console.error(message);

@@ -1,8 +1,11 @@
-const express = require("express");
-const path = require("path");
+import express from "express";
+import handlebars from "express-handlebars";
+import path from "path";
+import { __dirname } from "./utils.js";
 
-const productsRouter = require("./routers/products.router");
-const cartsRouter = require("./routers/carts.router");
+import productsRouter from "./routers/products.router.js";
+import cartsRouter from "./routers/carts.router.js";
+
 
 const app = express();
 const PORT = 8080;
@@ -15,5 +18,5 @@ app.use(express.static(path.join(__dirname, "../public")));
 app.use("/api", productsRouter, cartsRouter);
 
 app.listen(PORT, () => {
-  console.log(`HTTP Server listening from ${PORT} port`);
+  console.log(`Server running in http://localhost:${PORT} 🤩`);
 });

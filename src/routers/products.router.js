@@ -1,7 +1,7 @@
-const ProductManager = require("../ProductManager.js");
-const path = require("path");
-const { Router } = require("express");
-const { v4: uuidV4 } = require("uuid");
+import ProductManager from "../ProductManager.js";
+import path from "path";
+import { __dirname } from "../utils.js";
+import { Router } from "express";
 
 const router = Router();
 // * Ruta con path porque sin ella no me daba
@@ -9,6 +9,7 @@ const productManager = new ProductManager(
   path.join(__dirname, "../Products.json")
 );
 
+console.log(__dirname);
 router.get("/products", async (req, res) => {
   const { query } = req;
   const { limit } = query;
@@ -71,4 +72,4 @@ router.delete("/products/:productId", async (req, res) => {
   res.status(200).json(message);
 });
 
-module.exports = router;
+export default router;

@@ -14,6 +14,4 @@ app.use(express.static(path.join(__dirname, "../public")));
 
 app.use("/api", productsRouter, cartsRouter);
 
-app.listen(PORT, () => {
-  console.log(`HTTP Server listening from ${PORT} port`);
-});
+

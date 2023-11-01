@@ -9,7 +9,6 @@ const productManager = new ProductManager(
   path.join(__dirname, "../Products.json")
 );
 
-console.log(__dirname);
 router.get("/products", async (req, res) => {
   const { query } = req;
   const { limit } = query;

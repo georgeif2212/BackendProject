@@ -17,6 +17,11 @@ app.use(express.static(path.join(__dirname, "../public")));
 
 app.use("/api", productsRouter, cartsRouter);
 
-app.listen(PORT, () => {
-  console.log(`Server running in http://localhost:${PORT} 🤩`);
+app.use((error, req, res, next) => {
+  const message = `Ha ocurrido un error desconocido 😨: ${error.message}`;
+  console.error(message);
+  res.status(500).json({ message });
 });
+
+
+export default app;

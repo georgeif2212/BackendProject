@@ -18,10 +18,10 @@ router.get("/products", async (req, res) => {
   const { limit } = query;
   
   if (!limit) {
-    res.status(200).render("home", { title: "Products 🧴", products });
+    res.status(200).json(products);
   } else {
-    products = products.slice(0, parseInt(limit));
-    res.status(200).render("home", { title: "Limited Products 🧴", products });
+    const limitedProducts = products.slice(0, parseInt(limit));
+    res.status(200).json(limitedProducts);
   }
 });
 
@@ -74,19 +74,6 @@ router.delete("/products/:productId", async (req, res) => {
   res.status(200).json(message);
 });
 
-// ! ENDPOINTS FOR REALTIMEPRODUCTS
-router.get("/realtimeproducts", async (req, res) => {
-  const { query } = req;
-  const { limit } = query;
 
-  if (!limit) {
-    emit("update-list-products", { products });
-    res.render("realTimeProducts", { title: "Products 🧴" });
-  } else {
-    products = products.slice(0, parseInt(limit));
-    emit("update-list-products", { products });
-    res.render("realTimeProducts", { title: "Limited Products 🧴" });
-  }
-});
 
 export default router;

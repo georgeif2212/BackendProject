@@ -10,7 +10,7 @@ const productManager = new ProductManager(
   path.join(__dirname, "../Products.json")
 );
 
-export const products = await productManager.getProducts();
+const products = await productManager.getProducts();
 
 // ! ENDPOINTS FOR PRODUCTS
 router.get("/products", async (req, res) => {

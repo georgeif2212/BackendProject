@@ -4,9 +4,10 @@ socket.on("connect", () => {
   console.log("Conectado al servidor de sockets 😀");
 });
 
-const productForm = document.getElementById("product-form");
+const addProduct = document.getElementById("product-form");
+const deleteProduct = document.getElementById("delete-form");
 
-productForm.addEventListener("submit", (event) => {
+addProduct.addEventListener("submit", (event) => {
   event.preventDefault();
   // Obtener los valores de los campos del formulario
   const title = document.getElementById("title").value;
@@ -37,12 +38,24 @@ productForm.addEventListener("submit", (event) => {
   document.getElementById("stock").value = "";
 });
 
+deleteProduct.addEventListener("submit",(event)=>{
+  event.preventDefault();
+  const id = document.getElementById("id").value;
+  socket.emit("delete-product", id);
+  document.getElementById("id").value = "";
+})
+
 socket.on("update-list-products", ({ products }) => {
   const listProducts = document.getElementById("list-products");
   listProducts.innerText = "";
 
   products.forEach((product) => {
     const article = document.createElement("article");
+    article.style.width = "30%";
+
+    const idParagraph = document.createElement("p");
+    idParagraph.innerHTML = `<strong>ID</strong>: ${product.id}`;
+    article.appendChild(idParagraph);
 
     const nameParagraph = document.createElement("p");
     nameParagraph.innerHTML = `<strong>Nombre</strong>: ${product.title}`;

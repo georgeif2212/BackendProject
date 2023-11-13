@@ -19,9 +19,10 @@ export const init = (httpServer) => {
 
     socketClient.emit("update-list-products", { products });
 
-    socketClient.on("new-product", (productData) => {
+    socketClient.on("new-product", async (productData) => {
       productManager.addProduct(productData);
-      socketServer.emit("update-list-products", { products });
+      const newProducts = await productManager.getProducts();
+      socketServer.emit("update-list-products", { newProducts });
     });
 
     socketClient.on("delete-product", (idProduct) => {

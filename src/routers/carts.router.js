@@ -51,7 +51,7 @@ router.post("/carts", (req, res) => {
   const { body } = req;
   const newCart = {
     id: uuidV4(),
-    products: [body],
+    products: body,
   };
   carts.push(newCart);
   res.status(201).json(newCart);

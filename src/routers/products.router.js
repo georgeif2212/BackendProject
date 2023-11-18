@@ -1,4 +1,4 @@
-import ProductManager from "../ProductManager.js";
+import ProductManager from "../dao/ProductManagerFS.js";
 import path from "path";
 import { __dirname } from "../utils.js";
 import { Router } from "express";
@@ -16,7 +16,7 @@ const products = await productManager.getProducts();
 router.get("/products", async (req, res) => {
   const { query } = req;
   const { limit } = query;
-  
+
   if (!limit) {
     res.status(200).json(products);
   } else {
@@ -73,7 +73,5 @@ router.delete("/products/:productId", async (req, res) => {
   const message = await productManager.deleteProductById(productId);
   res.status(200).json(message);
 });
-
-
 
 export default router;

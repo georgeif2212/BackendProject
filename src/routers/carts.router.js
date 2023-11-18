@@ -1,5 +1,6 @@
-import { Router } from 'express';
-import { v4 as uuidV4 } from 'uuid';
+import { Router } from "express";
+import { v4 as uuidV4 } from "uuid";
+import CartsManager from "../dao/Carts.manager.js";
 
 const router = Router();
 
@@ -43,61 +44,72 @@ const carts = [
   },
 ];
 
-router.get("/carts", (req, res) => {
-  res.status(200).json(carts);
-});
+router.get("/carts", async (req, res) => {
+  const { query } = req;
+  const { limit } = query;
 
-router.post("/carts", (req, res) => {
-  const { body } = req;
-  const newCart = {
-    id: uuidV4(),
-    products: body,
-  };
-  carts.push(newCart);
-  res.status(201).json(newCart);
-});
-
-router.get("/carts/:cartId", (req, res) => {
-  const { cartId } = req.params;
-  const cart = carts.find((cart) => cart.id === cartId);
-
-  if (!cart) return res.status(404).json({ error: "Cart not found." });
-
-  const cartProducts = cart.products;
-  res.status(200).json({
-    id: cart.id,
-    products: cartProducts,
-  });
-});
-
-router.post("/carts/:cartId/products/:productId", (req, res) => {
-  const { cartId, productId } = req.params;
-  const { body } = req; //{quantity: 3}
-
-  // * Busca al carrito que corresponda al cartID por params
-  const cart = carts.find((cart) => cart.id == cartId);
-  if (!cart) return res.status(404).json({ error: "Cart not found." });
-
-  // * Busca al producto dentro del carrito que corresponda al productID por params
-  const cartProducts = cart.products;
-
-  const product = cartProducts.find((product) => product.id == productId);
-  // * Si no hay producto añadir uno nuevo
-  if (!product) {
-    // * Crear el nuevo producto que se añadirá al carrito
-    const newProduct = {
-      id: productId,
-      quantity: body.quantity,
-    };
-    cartProducts.push(newProduct);
+  if (!limit) {
+    const carts = await CartsManager.get();
+    res.status(200).json(carts);
   } else {
-    product.quantity += body.quantity;
+    const carts = await CartsManager.get(parseInt(limit));
+    res.status(200).json(carts);
   }
+});
 
-  res.status(200).json({
-    id: cart.id,
-    products: cartProducts,
-  });
+router.post("/carts", async (req, res) => {
+  const { body } = req;
+  try {
+    const cart = await CartsManager.create(body);
+    res.status(201).json(cart);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+router.get("/carts/:cartId", async (req, res) => {
+  const { cartId } = req.params;
+  try {
+    const cart = await CartsManager.getById(cartId);
+    res.status(200).json({ id: cart.id, products: cart.products });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+router.post("/carts/:cartId/products/:productId", async (req, res) => {
+  try {
+    const { cartId, productId } = req.params;
+    const { title, description, quantity } = req.body;
+    const cart = await CartsManager.getById(cartId);
+    const cartProducts = cart.products;
+
+    const productIndex = cartProducts.findIndex(
+      (product) => product.id == productId
+    );
+
+    if (productIndex === -1) {
+      // ! Si el producto no existe
+      const newProduct = {
+        id: productId,
+        title,
+        description,
+        quantity,
+      };
+      cartProducts.push(newProduct);
+    } else {
+      // ! Si el producto existe actualizar la cantidad del producto
+      cartProducts[productIndex].quantity += quantity;
+    }
+
+    await CartsManager.updateById(cartId, cartProducts);
+    res.status(200).json({
+      id: cart.id,
+      products: cartProducts,
+    });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
 });
 
 export default router;

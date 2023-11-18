@@ -9,50 +9,46 @@ export default class ProductsManager {
   static async getById(sid) {
     const product = await ProductModel.findById(sid);
     if (!product) {
-      throw new Error("Product not found");
+      throw new Error(`Product with ${sid} not found`);
     }
     return product;
   }
-  static getByCode(code) {
+  static alreadyExists(code) {
     return ProductModel.findOne({ code: code });
   }
 
   static create(data) {
     const { title, description, price, thumbnail, code, stock } = data;
-    const missingFields = [];
-    if (!title) {
-      missingFields.push("title");
-    }
-    if (!description) {
-      missingFields.push("description");
-    }
-    if (!price) {
-      missingFields.push("price");
-    }
-    if (!thumbnail) {
-      missingFields.push("thumbnail");
-    }
-    if (!code) {
-      missingFields.push("code");
-    }
-    if (!stock) {
-      missingFields.push("stock");
-    }
+
+    const requiredFields = [
+      "title",
+      "description",
+      "price",
+      "thumbnail",
+      "code",
+      "stock",
+    ];
+    const missingFields = requiredFields.filter((field) => !data[field]);
 
     if (missingFields.length > 0) {
       const missingFieldsString = missingFields.join(", ");
       throw new Error(`Data missing: ${missingFieldsString}`);
     }
-
     return ProductModel.create(data);
   }
 
   static async updateById(sid, data) {
+    const product = await ProductsManager.getById(sid);
+    if (!product) throw new Error(`Product with ${sid} not found`);
+    
     await ProductModel.updateOne({ _id: sid }, { $set: data });
     console.log(`Producto actualizado correctamente (${sid}) 😁.`);
   }
 
   static async deleteById(sid) {
+    const product = await ProductsManager.getById(sid);
+    if (!product) throw new Error(`Product with ${sid} not found`);
+    
     await ProductModel.deleteOne({ _id: sid });
     console.log(`Producto eliminado correctamente (${sid}) 🤔.`);
   }

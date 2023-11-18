@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-export const init = async () => {
+export const initDB = async () => {
   try {
     const URI = "mongodb://localhost:27017/ecommerce";
     await mongoose.connect(URI);

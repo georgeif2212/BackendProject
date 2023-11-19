@@ -3,9 +3,9 @@ import handlebars from "express-handlebars";
 import path from "path";
 import { __dirname } from "./utils.js";
 
-import productsRouter from "./routers/products.router.js";
-import cartsRouter from "./routers/carts.router.js";
-import viewsRouter from "./routers/views.router.js";
+import productsRouter from "./routers/api/products.router.js";
+import cartsRouter from "./routers/api/carts.router.js";
+import viewsRouter from "./routers/views/views.router.js";
 
 const app = express();
 

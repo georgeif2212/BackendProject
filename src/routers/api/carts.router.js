@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { v4 as uuidV4 } from "uuid";
-import CartsManager from "../dao/Carts.manager.js";
+import CartsManager from "../../dao/Carts.manager.js";
 
 const router = Router();
 

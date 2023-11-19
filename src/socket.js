@@ -1,33 +1,28 @@
 import { Server } from "socket.io";
-import ProductManager from "./dao/ProductManagerFS.js";
+// import ProductManager from "./dao/ProductManagerFS.js";
+import ProductsManager from "./dao/Products.manager.js";
 import { __dirname } from "./utils.js";
-import path from "path";
-
-const productManager = new ProductManager(
-  path.join(__dirname, "../Products.json")
-);
-
-const products = await productManager.getProducts();
 
 let socketServer;
-export const init = (httpServer) => {
+export const init = async (httpServer) => {
   socketServer = new Server(httpServer);
   // * socketServer.on Permite configurar eventos que queremos escuchar
   // * socketClient es el client que se conecta
-  socketServer.on("connection", (socketClient) => {
+  socketServer.on("connection", async (socketClient) => {
     console.log(`Nuevo cliente socket conectado ${socketClient.id} 🎊`);
-
-    socketClient.emit("update-list-products", { products });
+    const products = await ProductsManager.get();
+    socketClient.emit("update-list-products", { products: products });
 
     socketClient.on("new-product", async (productData) => {
-      productManager.addProduct(productData);
-      const newProducts = await productManager.getProducts();
-      socketServer.emit("update-list-products", { newProducts });
+      await ProductsManager.create(productData);
+      const newProducts = await ProductsManager.get();
+      socketServer.emit("update-list-products", { products: newProducts });
     });
 
-    socketClient.on("delete-product", (idProduct) => {
-      productManager.deleteProductById(idProduct);
-      socketServer.emit("update-list-products", { products });
+    socketClient.on("delete-product", async (idProduct) => {
+      await ProductsManager.deleteById(idProduct);
+      const newProducts = await ProductsManager.get();
+      socketServer.emit("update-list-products", { products: newProducts });
     });
   });
 };

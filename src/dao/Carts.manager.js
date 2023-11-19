@@ -1,6 +1,6 @@
 import CartModel from "./models/cart.model.js";
 
-export default class ProductsManager {
+export default class CartsManager {
   static get(limit) {
     if (!limit) return CartModel.find();
     return CartModel.find().limit(limit);

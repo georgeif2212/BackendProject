@@ -38,12 +38,12 @@ addProduct.addEventListener("submit", (event) => {
   document.getElementById("stock").value = "";
 });
 
-deleteProduct.addEventListener("submit",(event)=>{
+deleteProduct.addEventListener("submit", (event) => {
   event.preventDefault();
   const id = document.getElementById("id").value;
   socket.emit("delete-product", id);
   document.getElementById("id").value = "";
-})
+});
 
 socket.on("update-list-products", ({ products }) => {
   const listProducts = document.getElementById("list-products");
@@ -54,7 +54,7 @@ socket.on("update-list-products", ({ products }) => {
     article.style.width = "30%";
 
     const idParagraph = document.createElement("p");
-    idParagraph.innerHTML = `<strong>ID</strong>: ${product.id}`;
+    idParagraph.innerHTML = `<strong>ID</strong>: ${product._id}`;
     article.appendChild(idParagraph);
 
     const nameParagraph = document.createElement("p");

@@ -1,9 +1,9 @@
 // import ProductManager from "../dao/ProductManagerFS.js"; // ! FS Product manager
-import ProductsManager from "../dao/Products.manager.js";
+import ProductsManager from "../../dao/Products.manager.js";
 import path from "path";
-import { __dirname } from "../utils.js";
+import { __dirname } from "../../utils.js";
 import { Router } from "express";
-import { emit } from "../socket.js";
+import { emit } from "../../socket.js";
 
 const router = Router();
 // * Ruta con path porque sin ella no me daba

@@ -48,4 +48,9 @@ router.get("/realtimeproducts", async (req, res) => {
   }
 });
 
+// ! ENDPOINTS FOR CHAT
+router.get("/chat", async (req, res) => {
+  res.render("chat", { title: "Chat 😎" });
+});
+
 export default router;

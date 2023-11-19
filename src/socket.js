@@ -4,7 +4,7 @@ import ProductsManager from "./dao/Products.manager.js";
 import { __dirname } from "./utils.js";
 
 let socketServer;
-export const init = async (httpServer) => {
+export const init = (httpServer) => {
   socketServer = new Server(httpServer);
   // * socketServer.on Permite configurar eventos que queremos escuchar
   // * socketClient es el client que se conecta

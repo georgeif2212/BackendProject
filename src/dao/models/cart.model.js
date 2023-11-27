@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import mongoosePaginate from "mongoose-paginate-v2";
 
 const CartSchema = new mongoose.Schema(
   {
@@ -6,5 +7,7 @@ const CartSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+CartSchema.plugin(mongoosePaginate);
 
 export default mongoose.model("Cart", CartSchema);

@@ -1,9 +1,8 @@
 // import ProductManager from "../dao/ProductManagerFS.js"; // ! FS Product manager
 import ProductsManager from "../../dao/Products.manager.js";
-import path from "path";
 import { __dirname } from "../../utils.js";
 import { Router } from "express";
-import { emit } from "../../socket.js";
+import { buildResponsePaginated } from "../../utils.js";
 
 const router = Router();
 // * Ruta con path porque sin ella no me daba
@@ -24,8 +23,8 @@ router.get("/products", async (req, res) => {
     criteria.title = search;
   }
 
-  const products = await ProductsManager.get(criteria, options);
-  res.status(200).json(products);
+  const result = await ProductsManager.get(criteria, options);
+  res.status(200).json(buildResponsePaginated({ ...result, sort, search }));
 });
 
 router.post("/products", async (req, res) => {

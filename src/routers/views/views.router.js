@@ -24,7 +24,7 @@ router.get("/products", async (req, res) => {
   if (search) {
     criteria.title = search;
   }
-  const baseUrl = "http://localhost:8080/views";
+  const baseUrl = "http://localhost:8080/views/products";
   const result = await ProductsManager.get(criteria, options);
   const data = buildResponsePaginated({ ...result, sort, search }, baseUrl);
   res.status(200).render("home", {

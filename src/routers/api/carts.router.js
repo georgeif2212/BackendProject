@@ -145,4 +145,21 @@ router.delete("/carts/:cartId/products/:productId", async (req, res) => {
   }
 });
 
+router.put("/carts/:cartId", async (req, res) => {
+  const { body, params } = req;
+  const { cartId } = params;
+  try {
+    const cart = await CartsManager.getById(cartId);
+    let cartProducts = cart.products;
+    cartProducts = body;
+    await CartsManager.updateById(cartId, cartProducts);
+    res.status(200).json({
+      id: cart.id,
+      products: cartProducts,
+    });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
 export default router;

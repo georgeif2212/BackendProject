@@ -2,9 +2,9 @@
 
   <h1>Lista de productos</h1>
   <div class="containers">
-    {{#each products}}
-      <article class="card" style="width: 18rem;">
-        <img src={{this.thumbnail}} class="card-img-top" alt="..." />
+    {{#each payload}}
+      <article class="card product-real-time" style="width: 18rem;">
+        <img src={{this.thumbnail}} class="card-img-top product-real-time__img" alt="..." />
         <div class="card-body">
           <h5 class="card-title">{{this.title}}</h5>
           <p class="card-text">{{this.price}}</p>
@@ -15,4 +15,7 @@
       </article>
     {{/each}}
   </div>
+  <p>Página actual: {{page}}</p>
+  <a href="{{prevLink}}" role="button" {{#unless hasPrevPage}}disabled{{/unless}} >Anterior</a>
+  <a href="{{nextLink}}" role="button" {{#unless hasNextPage}}disabled{{/unless}} >Siguiente</a>
 </div>

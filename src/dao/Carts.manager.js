@@ -22,17 +22,17 @@ export default class CartsManager {
   }
 
   static async updateById(sid, data) {
-    const product = await ProductsManager.getById(sid);
-    if (!product) throw new Error(`Product with ${sid} not found`);
+    const cart = await CartsManager.getById(sid);
+    if (!cart) throw new Error(`Cart with ${sid} not found`);
     await CartModel.updateOne({ _id: sid }, { $set: { products: data } });
-    console.log(`Producto actualizado correctamente (${sid}) 😁.`);
+    console.log(`Cart actualizado correctamente (${sid}) 😁.`);
   }
 
   static async deleteById(sid) {
-    const product = await ProductsManager.getById(sid);
-    if (!product) throw new Error(`Product with ${sid} not found`);
+    const cart = await CartsManager.getById(sid);
+    if (!cart) throw new Error(`Cart with ${sid} not found`);
 
     await CartModel.deleteOne({ _id: sid });
-    console.log(`Producto eliminado correctamente (${sid}) 🤔.`);
+    console.log(`Cart eliminado correctamente (${sid}) 🤔.`);
   }
 }

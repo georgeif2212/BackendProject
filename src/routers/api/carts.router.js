@@ -44,6 +44,7 @@ const carts = [
   },
 ];
 
+// ! Muestra todos los carritos
 router.get("/carts", async (req, res) => {
   const { query } = req;
   const { limit } = query;
@@ -57,6 +58,7 @@ router.get("/carts", async (req, res) => {
   }
 });
 
+// ! Añade un nuevo carrito
 router.post("/carts", async (req, res) => {
   const { body } = req;
   try {
@@ -67,6 +69,7 @@ router.post("/carts", async (req, res) => {
   }
 });
 
+// ! Muestra el carrito con id específico
 router.get("/carts/:cartId", async (req, res) => {
   const { cartId } = req.params;
   try {
@@ -77,6 +80,8 @@ router.get("/carts/:cartId", async (req, res) => {
   }
 });
 
+// ! Añade al carrito con id: el producto con id: (en caso de que no exista el producto
+// ! en el carrito se agrega, si no se le suma la cantidad)
 router.post("/carts/:cartId/products/:productId", async (req, res) => {
   try {
     const { cartId, productId } = req.params;
@@ -100,6 +105,34 @@ router.post("/carts/:cartId/products/:productId", async (req, res) => {
     } else {
       // ! Si el producto existe actualizar la cantidad del producto
       cartProducts[productIndex].quantity += quantity;
+    }
+
+    await CartsManager.updateById(cartId, cartProducts);
+    res.status(200).json({
+      id: cart.id,
+      products: cartProducts,
+    });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
+// ! Elimina del carrito un producto seleccionado
+router.delete("/carts/:cartId/products/:productId", async (req, res) => {
+  try {
+    const { cartId, productId } = req.params;
+    const cart = await CartsManager.getById(cartId);
+    const cartProducts = cart.products;
+
+    const productIndex = cartProducts.findIndex(
+      (product) => product.id == productId
+    );
+
+    if (productIndex === -1) {
+      throw new Error(`Product with ${productId} not found`);
+    } else {
+      // ! Si el producto existe eliminarlo del carrito
+      cartProducts.splice(productIndex, 1);
     }
 
     await CartsManager.updateById(cartId, cartProducts);

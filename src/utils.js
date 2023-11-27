@@ -26,11 +26,11 @@ export const buildResponsePaginated = (data, baseUrl = URL_BASE) => {
     hasNextPage: data.hasNextPage,
     //prevLink: Link directo a la página previa (null si hasPrevPage=false)
     prevLink: data.hasPrevPage
-      ? `${baseUrl}/students?limit=${data.limit}&page=${data.prevPage}`
+      ? `${baseUrl}/products?limit=${data.limit}&page=${data.prevPage}`
       : null,
     //nextLink: Link directo a la página siguiente (null si hasNextPage=false)
     nextLink: data.hasNextPage
-      ? `${baseUrl}/students?limit=${data.limit}&page=${data.nextPage}`
+      ? `${baseUrl}/products?limit=${data.limit}&page=${data.nextPage}`
       : null,
   };
 };

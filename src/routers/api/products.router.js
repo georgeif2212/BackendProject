@@ -20,7 +20,7 @@ router.get("/products", async (req, res) => {
     options.sort = { price: sort };
   }
   if (search) {
-    criteria.title = search;
+    criteria.category = search;
   }
 
   const result = await ProductsManager.get(criteria, options);

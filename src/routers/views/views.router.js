@@ -22,7 +22,7 @@ router.get("/products", async (req, res) => {
     options.sort = { price: sort };
   }
   if (search) {
-    criteria.title = search;
+    criteria.category = search;
   }
   const baseUrl = "http://localhost:8080/views/products";
   const result = await ProductsManager.get(criteria, options);

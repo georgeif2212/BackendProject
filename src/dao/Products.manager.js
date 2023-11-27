@@ -1,9 +1,8 @@
 import ProductModel from "./models/product.model.js";
 
 export default class ProductsManager {
-  static get(limit) {
-    if (!limit) return ProductModel.find();
-    return ProductModel.find().limit(limit);
+  static get(criteria, options) {
+    return ProductModel.paginate(criteria, options);
   }
 
   static async getById(sid) {
@@ -40,7 +39,7 @@ export default class ProductsManager {
   static async updateById(sid, data) {
     const product = await ProductsManager.getById(sid);
     if (!product) throw new Error(`Product with ${sid} not found`);
-    
+
     await ProductModel.updateOne({ _id: sid }, { $set: data });
     console.log(`Producto actualizado correctamente (${sid}) 😁.`);
   }
@@ -48,7 +47,7 @@ export default class ProductsManager {
   static async deleteById(sid) {
     const product = await ProductsManager.getById(sid);
     if (!product) throw new Error(`Product with ${sid} not found`);
-    
+
     await ProductModel.deleteOne({ _id: sid });
     console.log(`Producto eliminado correctamente (${sid}) 🤔.`);
   }

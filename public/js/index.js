@@ -49,12 +49,12 @@ socket.on("update-list-products", ({ products }) => {
   const listProducts = document.getElementById("list-products");
   listProducts.innerText = "";
 
-  products.forEach((product) => {
+  products.docs.forEach((product) => {
     const article = document.createElement("article");
     article.classList.add("card", "product-real-time");
 
     const thumbnailImage = document.createElement("img");
-    thumbnailImage.classList.add("card-img-top","product-real-time__img");
+    thumbnailImage.classList.add("card-img-top", "product-real-time__img");
     thumbnailImage.src = product.thumbnail;
     thumbnailImage.alt = "";
     article.appendChild(thumbnailImage);

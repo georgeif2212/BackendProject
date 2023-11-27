@@ -35,18 +35,19 @@ router.get("/products", async (req, res) => {
 
 // ! ENDPOINTS FOR REALTIMEPRODUCTS
 router.get("/realtimeproducts", async (req, res) => {
-  const { query } = req;
-  const { limit } = query;
+  const { limit = 10, page = 1, sort, search } = req.query;
 
-  if (!limit) {
-    const products = await ProductsManager.get();
-    emit("update-list-products", { products });
-    res.render("realTimeProducts", { title: "Products 🧴" });
-  } else {
-    const products = await ProductsManager.get(parseInt(limit));
-    emit("update-list-products", { products });
-    res.render("realTimeProducts", { title: "Limited Products 🧴" });
+  const criteria = {};
+  const options = { limit, page };
+  if (sort) {
+    options.sort = { price: sort };
   }
+  if (search) {
+    criteria.title = search;
+  }
+  const products = await ProductsManager.get(criteria, options);
+  emit("update-list-products", { products });
+  res.render("realTimeProducts", { title: "Limited Products 🧴" });
 });
 
 // ! ENDPOINTS FOR CHAT

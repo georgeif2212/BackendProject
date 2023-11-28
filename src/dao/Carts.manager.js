@@ -1,9 +1,8 @@
 import CartModel from "./models/cart.model.js";
 
 export default class CartsManager {
-  static get(limit) {
-    if (!limit) return CartModel.find();
-    return CartModel.find().limit(limit);
+  static get(criteria, options) {
+    return CartModel.paginate(criteria, options);
   }
 
   static async getById(sid) {

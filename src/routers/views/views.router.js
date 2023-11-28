@@ -1,4 +1,5 @@
 import ProductsManager from "../../dao/Products.manager.js";
+import CartsManager from "../../dao/Carts.manager.js";
 import { __dirname } from "../../utils.js";
 import { Router } from "express";
 import { emit } from "../../socket.js";
@@ -53,6 +54,19 @@ router.get("/realtimeproducts", async (req, res) => {
 // ! ENDPOINTS FOR CHAT
 router.get("/chat", async (req, res) => {
   res.render("chat", { title: "Chat 😎" });
+});
+
+// ! ENDPOINTS FOR SPECIFIC CART
+router.get("/carts/:cartId", async (req, res) => {
+  const { cartId } = req.params;
+  try {
+    const cart = await CartsManager.getById(cartId);
+    const result = cart.toJSON();
+    res.status(200).render("carts", { title: "Carts", ...result });
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Internal Server Error");
+  }
 });
 
 export default router;

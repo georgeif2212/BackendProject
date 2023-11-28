@@ -145,6 +145,7 @@ router.delete("/carts/:cartId/products/:productId", async (req, res) => {
   }
 });
 
+// ! Actualiza todo el array productos del carrito seleccionado
 router.put("/carts/:cartId", async (req, res) => {
   const { body, params } = req;
   const { cartId } = params;
@@ -162,6 +163,7 @@ router.put("/carts/:cartId", async (req, res) => {
   }
 });
 
+// ! Actualiza solo la cantidad del producto que pertenece a un carrito
 router.put("/carts/:cartId/products/:productId", async (req, res) => {
   try {
     const { cartId, productId } = req.params;

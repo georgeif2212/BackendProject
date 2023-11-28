@@ -152,6 +152,17 @@ router.delete("/carts/:cartId/products/:productId", async (req, res) => {
 });
 
 // ! Actualiza todo el array productos del carrito seleccionado
+// Se le debe pasar el arreglo asÍ:
+// [
+//   {
+//       "product": "655915890e292adf21f99173",
+//       "quantity": 2
+//   },
+//   {
+//       "product": "655915890e292adf21f99172",
+//       "quantity": 4
+//   }
+// ]
 router.put("/carts/:cartId", async (req, res) => {
   const { body, params } = req;
   const { cartId } = params;
@@ -178,7 +189,7 @@ router.put("/carts/:cartId/products/:productId", async (req, res) => {
     const cartProducts = cart.products;
 
     const productIndex = cartProducts.findIndex(
-      (product) => product.id == productId
+      (product) => product.product.toString() === productId
     );
 
     if (productIndex === -1) {

@@ -129,11 +129,13 @@ router.delete("/carts/:cartId/products/:productId", async (req, res) => {
     const cartProducts = cart.products;
 
     const productIndex = cartProducts.findIndex(
-      (product) => product.id == productId
+      (product) => product.product.toString() === productId
     );
 
     if (productIndex === -1) {
-      throw new Error(`Product with ${productId} not found`);
+      throw new Error(
+        `Product with ${productId} not found in the cart ${cartId}`
+      );
     } else {
       // ! Si el producto existe eliminarlo del carrito
       cartProducts.splice(productIndex, 1);

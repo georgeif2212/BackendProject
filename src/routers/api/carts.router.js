@@ -195,4 +195,21 @@ router.put("/carts/:cartId/products/:productId", async (req, res) => {
   }
 });
 
+// ! Elimina todos los productos del array products
+router.delete("/carts/:cartId", async (req, res) => {
+  const { params } = req;
+  const { cartId } = params;
+  try {
+    const cart = await CartsManager.getById(cartId);
+    const cartProducts = [];
+    await CartsManager.updateById(cartId, cartProducts);
+    res.status(200).json({
+      id: cart.id,
+      products: cartProducts,
+    });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
 export default router;

@@ -14,10 +14,7 @@ export default class CartsManager {
   }
 
   static create(data) {
-    const { products } = data;
-    if (products.length === 0) throw new Error(`Empty cart, no need to save`);
-
-    return CartModel.create(data);
+    return CartModel.create({ products: data });
   }
 
   static async updateById(sid, data) {

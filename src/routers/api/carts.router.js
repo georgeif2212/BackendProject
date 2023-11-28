@@ -162,4 +162,35 @@ router.put("/carts/:cartId", async (req, res) => {
   }
 });
 
+router.put("/carts/:cartId/products/:productId", async (req, res) => {
+  try {
+    const { cartId, productId } = req.params;
+    const { quantity } = req.body;
+    const cart = await CartsManager.getById(cartId);
+    const cartProducts = cart.products;
+
+    const productIndex = cartProducts.findIndex(
+      (product) => product.id == productId
+    );
+
+    if (productIndex === -1) {
+      // ! Si el producto no existe
+      throw new Error(
+        `Product with ID: ${productId} not found in the cart: ${cartId}`
+      );
+    } else {
+      // ! Si el producto existe actualizar la cantidad del producto
+      cartProducts[productIndex].quantity += quantity;
+    }
+
+    await CartsManager.updateById(cartId, cartProducts);
+    res.status(200).json({
+      id: cart.id,
+      products: cartProducts,
+    });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+});
+
 export default router;

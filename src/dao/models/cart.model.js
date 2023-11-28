@@ -8,6 +8,10 @@ const CartSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+CartSchema.pre("find", function () {
+  this.populate("products.product");
+});
+
 CartSchema.plugin(mongoosePaginate);
 
 export default mongoose.model("Cart", CartSchema);

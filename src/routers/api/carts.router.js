@@ -63,11 +63,11 @@ router.get("/carts", async (req, res) => {
     .json(buildResponsePaginatedCarts({ ...result, sort, search }));
 });
 
-// ! Añade un nuevo carrito
+// ! Añade un nuevo carrito vacío
 router.post("/carts", async (req, res) => {
-  const { body } = req;
   try {
-    const cart = await CartsManager.create(body);
+    const products = [];
+    const cart = await CartsManager.create(products);
     res.status(201).json(cart);
   } catch (error) {
     res.status(400).json({ error: error.message });
@@ -85,25 +85,24 @@ router.get("/carts/:cartId", async (req, res) => {
   }
 });
 
-// ! Añade al carrito con id: el producto con id: (en caso de que no exista el producto
-// ! en el carrito se agrega, si no se le suma la cantidad)
+// !* Añade al carrito con id: el producto con id: (en caso de que no exista el producto
+// !* en el carrito se agrega, si no se le suma la cantidad)
 router.post("/carts/:cartId/products/:productId", async (req, res) => {
   try {
     const { cartId, productId } = req.params;
-    const { title, description, quantity } = req.body;
+    const { quantity } = req.body;
     const cart = await CartsManager.getById(cartId);
+
     const cartProducts = cart.products;
 
     const productIndex = cartProducts.findIndex(
-      (product) => product.id == productId
+      (product) => product.product.toString() === productId
     );
 
+    // ! Si el producto no existe
     if (productIndex === -1) {
-      // ! Si el producto no existe
       const newProduct = {
-        id: productId,
-        title,
-        description,
+        product: productId,
         quantity,
       };
       cartProducts.push(newProduct);

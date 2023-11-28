@@ -1,6 +1,6 @@
 import { Router } from "express";
-import { v4 as uuidV4 } from "uuid";
 import CartsManager from "../../dao/Carts.manager.js";
+import { buildResponsePaginatedCarts } from "../../utils.js";
 
 const router = Router();
 
@@ -46,16 +46,21 @@ const carts = [
 
 // ! Muestra todos los carritos
 router.get("/carts", async (req, res) => {
-  const { query } = req;
-  const { limit } = query;
+  const { limit = 1, page = 1, sort, search } = req.query;
 
-  if (!limit) {
-    const carts = await CartsManager.get();
-    res.status(200).json(carts);
-  } else {
-    const carts = await CartsManager.get(parseInt(limit));
-    res.status(200).json(carts);
+  const criteria = {};
+  const options = { limit, page };
+  if (sort) {
+    options.sort = { products: sort };
   }
+  if (search) {
+    criteria._id = search;
+  }
+
+  const result = await CartsManager.get(criteria, options);
+  res
+    .status(200)
+    .json(buildResponsePaginatedCarts({ ...result, sort, search }));
 });
 
 // ! Añade un nuevo carrito

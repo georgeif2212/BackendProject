@@ -3,40 +3,19 @@ import UserManager from "../../dao/User.manager.js";
 
 const router = Router();
 
-router.post("/sessions/login", async (req, res) => {
-  const {
-    body: { email, password },
-  } = req;
 
-  if (!email || !password) {
-    return res.render("error", {
-      title: "Hello People 🖐️",
-      messageError: "Todos los campos son requeridos.",
-    });
-  }
-  const user = await UserManager.login(email);
-  if (!user) {
-    return res.render("error", {
-      title: "Hello People 🖐️",
-      messageError: "Correo o contraseña invalidos.",
-    });
-  }
 
-  if (user.password !== password) {
-    return res.render("error", {
-      title: "Hello People 🖐️",
-      messageError: "Correo o contraseña invalidos.",
+router.post("/sessions/register", async (req, res) => {
+  try {
+    const { body } = req;
+    await UserManager.register(body);
+    res.redirect("/views/login");
+  } catch (error) {
+    res.status(400).render("error", {
+      title: "Errores",
+      messageError: error.message,
     });
   }
-  const { first_name, last_name, age, role } = user;
-  req.session.user = {
-    first_name,
-    last_name,
-    email,
-    age,
-    role,
-  };
-  res.redirect("/profile");
 });
 
 export default router;

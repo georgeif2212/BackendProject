@@ -9,7 +9,7 @@ import MongoStore from "connect-mongo";
 import productsRouter from "./routers/api/products.router.js";
 import cartsRouter from "./routers/api/carts.router.js";
 import viewsRouter from "./routers/views/views.router.js";
-import sessionsRouter from "./routers/views/views.router.js";
+import sessionsRouter from "./routers/api/sessions.router.js";
 import indexRouter from "./routers/views/index.router.js";
 
 const app = express();
@@ -37,8 +37,8 @@ app.engine("handlebars", handlebars.engine());
 app.set("views", path.join(__dirname, "./views"));
 app.set("view engine", "handlebars");
 
-app.use("/api", productsRouter, cartsRouter);
-app.use("/views", viewsRouter, sessionsRouter, indexRouter);
+app.use("/api", productsRouter, cartsRouter, sessionsRouter);
+app.use("/views", viewsRouter, indexRouter);
 
 // ! Middleware de error
 app.use((error, req, res, next) => {

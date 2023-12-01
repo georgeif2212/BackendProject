@@ -5,8 +5,21 @@ export default class UserManager {
     return UserModel.paginate(criteria, options);
   }
 
-  static login(email){
-    return UserModel.findOne({ email });
+  static async login(data) {
+    const { email, password } = data;
+    if (!email || !password) {
+      throw new Error(`Todos los campos son requeridos`);
+    }
+
+    const user = await UserModel.findOne({email});
+    if (!user) {
+      throw new Error(`Correo o contraseña invalidos`);
+    }
+
+    if (user.password !== password) {
+      throw new Error(`Correo o contraseña invalidos`);
+    }
+    return user;
   }
 
   static async getById(sid) {
@@ -20,17 +33,10 @@ export default class UserManager {
     return UserModel.findOne({ code: code });
   }
 
-  static create(data) {
-    const { title, description, price, thumbnail, code, stock } = data;
+  static register(data) {
+    const { first_name, last_name, email, password, age } = data;
 
-    const requiredFields = [
-      "title",
-      "description",
-      "price",
-      "thumbnail",
-      "code",
-      "stock",
-    ];
+    const requiredFields = ["first_name", "last_name", "email", "password"];
     const missingFields = requiredFields.filter((field) => !data[field]);
 
     if (missingFields.length > 0) {

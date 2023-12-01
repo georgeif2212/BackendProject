@@ -4,7 +4,7 @@ const router = Router();
 
 router.get("/profile", (req, res) => {
   if (!req.session.user) {
-    return res.redirect("/login");
+    return res.redirect("/views/login");
   }
   res.render("profile", { title: "Hello People 🖐️", user: req.session.user });
 });

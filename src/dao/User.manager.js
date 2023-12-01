@@ -5,6 +5,10 @@ export default class UserManager {
     return UserModel.paginate(criteria, options);
   }
 
+  static login(email){
+    return UserModel.findOne({ email });
+  }
+
   static async getById(sid) {
     const user = await UserModel.findById(sid);
     if (!user) {

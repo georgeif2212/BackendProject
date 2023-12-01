@@ -2,12 +2,28 @@ import express from "express";
 import handlebars from "express-handlebars";
 import path from "path";
 import { __dirname } from "./utils.js";
+import { URI } from "./db/mongodb.js";
 
 import productsRouter from "./routers/api/products.router.js";
 import cartsRouter from "./routers/api/carts.router.js";
 import viewsRouter from "./routers/views/views.router.js";
 
 const app = express();
+
+const SESSION_SECRET = "isfK_EtW3Xt5fF71{bJ[y+Eft!:Cg$";
+
+app.use(
+  sessions({
+    store: MongoStore.create({
+      mongoUrl: URI,
+      mongoOptions: {},
+      ttl: 60 * 30,
+    }),
+    secret: SESSION_SECRET,
+    resave: true,
+    saveUninitialized: true,
+  })
+);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

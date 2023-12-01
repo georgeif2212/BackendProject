@@ -3,6 +3,8 @@ import handlebars from "express-handlebars";
 import path from "path";
 import { __dirname } from "./utils.js";
 import { URI } from "./db/mongodb.js";
+import sessions from 'express-session';
+import MongoStore from 'connect-mongo';
 
 import productsRouter from "./routers/api/products.router.js";
 import cartsRouter from "./routers/api/carts.router.js";

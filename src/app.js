@@ -37,6 +37,10 @@ app.engine("handlebars", handlebars.engine());
 app.set("views", path.join(__dirname, "./views"));
 app.set("view engine", "handlebars");
 
+app.get("/", (req, res) => {
+  res.redirect("/views/login");
+});
+
 app.use("/api", productsRouter, cartsRouter, sessionsRouter);
 app.use("/views", viewsRouter, indexRouter);
 

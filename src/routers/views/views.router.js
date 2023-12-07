@@ -15,6 +15,13 @@ const router = Router();
 
 // ! ENDPOINTS FOR PRODUCTS
 router.get("/products", async (req, res) => {
+  if (!req.session.user) {
+    return res.render("error", {
+      title: "Hello People 🖐️",
+      messageError: "No estas autenticado.",
+    });
+  }
+
   const { limit = 10, page = 1, sort, search } = req.query;
 
   const criteria = {};
@@ -27,7 +34,11 @@ router.get("/products", async (req, res) => {
   }
   const baseUrl = "http://localhost:8080/views/products";
   const result = await ProductsManager.get(criteria, options);
-  const data = buildResponsePaginated({ ...result, sort, search }, baseUrl);
+  const infoUser = req.session.user;
+  const data = buildResponsePaginated(
+    { ...result, sort, search, infoUser },
+    baseUrl
+  );
   res.status(200).render("home", {
     title: "Products 🧴",
     ...data,

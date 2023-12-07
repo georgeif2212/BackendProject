@@ -1,6 +1,9 @@
 <div>
 
   <h1>Lista de productos</h1>
+  <h2>Te damos la bienvenida {{infoUser.first_name}} {{infoUser.last_name}}</h2>
+  <p>Tu rol es: {{infoUser.role}}</p>
+  <a href="/views/profile" role="button">Ver mi perfil</a>
   <div class="containers">
     {{#each payload}}
       <article class="card product-real-time" style="width: 18rem;">

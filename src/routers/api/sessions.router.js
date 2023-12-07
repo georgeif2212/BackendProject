@@ -8,13 +8,16 @@ router.post("/sessions/login", async (req, res) => {
     const { body } = req;
     const user = await UserManager.login(body);
 
-    const { first_name, last_name, age, role, email } = user;
+    const { first_name, last_name, age, role, email, password } = user;
     req.session.user = {
       first_name,
       last_name,
       email,
       age,
-      role,
+      role:
+        email === "adminCoder@coder.com" && password === "adminCod3r123"
+          ? "admin"
+          : "user",
     };
     res.redirect("/views/profile");
   } catch (error) {

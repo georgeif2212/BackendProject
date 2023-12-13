@@ -17,4 +17,8 @@ router.get("/register", (req, res) => {
   res.render("register", { title: "Hello People 🖐️" });
 });
 
+router.get("/recovery-password", (req, res) => {
+  res.render("recovery-password", { title: "Hello People 🖐️" });
+});
+
 export default router;

@@ -1,5 +1,5 @@
 import UserModel from "./models/user.model.js";
-
+import { createHash, isValidPassword } from "../utils.js";
 export default class UserManager {
   static get(criteria, options) {
     return UserModel.paginate(criteria, options);
@@ -11,12 +11,12 @@ export default class UserManager {
       throw new Error(`Todos los campos son requeridos`);
     }
 
-    const user = await UserModel.findOne({email});
+    const user = await UserModel.findOne({ email });
     if (!user) {
       throw new Error(`Correo o contraseña invalidos`);
     }
 
-    if (user.password !== password) {
+    if (!isValidPassword(password, user)) {
       throw new Error(`Correo o contraseña invalidos`);
     }
     return user;
@@ -43,6 +43,7 @@ export default class UserManager {
       const missingFieldsString = missingFields.join(", ");
       throw new Error(`Data missing: ${missingFieldsString}`);
     }
+    data.password = createHash(password);
     return UserModel.create(data);
   }
 

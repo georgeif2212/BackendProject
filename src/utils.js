@@ -1,5 +1,6 @@
 import path from "path";
 import url from "url";
+import bcrypt from "bcrypt";
 
 const __filename = url.fileURLToPath(import.meta.url);
 export const __dirname = path.dirname(__filename);

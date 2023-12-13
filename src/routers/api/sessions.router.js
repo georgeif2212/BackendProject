@@ -41,6 +41,19 @@ router.post("/sessions/register", async (req, res) => {
   }
 });
 
+router.post("/sessions/recovery-password", async (req, res) => {
+  try {
+    const { body } = req;
+    await UserManager.recoverPassword(body);
+    res.redirect("/views/login");
+  } catch (error) {
+    res.status(400).render("error", {
+      title: "Errores",
+      messageError: error.message,
+    });
+  }
+});
+
 router.get("/sessions/me", (req, res) => {
   if (!req.session.user) {
     return res.status(401).json({ message: "No estas autenticado." });

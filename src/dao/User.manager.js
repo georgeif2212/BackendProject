@@ -62,4 +62,19 @@ export default class UserManager {
     await UserModel.deleteOne({ _id: sid });
     console.log(`User eliminado correctamente (${sid}) 🤔.`);
   }
+
+  static async recoverPassword(data) {
+    const { email, password } = data;
+    if (!email || !password) {
+      throw new Error(`Todos los campos son requeridos`);
+    }
+
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      throw new Error(`Correo o contraseña invalidos ${user.email}`);
+    }
+
+    user.password = createHash(password);
+    await UserModel.updateOne({ email }, user);
+  }
 }

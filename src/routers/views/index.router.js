@@ -3,10 +3,10 @@ import { Router } from "express";
 const router = Router();
 
 router.get("/profile", (req, res) => {
-  if (!req.session.user) {
+  if (!req.user) {
     return res.redirect("/views/login");
   }
-  res.render("profile", { title: "Hello People 🖐️", user: req.session.user });
+  res.render("profile", { title: "Hello People 🖐️", user: req.user.toJSON() });
 });
 
 router.get("/login", (req, res) => {

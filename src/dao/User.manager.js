@@ -33,7 +33,7 @@ export default class UserManager {
     return UserModel.findOne({ code: code });
   }
 
-  static register(data) {
+  static async register(data) {
     const { first_name, last_name, email, password, age } = data;
 
     const requiredFields = ["first_name", "last_name", "email", "password"];
@@ -41,7 +41,13 @@ export default class UserManager {
 
     if (missingFields.length > 0) {
       const missingFieldsString = missingFields.join(", ");
-      throw new Error(`Data missing: ${missingFieldsString}`);
+      throw new Error(`Los campos: ${missingFieldsString} son requeridos`);
+    }
+    const user = await UserModel.findOne({ email });
+    if (user) {
+      throw new Error(
+        `Ya existe un usuario con el correo ${email} en el sistema.`
+      );
     }
     data.password = createHash(password);
     return UserModel.create(data);

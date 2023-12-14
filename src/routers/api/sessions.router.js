@@ -83,4 +83,17 @@ router.get("/session/logout", (req, res) => {
   });
 });
 
+router.get(
+  "/sessions/github",
+  passport.authenticate("github", { scope: ["user:email"] })
+);
+
+router.get(
+  "/sessions/github/callback",
+  passport.authenticate("github", { failureRedirect: "/views/login" }),
+  (req, res) => {
+    res.redirect("/views/profile");
+  }
+);
+
 export default router;

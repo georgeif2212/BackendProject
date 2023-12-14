@@ -31,15 +31,15 @@ export const init = () => {
           const user = await UserManager.login({ email, password });
           done(null, user);
         } catch (error) {
-          done(null, false, { message: error.message }); 
+          done(error, false, { message: error.message });
         }
       }
     )
   );
 
   const githubOpts = {
-    clientID: "Iv1.cca07a159c1a5826",
-    clientSecret: "29794bb0b5be13d20daf91d2a29454c98e4df9ac",
+    clientID: "Iv1.5d100ad00e860302",
+    clientSecret: "83c5d167b8ac1e61e576fab03fee33d9e3fd55c9",
     callbackURL: "http://localhost:8080/api/sessions/github/callback",
   };
   passport.use(
@@ -47,22 +47,26 @@ export const init = () => {
     new GithubStrategy(
       githubOpts,
       async (accesstoken, refreshToken, profile, done) => {
-        const email = profile._json.email;
-        let user = await UserModel.findOne({ email });
-        if (user) {
-          return done(null, user);
+        try {
+          const email = profile._json.email;
+          console.log(profile._json);
+          let user = await UserManager.alreadyExists(email);
+          if (user) {
+            return done(null, user);
+          }
+          user = {
+            first_name: profile._json.name,
+            last_name: "",
+            email,
+            password: "",
+            provider: "github",
+            providerId: profile.id,
+          };
+          const newUser = await UserModel.create(user);
+          done(null, newUser);
+        } catch (error) {
+          done(error, false, { message: error.message });
         }
-        user = {
-          first_name: profile._json.name,
-          last_name: "",
-          email,
-          password: "",
-          provider: "github",
-          providerId: profile.id,
-          age: 18,
-        };
-        const newUser = await UserModel.create(user);
-        done(null, newUser);
       }
     )
   );

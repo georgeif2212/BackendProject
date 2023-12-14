@@ -1,5 +1,5 @@
 import UserModel from "./models/user.model.js";
-
+import { createHash, isValidPassword } from "../utils.js";
 export default class UserManager {
   static get(criteria, options) {
     return UserModel.paginate(criteria, options);
@@ -11,12 +11,12 @@ export default class UserManager {
       throw new Error(`Todos los campos son requeridos`);
     }
 
-    const user = await UserModel.findOne({email});
+    const user = await UserModel.findOne({ email });
     if (!user) {
       throw new Error(`Correo o contraseña invalidos`);
     }
 
-    if (user.password !== password) {
+    if (!isValidPassword(password, user)) {
       throw new Error(`Correo o contraseña invalidos`);
     }
     return user;
@@ -29,20 +29,26 @@ export default class UserManager {
     }
     return user;
   }
-  static alreadyExists(code) {
-    return UserModel.findOne({ code: code });
+  static alreadyExists(email) {
+    return UserModel.findOne({ email });
   }
 
-  static register(data) {
-    const { first_name, last_name, email, password, age } = data;
-
-    const requiredFields = ["first_name", "last_name", "email", "password"];
+  static async register(data) {
+    const { email, password } = data;
+    const requiredFields = ["first_name", "email"];
     const missingFields = requiredFields.filter((field) => !data[field]);
 
     if (missingFields.length > 0) {
       const missingFieldsString = missingFields.join(", ");
-      throw new Error(`Data missing: ${missingFieldsString}`);
+      throw new Error(`Los campos: ${missingFieldsString} son requeridos`);
     }
+    const user = await UserModel.findOne({ email });
+    if (user) {
+      throw new Error(
+        `Ya existe un usuario con el correo ${email} en el sistema.`
+      );
+    }
+    data.password = createHash(password);
     return UserModel.create(data);
   }
 
@@ -60,5 +66,20 @@ export default class UserManager {
 
     await UserModel.deleteOne({ _id: sid });
     console.log(`User eliminado correctamente (${sid}) 🤔.`);
+  }
+
+  static async recoverPassword(data) {
+    const { email, password } = data;
+    if (!email || !password) {
+      throw new Error(`Todos los campos son requeridos`);
+    }
+
+    const user = await UserModel.findOne({ email });
+    if (!user) {
+      throw new Error(`Correo o contraseña invalidos ${user.email}`);
+    }
+
+    user.password = createHash(password);
+    await UserModel.updateOne({ email }, user);
   }
 }

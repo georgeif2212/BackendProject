@@ -5,12 +5,14 @@ import { __dirname } from "./utils.js";
 import { URI } from "./db/mongodb.js";
 import sessions from "express-session";
 import MongoStore from "connect-mongo";
+import passport from "passport";
 
 import productsRouter from "./routers/api/products.router.js";
 import cartsRouter from "./routers/api/carts.router.js";
 import viewsRouter from "./routers/views/views.router.js";
 import sessionsRouter from "./routers/api/sessions.router.js";
 import indexRouter from "./routers/views/index.router.js";
+import { init as initPassport } from "./config/passport.config.js";
 
 const app = express();
 
@@ -36,6 +38,10 @@ app.use(express.static(path.join(__dirname, "../public")));
 app.engine("handlebars", handlebars.engine());
 app.set("views", path.join(__dirname, "./views"));
 app.set("view engine", "handlebars");
+
+initPassport();
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.get("/", (req, res) => {
   res.redirect("/views/login");

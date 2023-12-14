@@ -54,7 +54,11 @@ app.use("/views", viewsRouter, indexRouter);
 app.use((error, req, res, next) => {
   const message = `Ha ocurrido un error desconocido 😨: ${error.message}`;
   console.error(message);
-  res.status(500).json({ message });
+
+  res.status(400).render("error", {
+    title: "Errores",
+    messageError: error.message,
+  });
 });
 
 export default app;

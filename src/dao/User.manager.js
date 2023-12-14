@@ -29,14 +29,13 @@ export default class UserManager {
     }
     return user;
   }
-  static alreadyExists(code) {
-    return UserModel.findOne({ code: code });
+  static alreadyExists(email) {
+    return UserModel.findOne({ email });
   }
 
   static async register(data) {
-    const { first_name, last_name, email, password, age } = data;
-
-    const requiredFields = ["first_name", "last_name", "email", "password"];
+    const { email, password } = data;
+    const requiredFields = ["first_name", "email"];
     const missingFields = requiredFields.filter((field) => !data[field]);
 
     if (missingFields.length > 0) {

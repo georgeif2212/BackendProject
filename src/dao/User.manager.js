@@ -1,5 +1,6 @@
 import UserModel from "./models/user.model.js";
 import { createHash, isValidPassword } from "../utils.js";
+import CartsManager from "./Carts.manager.js";
 export default class UserManager {
   static get(criteria, options) {
     return UserModel.paginate(criteria, options);
@@ -49,6 +50,9 @@ export default class UserManager {
       );
     }
     data.password = createHash(password);
+    const products = [];
+    const newCart = await CartsManager.create(products);
+    data.cartId=newCart;
     return UserModel.create(data);
   }
 

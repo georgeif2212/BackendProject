@@ -15,7 +15,7 @@ const router = Router();
 
 // ! ENDPOINTS FOR PRODUCTS
 router.get("/products", async (req, res) => {
-  if (!req.session.user) {
+  if (!req.user) {
     return res.render("error", {
       title: "Hello People 🖐️",
       messageError: "No estas autenticado.",
@@ -34,7 +34,7 @@ router.get("/products", async (req, res) => {
   }
   const baseUrl = "http://localhost:8080/views/products";
   const result = await ProductsManager.get(criteria, options);
-  const infoUser = req.session.user;
+  const infoUser = req.user;
   const data = buildResponsePaginated(
     { ...result, sort, search, infoUser },
     baseUrl
@@ -75,8 +75,10 @@ router.get("/carts/:cartId", async (req, res) => {
     const result = cart.toJSON();
     res.status(200).render("carts", { title: "Carts", ...result });
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Internal Server Error");
+    res.status(400).render("error", {
+      title: "Errores",
+      messageError: error.message,
+    });
   }
 });
 

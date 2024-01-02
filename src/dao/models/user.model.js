@@ -10,6 +10,7 @@ const userSchema = new Schema(
     providerId: { type: String },
     role: { type: String, default: "user" },
     age: { type: Number, required: false },
+    cartId: { type: mongoose.Schema.Types.ObjectId, ref: "Cart" }
   },
   { timestamps: true }
 );

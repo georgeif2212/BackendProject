@@ -13,7 +13,7 @@
           <p class="card-text">{{this.price}}</p>
           <p class="card-text">{{this.description}}</p>
           <p class="card-text">Stock: {{this.stock}}</p>
-          <a href="#" class="btn btn-success">Agregar al carrito</a>
+          <a class="btn btn-success">Agregar al carrito</a>
         </div>
       </article>
     {{/each}}
@@ -22,3 +22,5 @@
   <a href="{{prevLink}}" role="button" {{#unless hasPrevPage}}disabled{{/unless}} >Anterior</a>
   <a href="{{nextLink}}" role="button" {{#unless hasNextPage}}disabled{{/unless}} >Siguiente</a>
 </div>
+
+<script src="/js/products.js"></script>

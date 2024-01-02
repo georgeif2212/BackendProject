@@ -75,8 +75,10 @@ router.get("/carts/:cartId", async (req, res) => {
     const result = cart.toJSON();
     res.status(200).render("carts", { title: "Carts", ...result });
   } catch (error) {
-    console.error(error);
-    res.status(500).send("Internal Server Error");
+    res.status(400).render("error", {
+      title: "Errores",
+      messageError: error.message,
+    });
   }
 });
 

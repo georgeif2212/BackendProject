@@ -1,7 +1,6 @@
 <div>
-
   <h1>Lista de productos</h1>
-  <h2>Te damos la bienvenida {{infoUser.first_name}} {{infoUser.last_name}}</h2>
+  <h2>Te damos la bienvenida {{infoUser.first_name}} {{infoUser.last_name}} {{infoUser._id}}</h2>
   <p>Tu rol es: {{infoUser.role}}</p>
   <a href="/views/profile" role="button">Ver mi perfil</a>
   <div class="containers">
@@ -13,7 +12,8 @@
           <p class="card-text">{{this.price}}</p>
           <p class="card-text">{{this.description}}</p>
           <p class="card-text">Stock: {{this.stock}}</p>
-          <a class="btn btn-success">Agregar al carrito</a>
+          <!-- Pasa infoUser._id como un parámetro adicional -->
+          <a class="add-cart btn btn-success" data-cart-id="{{../infoUser.cartId}} "data-product-id="{{this._id}}">Agregar al carrito</a>
         </div>
       </article>
     {{/each}}

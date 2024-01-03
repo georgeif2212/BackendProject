@@ -39,6 +39,7 @@ router.get("/products", async (req, res) => {
     { ...result, sort, search, infoUser },
     baseUrl
   );
+  console.log(data);
   res.status(200).render("home", {
     title: "Products 🧴",
     ...data,

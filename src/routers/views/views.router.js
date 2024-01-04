@@ -69,7 +69,14 @@ router.get("/chat", async (req, res) => {
 
 // ! ENDPOINTS FOR SPECIFIC CART
 router.get("/carts/:cartId", async (req, res) => {
+  console.log(req.user);
   const { cartId } = req.params;
+  if (req.user.cartId != cartId) {
+    res.status(400).render("error", {
+      title: "Errores",
+      messageError: "No estás permitido",
+    });
+  }
   try {
     const cart = await CartsManager.getById(cartId);
     const result = cart.toJSON();

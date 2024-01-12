@@ -1,5 +1,5 @@
-import ProductsManager from "../../dao/Products.manager.js";
-import CartsManager from "../../dao/Carts.manager.js";
+import ProductsController from "../../controllers/products.controller.js";
+import CartsController from "../../controllers/products.controller.js";
 import { __dirname } from "../../utils.js";
 import { Router } from "express";
 import { emit } from "../../socket.js";
@@ -33,7 +33,7 @@ router.get("/products", async (req, res) => {
     criteria.category = search;
   }
   const baseUrl = "http://localhost:8080/views/products";
-  const result = await ProductsManager.get(criteria, options);
+  const result = await ProductsController.get(criteria, options);
   const infoUser = req.user;
   const data = buildResponsePaginated(
     { ...result, sort, search, infoUser },
@@ -57,7 +57,7 @@ router.get("/realtimeproducts", async (req, res) => {
   if (search) {
     criteria.title = search;
   }
-  const products = await ProductsManager.get(criteria, options);
+  const products = await ProductsController.get(criteria, options);
   emit("update-list-products", { products });
   res.render("realTimeProducts", { title: "Limited Products 🧴" });
 });
@@ -78,7 +78,7 @@ router.get("/carts/:cartId", async (req, res) => {
     });
   }
   try {
-    const cart = await CartsManager.getById(cartId);
+    const cart = await CartsController.getById(cartId);
     const result = cart.toJSON();
     res.status(200).render("carts", { title: "Carts", ...result });
   } catch (error) {

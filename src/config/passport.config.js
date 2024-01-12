@@ -48,7 +48,6 @@ export const init = () => {
       async (accesstoken, refreshToken, profile, done) => {
         try {
           const email = profile._json.email;
-          console.log(profile._json);
           let user = await UsersController.alreadyExists(email);
           if (user) {
             return done(null, user);

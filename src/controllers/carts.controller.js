@@ -22,14 +22,14 @@ export default class CartsController {
   }
 
   static async updateById(sid, data) {
-    const cart = await CartsManager.getById(sid);
+    const cart = await CartsController.getById(sid);
     if (!cart) throw new NotFoundException(`Cart with ${sid} not found`);
     await CartModel.updateOne({ _id: sid }, { $set: { products: data } });
     console.log(`Cart actualizado correctamente (${sid}) 😁.`);
   }
 
   static async deleteById(sid) {
-    const cart = await CartsManager.getById(sid);
+    const cart = await CartsController.getById(sid);
     if (!cart) throw new NotFoundException(`Cart with ${sid} not found`);
     await CartModel.deleteOne({ _id: sid });
     console.log(`Cart eliminado correctamente (${sid}) 🤔.`);

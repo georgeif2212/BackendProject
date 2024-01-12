@@ -5,6 +5,10 @@ export default class ProductDaoMongoDB {
     return ProductModel.paginate(criteria, options);
   }
 
+  static getAll(criteria = {}) {
+    return ProductModel.find(criteria);
+  }
+
   static getFilter(criteria = {}) {
     return ProductModel.find(criteria);
   }

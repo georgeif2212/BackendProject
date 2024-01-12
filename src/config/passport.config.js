@@ -1,8 +1,7 @@
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as GithubStrategy } from "passport-github2";
-import UserModel from "../dao/models/user.model.js";
-import UserManager from "../dao/User.manager.js";
+import UsersController from "../controllers/users.controller.js";
 
 export const init = () => {
   const registerOpts = {
@@ -14,7 +13,7 @@ export const init = () => {
     new LocalStrategy(registerOpts, async (req, email, password, done) => {
       try {
         const { body } = req;
-        const newUser = await UserManager.register(body);
+        const newUser = await UsersController.register(body);
         done(null, newUser);
       } catch (error) {
         return done(error);
@@ -28,7 +27,7 @@ export const init = () => {
       { usernameField: "email" },
       async (email, password, done) => {
         try {
-          const user = await UserManager.login({ email, password });
+          const user = await UsersController.login({ email, password });
           done(null, user);
         } catch (error) {
           done(error, false, { message: error.message });
@@ -50,7 +49,7 @@ export const init = () => {
         try {
           const email = profile._json.email;
           console.log(profile._json);
-          let user = await UserManager.alreadyExists(email);
+          let user = await UsersController.alreadyExists(email);
           if (user) {
             return done(null, user);
           }
@@ -62,7 +61,7 @@ export const init = () => {
             provider: "github",
             providerId: profile.id,
           };
-          const newUser = await UserModel.create(user);
+          const newUser = await UsersController.register(user);
           done(null, newUser);
         } catch (error) {
           done(error, false, { message: error.message });
@@ -78,7 +77,7 @@ export const init = () => {
   passport.deserializeUser(async (uid, done) => {
     // inflar la session
     try {
-      const user = await UserManager.getById(uid);
+      const user = await UsersController.getById(uid);
       done(null, user);
     } catch (error) {
       done(error.message);

@@ -1,6 +1,6 @@
 import { Server } from "socket.io";
 // import ProductManager from "./dao/ProductManagerFS.js";
-import ProductsController from "./controllers/users.controller.js";
+import ProductsController from "./controllers/products.controller.js";
 import { __dirname } from "./utils.js";
 import ChatsController from "./controllers/chats.controller.js";
 
@@ -13,18 +13,18 @@ export const init = (httpServer) => {
   socketServer.on("connection", async (socketClient) => {
     console.log(`Nuevo cliente socket conectado ${socketClient.id} 🎊`);
     // ! CONFIGURACIÓN PARA LOS PRODUCTOS
-    const products = await ProductsController.get();
+    const products = await ProductsController.getAll();
     socketClient.emit("update-list-products", { products: products });
 
     socketClient.on("new-product", async (productData) => {
       await ProductsController.create(productData);
-      const newProducts = await ProductsController.get();
+      const newProducts = await ProductsController.getAll();
       socketServer.emit("update-list-products", { products: newProducts });
     });
 
     socketClient.on("delete-product", async (idProduct) => {
       await ProductsController.deleteById(idProduct);
-      const newProducts = await ProductsController.get();
+      const newProducts = await ProductsController.getAll();
       socketServer.emit("update-list-products", { products: newProducts });
     });
 

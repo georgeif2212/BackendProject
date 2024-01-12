@@ -5,6 +5,10 @@ export default class ProductsService {
     return ProductDao.getPaginate(criteria, options);
   }
 
+  static getAll(filter = {}) {
+    return ProductDao.getAll(filter);
+  }
+
   static create(data) {
     return ProductDao.create(data);
   }

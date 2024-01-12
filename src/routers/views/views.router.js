@@ -1,5 +1,5 @@
 import ProductsController from "../../controllers/products.controller.js";
-import CartsController from "../../controllers/products.controller.js";
+import CartsController from "../../controllers/carts.controller.js";
 import { __dirname } from "../../utils.js";
 import { Router } from "express";
 import { emit } from "../../socket.js";
@@ -68,8 +68,7 @@ router.get("/chat", async (req, res) => {
 });
 
 // ! ENDPOINTS FOR SPECIFIC CART
-router.get("/carts/:cartId", async (req, res) => {
-  console.log(req.user);
+router.get("/carts/:cartId", async (req, res, next) => {
   const { cartId } = req.params;
   if (req.user.cartId != cartId) {
     res.status(400).render("error", {
@@ -82,10 +81,11 @@ router.get("/carts/:cartId", async (req, res) => {
     const result = cart.toJSON();
     res.status(200).render("carts", { title: "Carts", ...result });
   } catch (error) {
-    res.status(400).render("error", {
-      title: "Errores",
-      messageError: error.message,
-    });
+    // res.status(400).render("error", {
+    //   title: "Errores",
+    //   messageError: error.message,
+    // });
+    next(error);
   }
 });
 

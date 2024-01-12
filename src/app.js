@@ -1,12 +1,12 @@
 import express from "express";
 import handlebars from "express-handlebars";
 import path from "path";
-import { __dirname } from "./utils.js";
+import { Exception, __dirname } from "./utils.js";
 import { URI } from "./db/mongodb.js";
 import sessions from "express-session";
 import MongoStore from "connect-mongo";
 import passport from "passport";
-import config from './config/config.js';
+import config from "./config/config.js";
 
 import productsRouter from "./routers/api/products.router.js";
 import cartsRouter from "./routers/api/carts.router.js";

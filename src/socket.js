@@ -1,8 +1,8 @@
 import { Server } from "socket.io";
 // import ProductManager from "./dao/ProductManagerFS.js";
-import ProductsManager from "./dao/Products.manager.js";
+import ProductsController from "./controllers/products.controller.js";
 import { __dirname } from "./utils.js";
-import ChatsManager from "./dao/Chats.manager.js";
+import ChatsController from "./controllers/chats.controller.js";
 
 let socketServer;
 export const init = (httpServer) => {
@@ -13,29 +13,29 @@ export const init = (httpServer) => {
   socketServer.on("connection", async (socketClient) => {
     console.log(`Nuevo cliente socket conectado ${socketClient.id} 🎊`);
     // ! CONFIGURACIÓN PARA LOS PRODUCTOS
-    const products = await ProductsManager.get();
+    const products = await ProductsController.getAll();
     socketClient.emit("update-list-products", { products: products });
 
     socketClient.on("new-product", async (productData) => {
-      await ProductsManager.create(productData);
-      const newProducts = await ProductsManager.get();
+      await ProductsController.create(productData);
+      const newProducts = await ProductsController.getAll();
       socketServer.emit("update-list-products", { products: newProducts });
     });
 
     socketClient.on("delete-product", async (idProduct) => {
-      await ProductsManager.deleteById(idProduct);
-      const newProducts = await ProductsManager.get();
+      await ProductsController.deleteById(idProduct);
+      const newProducts = await ProductsController.getAll();
       socketServer.emit("update-list-products", { products: newProducts });
     });
 
     // ! CONFIGURACIÓN PARA EL CHAT
-    const messages = await ChatsManager.get();
+    const messages = await ChatsController.get();
     socketClient.emit("update-messages", { messages: messages });
 
     socketClient.on("new-message", async (newMessage) => {
-      await ChatsManager.create(newMessage);
+      await ChatsController.create(newMessage);
 
-      const messages = await ChatsManager.get();
+      const messages = await ChatsController.get();
       socketServer.emit("update-messages", { messages: messages });
     });
   });

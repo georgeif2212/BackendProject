@@ -1,6 +1,6 @@
 import { Router } from "express";
-import CartsManager from "../../dao/Carts.manager.js";
-import { buildResponsePaginatedCarts } from "../../utils.js";
+import CartsController from "../../controllers/carts.controller.js";
+import { NotFoundException, buildResponsePaginatedCarts } from "../../utils.js";
 
 const router = Router();
 
@@ -57,20 +57,20 @@ router.get("/carts", async (req, res) => {
     criteria._id = search;
   }
 
-  const result = await CartsManager.get(criteria, options);
+  const result = await CartsController.get(criteria, options);
   res
     .status(200)
     .json(buildResponsePaginatedCarts({ ...result, sort, search }));
 });
 
 // ! Añade un nuevo carrito vacío
-router.post("/carts", async (req, res) => {
+router.post("/carts", async (req, res, next) => {
   try {
     const products = [];
-    const cart = await CartsManager.create(products);
+    const cart = await CartsController.create(products);
     res.status(201).json(cart);
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    next(error);
   }
 });
 
@@ -78,10 +78,10 @@ router.post("/carts", async (req, res) => {
 router.get("/carts/:cartId", async (req, res) => {
   const { cartId } = req.params;
   try {
-    const cart = await CartsManager.getById(cartId);
+    const cart = await CartsController.getById(cartId);
     res.status(200).json({ id: cart.id, products: cart.products });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    next(error);
   }
 });
 
@@ -91,7 +91,7 @@ router.post("/carts/:cartId/products/:productId", async (req, res) => {
   try {
     const { cartId, productId } = req.params;
     const { quantity } = req.body;
-    const cart = await CartsManager.getById(cartId);
+    const cart = await CartsController.getById(cartId);
 
     const cartProducts = cart.products;
 
@@ -111,13 +111,13 @@ router.post("/carts/:cartId/products/:productId", async (req, res) => {
       cartProducts[productIndex].quantity += quantity;
     }
 
-    await CartsManager.updateById(cartId, cartProducts);
+    await CartsController.updateById(cartId, cartProducts);
     res.status(200).json({
       id: cart.id,
       products: cartProducts,
     });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    next(error);
   }
 });
 
@@ -125,7 +125,7 @@ router.post("/carts/:cartId/products/:productId", async (req, res) => {
 router.delete("/carts/:cartId/products/:productId", async (req, res) => {
   try {
     const { cartId, productId } = req.params;
-    const cart = await CartsManager.getById(cartId);
+    const cart = await CartsController.getById(cartId);
     const cartProducts = cart.products;
 
     const productIndex = cartProducts.findIndex(
@@ -141,13 +141,13 @@ router.delete("/carts/:cartId/products/:productId", async (req, res) => {
       cartProducts.splice(productIndex, 1);
     }
 
-    await CartsManager.updateById(cartId, cartProducts);
+    await CartsController.updateById(cartId, cartProducts);
     res.status(200).json({
       id: cart.id,
       products: cartProducts,
     });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    next(error);
   }
 });
 
@@ -167,16 +167,16 @@ router.put("/carts/:cartId", async (req, res) => {
   const { body, params } = req;
   const { cartId } = params;
   try {
-    const cart = await CartsManager.getById(cartId);
+    const cart = await CartsController.getById(cartId);
     let cartProducts = cart.products;
     cartProducts = body;
-    await CartsManager.updateById(cartId, cartProducts);
+    await CartsController.updateById(cartId, cartProducts);
     res.status(200).json({
       id: cart.id,
       products: cartProducts,
     });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    next(error);
   }
 });
 
@@ -185,7 +185,7 @@ router.put("/carts/:cartId/products/:productId", async (req, res) => {
   try {
     const { cartId, productId } = req.params;
     const { quantity } = req.body;
-    const cart = await CartsManager.getById(cartId);
+    const cart = await CartsController.getById(cartId);
     const cartProducts = cart.products;
 
     const productIndex = cartProducts.findIndex(
@@ -194,7 +194,7 @@ router.put("/carts/:cartId/products/:productId", async (req, res) => {
 
     if (productIndex === -1) {
       // ! Si el producto no existe
-      throw new Error(
+      throw new NotFoundException(
         `Product with ID: ${productId} not found in the cart: ${cartId}`
       );
     } else {
@@ -202,13 +202,13 @@ router.put("/carts/:cartId/products/:productId", async (req, res) => {
       cartProducts[productIndex].quantity += quantity;
     }
 
-    await CartsManager.updateById(cartId, cartProducts);
+    await CartsController.updateById(cartId, cartProducts);
     res.status(200).json({
       id: cart.id,
       products: cartProducts,
     });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    next(error);
   }
 });
 
@@ -217,15 +217,15 @@ router.delete("/carts/:cartId", async (req, res) => {
   const { params } = req;
   const { cartId } = params;
   try {
-    const cart = await CartsManager.getById(cartId);
+    const cart = await CartsController.getById(cartId);
     const cartProducts = [];
-    await CartsManager.updateById(cartId, cartProducts);
+    await CartsController.updateById(cartId, cartProducts);
     res.status(200).json({
       id: cart.id,
       products: cartProducts,
     });
   } catch (error) {
-    res.status(400).json({ error: error.message });
+    next(error);
   }
 });
 

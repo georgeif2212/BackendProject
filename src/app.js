@@ -1,11 +1,12 @@
 import express from "express";
 import handlebars from "express-handlebars";
 import path from "path";
-import { __dirname } from "./utils.js";
+import { Exception, __dirname } from "./utils.js";
 import { URI } from "./db/mongodb.js";
 import sessions from "express-session";
 import MongoStore from "connect-mongo";
 import passport from "passport";
+import config from "./config/config.js";
 
 import productsRouter from "./routers/api/products.router.js";
 import cartsRouter from "./routers/api/carts.router.js";
@@ -16,7 +17,7 @@ import { init as initPassport } from "./config/passport.config.js";
 
 const app = express();
 
-const SESSION_SECRET = "isfK_EtW3Xt5fF71{bJ[y+Eft!:Cg$";
+const SESSION_SECRET = config.sessionSecret;
 
 app.use(
   sessions({
@@ -52,13 +53,12 @@ app.use("/views", viewsRouter, indexRouter);
 
 // ! Middleware de error
 app.use((error, req, res, next) => {
-  const message = `Ha ocurrido un error desconocido 😨: ${error.message}`;
-  console.error(message);
-
-  res.status(400).render("error", {
-    title: "Errores",
-    messageError: error.message,
-  });
+  const message =
+    error instanceof Exception
+      ? error.message
+      : `Ha ocurrido un error desconocido: ${error.message}`;
+  console.log(message);
+  res.status(error.statusCode || 500).json({ status: "error", message });
 });
 
 export default app;

@@ -1,5 +1,5 @@
 import { Router } from "express";
-import UserManager from "../../dao/User.manager.js";
+import UsersController from "../../controllers/users.controller.js";
 import passport from "passport";
 
 const router = Router();
@@ -10,7 +10,7 @@ router.post(
   async (req, res) => {
     // try {
     //   const { body } = req;
-    //   const user = await UserManager.login(body);
+    //   const user = await UsersController.login(body);
 
     //   const { first_name, last_name, age, role, email, password } = user;
     //   req.session.user = {
@@ -40,7 +40,7 @@ router.post(
     res.redirect("/views/login");
     // try {
     //   const { body } = req;
-    //   await UserManager.register(body);
+    //   await UsersController.register(body);
     //   res.redirect("/views/login");
     // } catch (error) {
     //   res.status(400).render("error", {
@@ -51,16 +51,13 @@ router.post(
   }
 );
 
-router.post("/sessions/recovery-password", async (req, res) => {
+router.post("/sessions/recovery-password", async (req, res, next) => {
   try {
     const { body } = req;
-    await UserManager.recoverPassword(body);
+    await UsersController.recoverPassword(body);
     res.redirect("/views/login");
   } catch (error) {
-    res.status(400).render("error", {
-      title: "Errores",
-      messageError: error.message,
-    });
+    next(error);
   }
 });
 

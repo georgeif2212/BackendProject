@@ -22,14 +22,14 @@ export default class ChatsController {
   }
 
   static async updateById(sid, data) {
-    const product = await ProductsManager.getById(sid);
+    const product = await ChatsController.getById(sid);
     if (!product) throw new NotFoundException(`Product with ${sid} not found`);
     await MessageModel.updateOne({ _id: sid }, { $set: { products: data } });
     console.log(`Producto actualizado correctamente (${sid}) 😁.`);
   }
 
   static async deleteById(sid) {
-    const product = await ProductsManager.getById(sid);
+    const product = await ChatsController.getById(sid);
     if (!product) throw new NotFoundException(`Product with ${sid} not found`);
 
     await MessageModel.deleteOne({ _id: sid });

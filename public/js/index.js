@@ -16,6 +16,7 @@ addProduct.addEventListener("submit", (event) => {
   const thumbnail = document.getElementById("thumbnail").value;
   const code = document.getElementById("code").value;
   const stock = document.getElementById("stock").value;
+  const category = document.getElementById("category").value;
 
   // Crear un objeto con los valores del producto
   const productData = {
@@ -25,6 +26,7 @@ addProduct.addEventListener("submit", (event) => {
     thumbnail: thumbnail,
     code: code,
     stock: stock,
+    category: category,
   };
   // Enviar el objeto del producto al servidor a través del socket
   socket.emit("new-product", productData);
@@ -48,8 +50,7 @@ deleteProduct.addEventListener("submit", (event) => {
 socket.on("update-list-products", ({ products }) => {
   const listProducts = document.getElementById("list-products");
   listProducts.innerText = "";
-
-  products.docs.forEach((product) => {
+  products.forEach((product) => {
     const article = document.createElement("article");
     article.classList.add("card", "product-real-time");
 

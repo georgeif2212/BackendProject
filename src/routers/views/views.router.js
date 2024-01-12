@@ -47,17 +47,7 @@ router.get("/products", async (req, res) => {
 
 // ! ENDPOINTS FOR REALTIMEPRODUCTS
 router.get("/realtimeproducts", async (req, res) => {
-  const { limit = 10, page = 1, sort, search } = req.query;
-
-  const criteria = {};
-  const options = { limit, page };
-  if (sort) {
-    options.sort = { price: sort };
-  }
-  if (search) {
-    criteria.title = search;
-  }
-  const products = await ProductsController.get(criteria, options);
+  const products = await ProductsController.getAll();
   emit("update-list-products", { products });
   res.render("realTimeProducts", { title: "Limited Products 🧴" });
 });

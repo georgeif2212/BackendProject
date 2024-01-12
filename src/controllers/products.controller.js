@@ -6,6 +6,10 @@ export default class ProductsController {
     return ProductsService.getPaginate(criteria, options);
   }
 
+  static getAll() {
+    return ProductsService.getAll({});
+  }
+
   static async getById(pid) {
     const product = await ProductsService.getById(pid);
     if (!product) {

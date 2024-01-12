@@ -1,4 +1,4 @@
-import UserModel from "./models/user.model.js";
+import UsersService from "../services/users.service.js";
 import {
   InvalidDataException,
   NotFoundException,
@@ -6,10 +6,10 @@ import {
   createHash,
   isValidPassword,
 } from "../utils.js";
-import CartsManager from "./Carts.manager.js";
+import CartsController from "./carts.controller.js";
 export default class UsersController {
   static get(criteria, options) {
-    return UserModel.paginate(criteria, options);
+    return UsersService.getPaginate(criteria, options);
   }
 
   static async login(data) {
@@ -18,7 +18,7 @@ export default class UsersController {
       throw new InvalidDataException(`Todos los campos son requeridos`);
     }
 
-    const user = await UserModel.findOne({ email });
+    const user = await UsersService.getByEmail(email);
     if (!user) {
       throw new UnauthorizedException(`Correo o contraseña invalidos`);
     }
@@ -29,16 +29,16 @@ export default class UsersController {
     return user;
   }
 
-  static async getById(sid) {
-    const user = await UserModel.findById(sid);
+  static async getById(id) {
+    const user = await UsersService.getById(id);
     if (!user) {
-      throw new NotFoundException(`user with ${sid} not found`);
+      throw new NotFoundException(`user with ${id} not found`);
     }
     return user;
   }
 
   static alreadyExists(email) {
-    return UserModel.findOne({ email });
+    return UsersService.getByEmail(email);
   }
 
   static async register(data) {
@@ -52,7 +52,7 @@ export default class UsersController {
         `Los campos: ${missingFieldsString} son requeridos`
       );
     }
-    const user = await UserModel.findOne({ email });
+    const user = await UsersService.getByEmail(email);
     if (user) {
       throw new UnauthorizedException(
         `Ya existe un usuario con el correo ${email} en el sistema.`
@@ -60,25 +60,25 @@ export default class UsersController {
     }
     data.password = createHash(password);
     const products = [];
-    const newCart = await CartsManager.create(products);
+    const newCart = await CartsController.create(products);
     data.cartId = newCart;
-    return UserModel.create(data);
+    return UsersService.create(data);
   }
 
-  static async updateById(sid, data) {
-    const user = await UsersController.getById(sid);
-    if (!user) throw new NotFoundException(`user with ${sid} not found`);
+  static async updateById(uid, data) {
+    const user = await UsersController.getById(uid);
+    if (!user) throw new NotFoundException(`user with ${uid} not found`);
 
-    await UserModel.updateOne({ _id: sid }, { $set: data });
-    console.log(`User actualizado correctamente (${sid}) 😁.`);
+    await UsersService.updateById(uid, data);
+    console.log(`User actualizado correctamente (${uid}) 😁.`);
   }
 
-  static async deleteById(sid) {
-    const user = await UsersController.getById(sid);
-    if (!user) throw new NotFoundException(`user with ${sid} not found`);
+  static async deleteById(uid) {
+    const user = await UsersController.getById(uid);
+    if (!user) throw new NotFoundException(`user with ${uid} not found`);
 
-    await UserModel.deleteOne({ _id: sid });
-    console.log(`User eliminado correctamente (${sid}) 🤔.`);
+    await UsersService.deleteById(uid);
+    console.log(`User eliminado correctamente (${uid}) 🤔.`);
   }
 
   static async recoverPassword(data) {
@@ -87,7 +87,7 @@ export default class UsersController {
       throw new InvalidDataException(`Todos los campos son requeridos`);
     }
 
-    const user = await UserModel.findOne({ email });
+    const user = await UsersService.getByEmail(email);
     if (!user) {
       throw new InvalidDataException(
         `Correo o contraseña invalidos ${user.email}`
@@ -95,6 +95,6 @@ export default class UsersController {
     }
 
     user.password = createHash(password);
-    await UserModel.updateOne({ email }, user);
+    await UsersService.updateById(user._id, user);
   }
 }

@@ -1,38 +1,37 @@
 import { InvalidDataException, NotFoundException } from "../utils.js";
-import MessageModel from "./models/message.model.js";
+import ChatsService from "../services/chats.service.js";
 
 export default class ChatsController {
   static get(limit) {
-    if (!limit) return MessageModel.find();
-    return MessageModel.find().limit(limit);
+    return ChatsService.get(limit);
   }
 
-  static async getById(sid) {
-    const cart = await MessageModel.findById(sid);
-    if (!cart) throw new NotFoundException(`Cart with ${sid} not found`);
+  static async getById(cid) {
+    const message = await ChatsService.getById(cid);
+    if (!message) throw new NotFoundException(`Cart with ${cid} not found`);
 
-    return cart;
+    return message;
   }
 
   static create(data) {
     const { user, message } = data;
     if (!user || !message)
       throw new InvalidDataException("Usuario y mensaje requeridos");
-    return MessageModel.create(data);
+    return ChatsService.create(data);
   }
 
-  static async updateById(sid, data) {
-    const product = await ChatsController.getById(sid);
-    if (!product) throw new NotFoundException(`Product with ${sid} not found`);
-    await MessageModel.updateOne({ _id: sid }, { $set: { products: data } });
-    console.log(`Producto actualizado correctamente (${sid}) 😁.`);
-  }
+  // static async updateById(cid, data) {
+  //   const message = await ChatsController.getById(cid);
+  //   if (!message) throw new NotFoundException(`Message with ${cid} not found`);
+  //   await ChatsService.updateOne({ _id: cid }, { $set: { products: data } });
+  //   console.log(`Producto actualizado correctamente (${cid}) 😁.`);
+  // }
 
-  static async deleteById(sid) {
-    const product = await ChatsController.getById(sid);
-    if (!product) throw new NotFoundException(`Product with ${sid} not found`);
+  static async deleteById(cid) {
+    const message = await ChatsController.getById(cid);
+    if (!message) throw new NotFoundException(`Message with ${cid} not found`);
 
-    await MessageModel.deleteOne({ _id: sid });
-    console.log(`Producto eliminado correctamente (${sid}) 🤔.`);
+    await ChatsService.deleteById(cid);
+    console.log(`Message eliminado correctamente (${cid}) 🤔.`);
   }
 }

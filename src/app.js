@@ -52,13 +52,12 @@ app.use("/views", viewsRouter, indexRouter);
 
 // ! Middleware de error
 app.use((error, req, res, next) => {
-  const message = `Ha ocurrido un error desconocido 😨: ${error.message}`;
-  console.error(message);
-
-  res.status(400).render("error", {
-    title: "Errores",
-    messageError: error.message,
-  });
+  const message =
+    error instanceof Exception
+      ? error.message
+      : `Ha ocurrido un error desconocido: ${error.message}`;
+  console.log(message);
+  res.status(error.statusCode || 500).json({ status: "error", message });
 });
 
 export default app;

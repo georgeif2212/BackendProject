@@ -6,6 +6,7 @@ import { URI } from "./db/mongodb.js";
 import sessions from "express-session";
 import MongoStore from "connect-mongo";
 import passport from "passport";
+import config from './config/config.js';
 
 import productsRouter from "./routers/api/products.router.js";
 import cartsRouter from "./routers/api/carts.router.js";
@@ -16,7 +17,7 @@ import { init as initPassport } from "./config/passport.config.js";
 
 const app = express();
 
-const SESSION_SECRET = "isfK_EtW3Xt5fF71{bJ[y+Eft!:Cg$";
+const SESSION_SECRET = config.sessionSecret;
 
 app.use(
   sessions({

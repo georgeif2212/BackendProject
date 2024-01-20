@@ -44,7 +44,7 @@ export const buildResponsePaginatedCarts = (data, baseUrl = URL_BASE_CARTS) => {
     //status:success/error
     status: "success",
     //payload: Resultado de los productos solicitados
-    payload: data.products,
+    payload: data.carts,
     //totalPages: Total de páginas
     totalPages: data.totalPages,
     //prevPage: Página anterior

@@ -10,7 +10,7 @@ export default class CartsService {
   }
 
   static getById(id) {
-    return CartRepository.getFilter({ _id: id });
+    return CartRepository.getById(id);
   }
 
   static updateById(id, data) {

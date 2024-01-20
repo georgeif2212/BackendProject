@@ -10,7 +10,7 @@ export default class UsersService {
 
   static async getById(id) {
     const result = await UserRepository.getById(id);
-    return result[0];
+    return result;
   }
 
   static updateById(id, data) {
@@ -23,6 +23,6 @@ export default class UsersService {
 
   static async getByEmail(email) {
     const result = await UserRepository.getByEmail(email);
-    return result[0];
+    return result;
   }
 }

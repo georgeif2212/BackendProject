@@ -7,12 +7,13 @@ export default class UserRepository {
     return users.map((user) => new UserDto(user));
   }
 
-  async getById(uid) {
+  static async getById(uid) {
     let user = await UserDaoMongoDB.getFilter({ _id: uid });
-    if (user) {
-      user = new UserDto(user);
+    if (user.length !== 0) {
+      user = new UserDto(user[0]);
+      return user;
     }
-    return user;
+    return null;
   }
 
   static async create(data) {
@@ -30,9 +31,10 @@ export default class UserRepository {
 
   static async getByEmail(email) {
     let user = await UserDaoMongoDB.getFilter({ email: email });
-    if (user) {
-      user = new UserDto(user);
+    if (user.length !== 0) {
+      user = new UserDto(user[0]);
+      return user;
     }
-    return user;
+    return null;
   }
 }

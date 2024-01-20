@@ -3,8 +3,24 @@ import ProductDaoMongoDB from "../dao/product.dao.js";
 
 export default class ProductsRepository {
   static async getPaginate(filter = {}, opts = {}) {
-    const products = await ProductDaoMongoDB.getPaginate(filter, opts);
-    return products.map((product) => new ProductDto(product));
+    const paginatedProducts = await ProductDaoMongoDB.getPaginate(filter, opts);
+    const products = paginatedProducts.docs.map(
+      (product) => new ProductDto(product)
+    );
+
+    const paginatedProductsDTO = {
+      products,
+      totalDocs: paginatedProducts.totalDocs,
+      limit: paginatedProducts.limit,
+      totalPages: paginatedProducts.totalPages,
+      page: paginatedProducts.page,
+      pagingCounter: paginatedProducts.pagingCounter,
+      hasPrevPage: paginatedProducts.hasPrevPage,
+      hasNextPage: paginatedProducts.hasNextPage,
+      prevPage: paginatedProducts.prevPage,
+      nextPage: paginatedProducts.nextPage,
+    };
+    return paginatedProductsDTO;
   }
 
   static async getAll(filter = {}) {

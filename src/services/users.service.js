@@ -1,29 +1,28 @@
-import UserDao from "../dao/user.dao.js";
-
+import UserRepository from "../repositories/users.repository.js";
 export default class UsersService {
   static getPaginate(criteria, options) {
-    return UserDao.getPaginate(criteria, options);
+    return UserRepository.getPaginate(criteria, options);
   }
 
   static create(data) {
-    return UserDao.create(data);
+    return UserRepository.create(data);
   }
 
   static async getById(id) {
-    const result = await UserDao.getFilter({ _id: id });
+    const result = await UserRepository.getById(id);
     return result[0];
   }
 
   static updateById(id, data) {
-    return UserDao.updateById(id, data);
+    return UserRepository.updateById(id, data);
   }
 
   static deleteById(id) {
-    return UserDao.deleteById(id);
+    return UserRepository.deleteById(id);
   }
 
   static async getByEmail(email) {
-    const result = await UserDao.getFilter({ email: email });
+    const result = await UserRepository.getByEmail(email);
     return result[0];
   }
 }

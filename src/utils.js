@@ -12,7 +12,7 @@ export const buildResponsePaginated = (data, baseUrl = URL_BASE) => {
     //status:success/error
     status: "success",
     //payload: Resultado de los productos solicitados
-    payload: data.docs.map((doc) => doc.toJSON()),
+    payload: data.products,
     //payload: Resultado de los productos solicitados
     infoUser: data.infoUser,
     //totalPages: Total de páginas
@@ -44,7 +44,7 @@ export const buildResponsePaginatedCarts = (data, baseUrl = URL_BASE_CARTS) => {
     //status:success/error
     status: "success",
     //payload: Resultado de los productos solicitados
-    payload: data.docs.map((doc) => doc.toJSON()),
+    payload: data.products,
     //totalPages: Total de páginas
     totalPages: data.totalPages,
     //prevPage: Página anterior

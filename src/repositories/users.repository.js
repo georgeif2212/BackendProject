@@ -28,7 +28,7 @@ export default class UserRepository {
     return UserDaoMongoDB.deleteById(uid);
   }
 
-  async getByEmail(email) {
+  static async getByEmail(email) {
     let user = await UserDaoMongoDB.getFilter({ email: email });
     if (user) {
       user = new UserDto(user);

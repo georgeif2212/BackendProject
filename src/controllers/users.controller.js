@@ -93,7 +93,6 @@ export default class UsersController {
         `Correo o contraseña invalidos ${user.email}`
       );
     }
-
     user.password = createHash(password);
     await UsersService.updateById(user._id, user);
   }

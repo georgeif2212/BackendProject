@@ -6,6 +6,8 @@ router.get("/profile", (req, res) => {
   if (!req.user) {
     return res.redirect("/views/login");
   }
+  console.log(req.user);
+  // ? No entendí como modificar la ruta con el dto, ya que el req.user ya se le aplica el DTO desde que inicia sesión
   res.render("profile", { title: "Hello People 🖐️", user: req.user });
 });
 

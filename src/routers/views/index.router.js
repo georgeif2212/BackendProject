@@ -1,14 +1,16 @@
 import { Router } from "express";
+import { authMiddleware } from "../../utils.js";
+import UsersController from "../../controllers/users.controller.js";
 
 const router = Router();
 
-router.get("/profile", (req, res) => {
-  if (!req.user) {
-    return res.redirect("/views/login");
+router.get("/profile", authMiddleware("jwt"), async (req, res, next) => {
+  try {
+    const user = await UsersController.getById(req.user._id);
+    res.render("profile", { title: "Hello People 🖐️", user: user });
+  } catch (error) {
+    next(error);
   }
-  console.log(req.user);
-  // ? No entendí como modificar la ruta con el dto, ya que el req.user ya se le aplica el DTO desde que inicia sesión
-  res.render("profile", { title: "Hello People 🖐️", user: req.user });
 });
 
 router.get("/login", (req, res) => {

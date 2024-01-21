@@ -1,57 +1,60 @@
 import { Router } from "express";
 import UsersController from "../../controllers/users.controller.js";
 import passport from "passport";
+import { authMiddleware, generateToken } from "../../utils.js";
 
 const router = Router();
 
 router.post(
-  "/sessions/login",
-  passport.authenticate("login", { failureRedirect: "/views/login" }),
-  async (req, res) => {
-    // try {
+  "/login",
+  passport.authenticate("login", { failureRedirect: "/login", session: false }),
+  async (req, res, next) => {
+    const token = generateToken(req.user);
+    res
+      .cookie("access_token", token, {
+        maxAge: 1000 * 60 * 30,
+        httpOnly: true,
+        signed: true,
+      })
+      .status(200)
+      .redirect("/views/profile");
+     // try {
     //   const { body } = req;
     //   const user = await UsersController.login(body);
-
-    //   const { first_name, last_name, age, role, email, password } = user;
-    //   req.session.user = {
-    //     first_name,
-    //     last_name,
-    //     email,
-    //     age,
-    //     role:
-    //       email === "adminCoder@coder.com" && password === "adminCod3r123"
-    //         ? "admin"
-    //         : "user",
-    //   };
-    res.redirect("/views/profile");
+    //   const token = generateToken(user);
+    //   res
+    //     .cookie("access_token", token, {
+    //       maxAge: 1000 * 60 * 30,
+    //       httpOnly: true,
+    //       signed: true,
+    //     })
+    //     .status(200)
+    //     .redirect("/views/profile");
     // } catch (error) {
-    //   res.status(400).render("error", {
-    //     title: "Errores",
-    //     messageError: error.message,
-    //   });
+    //   next(error);
     // }
   }
 );
 
 router.post(
-  "/sessions/register",
-  passport.authenticate("register", { failureRedirect: "/views/register" }),
-  async (req, res) => {
+  "/register",
+  passport.authenticate("register", {
+    failureRedirect: "/register",
+    session: false,
+  }),
+  async (req, res, next) => {
     res.redirect("/views/login");
     // try {
     //   const { body } = req;
     //   await UsersController.register(body);
     //   res.redirect("/views/login");
     // } catch (error) {
-    //   res.status(400).render("error", {
-    //     title: "Errores",
-    //     messageError: error.message,
-    //   });
+    //   next(error);
     // }
   }
 );
 
-router.post("/sessions/recovery-password", async (req, res, next) => {
+router.post("/recovery-password", async (req, res, next) => {
   try {
     const { body } = req;
     await UsersController.recoverPassword(body);
@@ -61,35 +64,34 @@ router.post("/sessions/recovery-password", async (req, res, next) => {
   }
 });
 
-router.get("/sessions/me", (req, res) => {
-  if (!req.session.user) {
-    return res.status(401).json({ message: "No estas autenticado." });
-  }
-  res.status(200).json(req.session.user);
+router.get("/me", authMiddleware("jwt"), (req, res) => {
+  res.status(200).json(req.user);
 });
 
-router.get("/sessions/logout", (req, res) => {
-  req.session.destroy((error) => {
-    if (error) {
-      return res.render("error", {
-        title: "Hello People 🖐️",
-        messageError: error.message,
-      });
-    }
-    res.redirect("/views/login");
-  });
+router.get("/logout", (req, res) => {
+  res.clearCookie("access_token").redirect("/views/login");
 });
 
 router.get(
-  "/sessions/github",
-  passport.authenticate("github", { scope: ["user:email"] })
+  "/github",
+  passport.authenticate("github", { scope: ["user:email"], session: false })
 );
 
 router.get(
-  "/sessions/github/callback",
-  passport.authenticate("github", { failureRedirect: "/views/login" }),
+  "/github/callback",
+  passport.authenticate("github", {
+    session: false,
+    failureRedirect: "/views/login",
+  }),
   (req, res) => {
-    res.redirect("/views/profile");
+    const token = generateToken(req.user);
+    res
+      .cookie("access_token", token, {
+        maxAge: 1000 * 60 * 30,
+        httpOnly: true,
+        signed: true,
+      })
+      .redirect("/views/profile");
   }
 );
 

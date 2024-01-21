@@ -4,6 +4,7 @@ import path from "path";
 import { Exception, __dirname } from "./utils.js";
 import passport from "passport";
 import cookieParser from "cookie-parser";
+import config from "./config/config.js";
 
 import productsRouter from "./routers/api/products.router.js";
 import cartsRouter from "./routers/api/carts.router.js";
@@ -14,7 +15,7 @@ import { init as initPassport } from "./config/passport.config.js";
 
 const app = express();
 
-app.use(cookieParser());
+app.use(cookieParser(config.cookieSecret));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, "../public")));
@@ -25,7 +26,6 @@ app.set("view engine", "handlebars");
 
 initPassport();
 app.use(passport.initialize());
-app.use(passport.session());
 
 app.get("/", (req, res) => {
   res.redirect("/views/login");

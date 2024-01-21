@@ -14,22 +14,22 @@ const cookieExtractor = (req) => {
 };
 
 export const init = () => {
-  // const registerOpts = {
-  //   usernameField: "email",
-  //   passReqToCallback: true,
-  // };
-  // passport.use(
-  //   "register",
-  //   new LocalStrategy(registerOpts, async (req, email, password, done) => {
-  //     try {
-  //       const { body } = req;
-  //       const newUser = await UsersController.register(body);
-  //       done(null, newUser);
-  //     } catch (error) {
-  //       return done(error);
-  //     }
-  //   })
-  // );
+  const registerOpts = {
+    usernameField: "email",
+    passReqToCallback: true,
+  };
+  passport.use(
+    "register",
+    new LocalStrategy(registerOpts, async (req, email, password, done) => {
+      try {
+        const { body } = req;
+        const newUser = await UsersController.register(body);
+        done(null, newUser);
+      } catch (error) {
+        return done(error);
+      }
+    })
+  );
 
   const jwtOptions = {
     secretOrKey: config.jwtSecret,

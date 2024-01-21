@@ -23,16 +23,23 @@ router.post("/login", async (req, res, next) => {
   }
 });
 
-router.post("/register", async (req, res, next) => {
-  res.redirect("/views/login");
-  try {
-    const { body } = req;
-    await UsersController.register(body);
+router.post(
+  "/register",
+  passport.authenticate("register", {
+    failureRedirect: "/register",
+    session: false,
+  }),
+  async (req, res, next) => {
     res.redirect("/views/login");
-  } catch (error) {
-    next(error);
+    // try {
+    //   const { body } = req;
+    //   await UsersController.register(body);
+    //   res.redirect("/views/login");
+    // } catch (error) {
+    //   next(error);
+    // }
   }
-});
+);
 
 router.post("/recovery-password", async (req, res, next) => {
   try {

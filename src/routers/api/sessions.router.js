@@ -54,14 +54,24 @@ router.get("/logout", (req, res) => {
 
 router.get(
   "/github",
-  passport.authenticate("github", { scope: ["user:email"] })
+  passport.authenticate("github", { scope: ["user:email"], session: false })
 );
 
 router.get(
   "/github/callback",
-  passport.authenticate("github", { failureRedirect: "/views/login" }),
+  passport.authenticate("github", {
+    session: false,
+    failureRedirect: "/views/login",
+  }),
   (req, res) => {
-    res.redirect("/views/profile");
+    const token = generateToken(req.user);
+    res
+      .cookie("access_token", token, {
+        maxAge: 1000 * 60 * 30,
+        httpOnly: true,
+        signed: true,
+      })
+      .redirect("/views/profile");
   }
 );
 

@@ -3,6 +3,14 @@ import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as GithubStrategy } from "passport-github2";
 import UsersController from "../controllers/users.controller.js";
 
+const cookieExtractor = (req) => {
+  let token = null;
+  if (req && req.cookies) {
+    token = req.cookies.token;
+  }
+  return token;
+};
+
 export const init = () => {
   const registerOpts = {
     usernameField: "email",
@@ -18,6 +26,16 @@ export const init = () => {
       } catch (error) {
         return done(error);
       }
+    })
+  );
+  const jwtOptions = {
+    secretOrKey: JWT_SECRET,
+    jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]),
+  };
+  passport.use(
+    "jwt",
+    new JWTStrategy(jwtOptions, (payload, done) => {
+      return done(null, payload);
     })
   );
 

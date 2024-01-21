@@ -1,55 +1,38 @@
 import { Router } from "express";
 import UsersController from "../../controllers/users.controller.js";
 import passport from "passport";
+import { generateToken } from "../../utils.js";
 
 const router = Router();
 
-router.post(
-  "/sessions/login",
-  passport.authenticate("login", { failureRedirect: "/views/login" }),
-  async (req, res) => {
-    // try {
-    //   const { body } = req;
-    //   const user = await UsersController.login(body);
-
-    //   const { first_name, last_name, age, role, email, password } = user;
-    //   req.session.user = {
-    //     first_name,
-    //     last_name,
-    //     email,
-    //     age,
-    //     role:
-    //       email === "adminCoder@coder.com" && password === "adminCod3r123"
-    //         ? "admin"
-    //         : "user",
-    //   };
-    res.redirect("/views/profile");
-    // } catch (error) {
-    //   res.status(400).render("error", {
-    //     title: "Errores",
-    //     messageError: error.message,
-    //   });
-    // }
+router.post("/sessions/login", async (req, res, next) => {
+  try {
+    const { body } = req;
+    const user = await UsersController.login(body);
+    const token = generateToken(user);
+    res
+      .cookie("access_token", token, {
+        maxAge: 1000 * 60 * 30,
+        httpOnly: true,
+        signed: true,
+      })
+      .status(200)
+      .redirect("/views/profile");
+  } catch (error) {
+    next(error);
   }
-);
+});
 
-router.post(
-  "/sessions/register",
-  passport.authenticate("register", { failureRedirect: "/views/register" }),
-  async (req, res) => {
+router.post("/sessions/register", async (req, res, next) => {
+  res.redirect("/views/login");
+  try {
+    const { body } = req;
+    await UsersController.register(body);
     res.redirect("/views/login");
-    // try {
-    //   const { body } = req;
-    //   await UsersController.register(body);
-    //   res.redirect("/views/login");
-    // } catch (error) {
-    //   res.status(400).render("error", {
-    //     title: "Errores",
-    //     messageError: error.message,
-    //   });
-    // }
+  } catch (error) {
+    next(error);
   }
-);
+});
 
 router.post("/sessions/recovery-password", async (req, res, next) => {
   try {

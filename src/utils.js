@@ -106,6 +106,24 @@ export class ForbiddenException extends Exception {
   }
 }
 
+export const generateToken = (user) => {
+  const { id, name, email, role } = user;
+  const payload = { id, name, email, role };
+  return JWT.sign(payload, JWT_SECRET, { expiresIn: "1m" });
+};
+
+export const validateToken = (token) => {
+  return new Promise((resolve) => {
+    JWT.verify(token, JWT_SECRET, (error, payload) => {
+      if (error) {
+        return resolve(false);
+      }
+      console.log("payload", payload);
+      resolve(payload);
+    });
+  });
+};
+
 export const authMiddleware = (strategy) => (req, res, next) => {
   passport.authenticate(strategy, function (error, payload, info) {
     if (error) {

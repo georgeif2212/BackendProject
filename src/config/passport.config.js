@@ -57,38 +57,38 @@ export const init = () => {
   //   )
   // );
 
-  // const githubOpts = {
-  //   clientID: "Iv1.5d100ad00e860302",
-  //   clientSecret: "83c5d167b8ac1e61e576fab03fee33d9e3fd55c9",
-  //   callbackURL: "http://localhost:8080/api/sessions/github/callback",
-  // };
-  // passport.use(
-  //   "github",
-  //   new GithubStrategy(
-  //     githubOpts,
-  //     async (accesstoken, refreshToken, profile, done) => {
-  //       try {
-  //         const email = profile._json.email;
-  //         let user = await UsersController.alreadyExists(email);
-  //         if (user) {
-  //           return done(null, user);
-  //         }
-  //         user = {
-  //           first_name: profile._json.name,
-  //           last_name: "",
-  //           email,
-  //           password: "",
-  //           provider: "github",
-  //           providerId: profile.id,
-  //         };
-  //         const newUser = await UsersController.register(user);
-  //         done(null, newUser);
-  //       } catch (error) {
-  //         done(error, false, { message: error.message });
-  //       }
-  //     }
-  //   )
-  // );
+  const githubOpts = {
+    clientID: "Iv1.5d100ad00e860302",
+    clientSecret: "83c5d167b8ac1e61e576fab03fee33d9e3fd55c9",
+    callbackURL: "http://localhost:8080/api/sessions/github/callback",
+  };
+  passport.use(
+    "github",
+    new GithubStrategy(
+      githubOpts,
+      async (accesstoken, refreshToken, profile, done) => {
+        try {
+          const email = profile._json.email;
+          let user = await UsersController.alreadyExists(email);
+          if (user) {
+            return done(null, user);
+          }
+          user = {
+            first_name: profile._json.name,
+            last_name: "",
+            email,
+            password: "",
+            provider: "github",
+            providerId: profile.id,
+          };
+          const newUser = await UsersController.register(user);
+          done(null, newUser);
+        } catch (error) {
+          done(error, false, { message: error.message });
+        }
+      }
+    )
+  );
 
   // passport.serializeUser((user, done) => {
   //   done(null, user._id);

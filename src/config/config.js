@@ -7,4 +7,5 @@ export default {
   sessionSecret: process.env.SESSION_SECRET,
   persistence: process.env.PERSISTENCE || "memory",
   jwtSecret: process.env.JWT_SECRET,
+  cookieSecret: process.env.COOKIE_SECRET,
 };

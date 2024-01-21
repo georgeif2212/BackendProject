@@ -68,7 +68,7 @@ router.get("/sessions/me", (req, res) => {
   res.status(200).json(req.session.user);
 });
 
-router.get("/session/logout", (req, res) => {
+router.get("/sessions/logout", (req, res) => {
   req.session.destroy((error) => {
     if (error) {
       return res.render("error", {

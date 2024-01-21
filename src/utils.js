@@ -133,12 +133,10 @@ export const authMiddleware = (strategy) => (req, res, next) => {
       return next(error);
     }
     if (!payload) {
-      return res
-        .status(401)
-        .json({
-          message: info.message ? info.message : info.toString(),
-          login: "http://localhost:8080/views/login",
-        });
+      return res.status(401).json({
+        message: info.message ? info.message : info.toString(),
+        login: "http://localhost:8080/views/login",
+      });
     }
     req.user = payload;
     next();

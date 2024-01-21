@@ -49,15 +49,7 @@ router.get("/me", authMiddleware("jwt"), (req, res) => {
 });
 
 router.get("/logout", (req, res) => {
-  req.session.destroy((error) => {
-    if (error) {
-      return res.render("error", {
-        title: "Hello People 🖐️",
-        messageError: error.message,
-      });
-    }
-    res.redirect("/views/login");
-  });
+  res.clearCookie("access_token").redirect("/views/login");
 });
 
 router.get(

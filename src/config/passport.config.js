@@ -42,20 +42,20 @@ export const init = () => {
     })
   );
 
-  // passport.use(
-  //   "login",
-  //   new LocalStrategy(
-  //     { usernameField: "email" },
-  //     async (email, password, done) => {
-  //       try {
-  //         const user = await UsersController.login({ email, password });
-  //         done(null, user);
-  //       } catch (error) {
-  //         done(error, false, { message: error.message });
-  //       }
-  //     }
-  //   )
-  // );
+  passport.use(
+    "login",
+    new LocalStrategy(
+      { usernameField: "email" },
+      async (email, password, done) => {
+        try {
+          const user = await UsersController.login({ email, password });
+          done(null, user);
+        } catch (error) {
+          done(error, false, { message: error.message });
+        }
+      }
+    )
+  );
 
   const githubOpts = {
     clientID: "Iv1.5d100ad00e860302",
@@ -89,18 +89,4 @@ export const init = () => {
       }
     )
   );
-
-  // passport.serializeUser((user, done) => {
-  //   done(null, user._id);
-  // });
-
-  // passport.deserializeUser(async (uid, done) => {
-  //   // inflar la session
-  //   try {
-  //     const user = await UsersController.getById(uid);
-  //     done(null, user);
-  //   } catch (error) {
-  //     done(error.message);
-  //   }
-  // });
 };

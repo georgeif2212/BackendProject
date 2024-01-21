@@ -5,11 +5,11 @@ import { authMiddleware, generateToken } from "../../utils.js";
 
 const router = Router();
 
-router.post("/login", async (req, res, next) => {
-  try {
-    const { body } = req;
-    const user = await UsersController.login(body);
-    const token = generateToken(user);
+router.post(
+  "/login",
+  passport.authenticate("login", { failureRedirect: "/login", session: false }),
+  async (req, res, next) => {
+    const token = generateToken(req.user);
     res
       .cookie("access_token", token, {
         maxAge: 1000 * 60 * 30,
@@ -18,10 +18,23 @@ router.post("/login", async (req, res, next) => {
       })
       .status(200)
       .redirect("/views/profile");
-  } catch (error) {
-    next(error);
+    // try {
+    //   const { body } = req;
+    //   const user = await UsersController.login(body);
+    //   const token = generateToken(user);
+    //   res
+    //     .cookie("access_token", token, {
+    //       maxAge: 1000 * 60 * 30,
+    //       httpOnly: true,
+    //       signed: true,
+    //     })
+    //     .status(200)
+    //     .redirect("/views/profile");
+    // } catch (error) {
+    //   next(error);
+    // }
   }
-});
+);
 
 router.post(
   "/register",

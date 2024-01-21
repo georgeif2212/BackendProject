@@ -2,6 +2,8 @@ import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as GithubStrategy } from "passport-github2";
 import UsersController from "../controllers/users.controller.js";
+import { Strategy as JWTStrategy, ExtractJwt } from "passport-jwt";
+import config from "../config/config.js";
 
 const cookieExtractor = (req) => {
   let token = null;
@@ -29,7 +31,7 @@ export const init = () => {
     })
   );
   const jwtOptions = {
-    secretOrKey: JWT_SECRET,
+    secretOrKey: config.jwtSecret,
     jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]),
   };
   passport.use(

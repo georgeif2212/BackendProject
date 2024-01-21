@@ -32,6 +32,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api", productsRouter, cartsRouter, sessionsRouter);
+app.use("/api/sessions", sessionsRouter);
 app.use("/views", viewsRouter, indexRouter);
 
 // ! Middleware de error

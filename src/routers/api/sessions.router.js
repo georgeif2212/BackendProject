@@ -1,11 +1,11 @@
 import { Router } from "express";
 import UsersController from "../../controllers/users.controller.js";
 import passport from "passport";
-import { generateToken } from "../../utils.js";
+import { authMiddleware, generateToken } from "../../utils.js";
 
 const router = Router();
 
-router.post("/sessions/login", async (req, res, next) => {
+router.post("/login", async (req, res, next) => {
   try {
     const { body } = req;
     const user = await UsersController.login(body);
@@ -23,7 +23,7 @@ router.post("/sessions/login", async (req, res, next) => {
   }
 });
 
-router.post("/sessions/register", async (req, res, next) => {
+router.post("/register", async (req, res, next) => {
   res.redirect("/views/login");
   try {
     const { body } = req;
@@ -34,7 +34,7 @@ router.post("/sessions/register", async (req, res, next) => {
   }
 });
 
-router.post("/sessions/recovery-password", async (req, res, next) => {
+router.post("/recovery-password", async (req, res, next) => {
   try {
     const { body } = req;
     await UsersController.recoverPassword(body);
@@ -44,14 +44,11 @@ router.post("/sessions/recovery-password", async (req, res, next) => {
   }
 });
 
-router.get("/sessions/me", (req, res) => {
-  if (!req.session.user) {
-    return res.status(401).json({ message: "No estas autenticado." });
-  }
-  res.status(200).json(req.session.user);
+router.get("/me", authMiddleware("jwt"), (req, res) => {
+  res.status(200).json(req.user);
 });
 
-router.get("/session/logout", (req, res) => {
+router.get("/logout", (req, res) => {
   req.session.destroy((error) => {
     if (error) {
       return res.render("error", {
@@ -64,12 +61,12 @@ router.get("/session/logout", (req, res) => {
 });
 
 router.get(
-  "/sessions/github",
+  "/github",
   passport.authenticate("github", { scope: ["user:email"] })
 );
 
 router.get(
-  "/sessions/github/callback",
+  "/github/callback",
   passport.authenticate("github", { failureRedirect: "/views/login" }),
   (req, res) => {
     res.redirect("/views/profile");

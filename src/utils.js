@@ -2,8 +2,11 @@ import path from "path";
 import url from "url";
 import bcrypt from "bcrypt";
 import passport from "passport";
+import jwt from "jsonwebtoken";
+import config from "./config/config.js";
 
 const __filename = url.fileURLToPath(import.meta.url);
+const JWT_SECRET = config.jwtSecret;
 export const __dirname = path.dirname(__filename);
 
 export const URL_BASE = "http://localhost:8080/api/products";
@@ -107,14 +110,14 @@ export class ForbiddenException extends Exception {
 }
 
 export const generateToken = (user) => {
-  const { id, name, email, role } = user;
-  const payload = { id, name, email, role };
-  return JWT.sign(payload, JWT_SECRET, { expiresIn: "1m" });
+  const { _id, first_name, email, role } = user;
+  const payload = { _id, first_name, email, role };
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: "30m" });
 };
 
 export const validateToken = (token) => {
   return new Promise((resolve) => {
-    JWT.verify(token, JWT_SECRET, (error, payload) => {
+    jwt.verify(token, JWT_SECRET, (error, payload) => {
       if (error) {
         return resolve(false);
       }

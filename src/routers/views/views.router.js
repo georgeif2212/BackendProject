@@ -15,29 +15,34 @@ const router = Router();
 // export const products = await productManager.getProducts();
 
 // ! ENDPOINTS FOR PRODUCTS
-router.get("/products", authMiddleware("jwt"), async (req, res) => {
-  const { limit = 10, page = 1, sort, search } = req.query;
+router.get(
+  "/products",
+  authMiddleware("jwt"),
+  authRolesMiddleware(["user"]),
+  async (req, res) => {
+    const { limit = 10, page = 1, sort, search } = req.query;
 
-  const criteria = {};
-  const options = { limit, page };
-  if (sort) {
-    options.sort = { price: sort };
+    const criteria = {};
+    const options = { limit, page };
+    if (sort) {
+      options.sort = { price: sort };
+    }
+    if (search) {
+      criteria.category = search;
+    }
+    const baseUrl = "http://localhost:8080/views/products";
+    const result = await ProductsController.get(criteria, options);
+    const infoUser = await UsersController.getById(req.user._id);
+    const data = buildResponsePaginated(
+      { ...result, sort, search, infoUser },
+      baseUrl
+    );
+    res.status(200).render("home", {
+      title: "Products 🧴",
+      ...data,
+    });
   }
-  if (search) {
-    criteria.category = search;
-  }
-  const baseUrl = "http://localhost:8080/views/products";
-  const result = await ProductsController.get(criteria, options);
-  const infoUser = await UsersController.getById(req.user._id);
-  const data = buildResponsePaginated(
-    { ...result, sort, search, infoUser },
-    baseUrl
-  );
-  res.status(200).render("home", {
-    title: "Products 🧴",
-    ...data,
-  });
-});
+);
 
 router.get(
   "/editProducts",
@@ -49,16 +54,21 @@ router.get(
 );
 
 // ! ENDPOINTS FOR REALTIMEPRODUCTS
-router.get("/realtimeproducts", async (req, res) => {
+router.get("/realtimeproducts", authMiddleware("jwt"), async (req, res) => {
   const products = await ProductsController.getAll();
   emit("update-list-products", { products });
   res.render("realTimeProducts", { title: "Limited Products 🧴" });
 });
 
 // ! ENDPOINTS FOR CHAT
-router.get("/chat", async (req, res) => {
-  res.render("chat", { title: "Chat 😎" });
-});
+router.get(
+  "/chat",
+  authMiddleware("jwt"),
+  authRolesMiddleware(["user"]),
+  async (req, res) => {
+    res.render("chat", { title: "Chat 😎" });
+  }
+);
 
 // ! ENDPOINTS FOR SPECIFIC CART
 router.get("/carts/:cartId", authMiddleware("jwt"), async (req, res, next) => {

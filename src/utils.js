@@ -109,6 +109,12 @@ export class ForbiddenException extends Exception {
   }
 }
 
+export class InsufficientStockException extends Exception {
+  constructor(message) {
+    super(message, 422); // Código de estado HTTP 422
+  }
+}
+
 export const generateToken = (user) => {
   const { _id, first_name, email, role } = user;
   const payload = { _id, first_name, email, role };
@@ -148,12 +154,10 @@ export const authRolesMiddleware = (roles) => (req, res, next) => {
   }
   const { role: userRole } = req.user;
   if (!roles.includes(userRole)) {
-    return res
-      .status(403)
-      .json({
-        message: "forbidden 😨",
-        return: "http://localhost:8080/views/profile",
-      });
+    return res.status(403).json({
+      message: "forbidden 😨",
+      return: "http://localhost:8080/views/profile",
+    });
   }
   next();
 };

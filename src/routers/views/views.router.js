@@ -1,10 +1,11 @@
 import ProductsController from "../../controllers/products.controller.js";
 import CartsController from "../../controllers/carts.controller.js";
 import { __dirname, authMiddleware, authRolesMiddleware } from "../../utils.js";
-import { Router } from "express";
+import e, { Router } from "express";
 import { emit } from "../../socket.js";
 import { buildResponsePaginated } from "../../utils.js";
 import UsersController from "../../controllers/users.controller.js";
+import TicketsController from "../../controllers/tickets.controller.js";
 
 const router = Router();
 // * Ruta con path porque sin ella no me daba
@@ -83,6 +84,15 @@ router.get("/carts/:cartId", authMiddleware("jwt"), async (req, res, next) => {
     }
     const cart = await CartsController.getById(cartId);
     res.status(200).render("carts", { title: "Carts", ...cart });
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/tickets", authMiddleware("jwt"), async (req, res, next) => {
+  try {
+    const tickets = await TicketsController.getByEmail(req.user.email);
+    res.status(200).render("tickets", { title: "Tickets 📄", tickets });
   } catch (error) {
     next(error);
   }

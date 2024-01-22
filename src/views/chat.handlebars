@@ -1,15 +1,29 @@
-<h1>Te damos la bienvenida al chat del corso 🚀</h1>
-<article>
-  <form id="form-message">
-    <input id="input-message" type="text" placeholder="Escribe tu mensaje" required>
-    <input type="submit" value="Enviar">
-  </form>
-</article>
-<h3>Mensajes</h3>
-<article>
-  <div id="log-messages">
-  </div>
-</article>
+<div>
+  <h1>Te damos la bienvenida al chat del corso 🚀</h1>
+  <article>
+    <form id="form-message">
+      <input
+        id="input-message"
+        type="text"
+        placeholder="Escribe tu mensaje"
+        required
+      />
+      <input type="submit" value="Enviar" />
+    </form>
+  </article>
+  <h3>Mensajes</h3>
+  <article>
+    <div id="log-messages">
+    </div>
+  </article>
+    <footer>
+    <a href="/api/sessions/logout" role="button">Salir</a>
+    <a href="/views/products" role="button">Ver productos</a>
+    <a href="/views/editProducts" role="button">Añadir/Eliminar productos</a>
+    <a href="/views/realTimeProducts" role="button">Ver productos en tiempo real</a>
+    <a href="/views/chat" role="button">Chat</a>
+  </footer>
+</div>
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script src="/js/chat.js"></script>

@@ -6,6 +6,7 @@ import {
   authRolesMiddleware,
   buildResponsePaginatedCarts,
 } from "../../utils.js";
+import TicketsController from "../../controllers/tickets.controller.js";
 
 const router = Router();
 
@@ -239,5 +240,24 @@ router.delete("/carts/:cartId", async (req, res) => {
     next(error);
   }
 });
+
+// ! Ticket de compra
+router.post(
+  "/carts/:cartId/purchase",
+  authMiddleware("jwt"),
+  async (req, res, next) => {
+    try {
+      const { cartId } = req.params;
+      const availableProducts = await CartsController.doPurchase(cartId);
+      const ticket = await TicketsController.create({
+        availableProducts,
+        ...req.user,
+      });
+      res.status(200).json(ticket);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 export default router;

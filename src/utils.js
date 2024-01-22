@@ -4,6 +4,8 @@ import bcrypt from "bcrypt";
 import passport from "passport";
 import jwt from "jsonwebtoken";
 import config from "./config/config.js";
+import EmailService from "./services/email.service.js";
+// import emailTemplate from "./resources/welcomeEmail.html";
 
 const __filename = url.fileURLToPath(import.meta.url);
 const JWT_SECRET = config.jwtSecret;
@@ -160,4 +162,25 @@ export const authRolesMiddleware = (roles) => (req, res, next) => {
     });
   }
   next();
+};
+
+export const sendWelcomeEmail = async (user) => {
+  const emailService = EmailService.getInstance();
+  const result = await emailService.sendEmail(
+    user.email,
+    `Bienvenido ${user.first_name}!`,
+    `<div>
+      <h1>Hola ${user.first_name}! Soy Jorge.</h1>
+      <h2>Te damos la bienvenida</h2>
+      <img src="cid:hello" alt="Hello" />
+    </div>`,
+    [
+      {
+        filename: "hello.png",
+        path: path.join(__dirname, "./resources/hello.png"),
+        cid: "hello",
+      },
+    ],
+  );
+  return result;
 };

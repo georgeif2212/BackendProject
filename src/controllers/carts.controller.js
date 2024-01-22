@@ -48,7 +48,6 @@ export default class CartsController {
     const availableProducts = cart.products.filter((element) => {
       return element.quantity <= element.product.stock;
     });
-    console.log(availableProducts);
     const notAvailableProducts = cart.products.filter((element) => {
       return element.quantity > element.product.stock;
     });

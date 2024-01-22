@@ -1,3 +1,8 @@
+const socket = io();
+
+socket.on("connect", () => {
+  console.log("Conectado al servidor de sockets 😀");
+});
 
 const addProduct = document.getElementById("product-form");
 const deleteProduct = document.getElementById("delete-form");

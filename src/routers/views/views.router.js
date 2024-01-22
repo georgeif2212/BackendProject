@@ -1,6 +1,6 @@
 import ProductsController from "../../controllers/products.controller.js";
 import CartsController from "../../controllers/carts.controller.js";
-import { __dirname, authMiddleware } from "../../utils.js";
+import { __dirname, authMiddleware, authRolesMiddleware } from "../../utils.js";
 import { Router } from "express";
 import { emit } from "../../socket.js";
 import { buildResponsePaginated } from "../../utils.js";
@@ -38,6 +38,15 @@ router.get("/products", authMiddleware("jwt"), async (req, res) => {
     ...data,
   });
 });
+
+router.get(
+  "/editProducts",
+  authMiddleware("jwt"),
+  authRolesMiddleware(["admin"]),
+  async (req, res) => {
+    res.status(200).render("add-delete-products", { title: "Modify products" });
+  }
+);
 
 // ! ENDPOINTS FOR REALTIMEPRODUCTS
 router.get("/realtimeproducts", async (req, res) => {

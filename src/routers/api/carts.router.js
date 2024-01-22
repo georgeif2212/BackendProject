@@ -1,6 +1,12 @@
 import { Router } from "express";
 import CartsController from "../../controllers/carts.controller.js";
-import { NotFoundException, buildResponsePaginatedCarts } from "../../utils.js";
+import {
+  NotFoundException,
+  authMiddleware,
+  authRolesMiddleware,
+  buildResponsePaginatedCarts,
+} from "../../utils.js";
+import TicketsController from "../../controllers/tickets.controller.js";
 
 const router = Router();
 
@@ -88,39 +94,44 @@ router.get("/carts/:cartId", async (req, res, next) => {
 
 // !* Añade al carrito con id: el producto con id: (en caso de que no exista el producto
 // !* en el carrito se agrega, si no se le suma la cantidad)
-router.post("/carts/:cartId/products/:productId", async (req, res, next) => {
-  try {
-    const { cartId, productId } = req.params;
-    const { quantity } = req.body;
-    const cart = await CartsController.getById(cartId);
+router.post(
+  "/carts/:cartId/products/:productId",
+  authMiddleware("jwt"),
+  authRolesMiddleware(["user"]),
+  async (req, res, next) => {
+    try {
+      const { cartId, productId } = req.params;
+      const { quantity } = req.body;
+      const cart = await CartsController.getById(cartId);
 
-    const cartProducts = cart.products;
+      const cartProducts = cart.products;
 
-    const productIndex = cartProducts.findIndex(
-      (product) => product.product._id == productId
-    );
+      const productIndex = cartProducts.findIndex(
+        (product) => product.product._id == productId
+      );
 
-    // ! Si el producto no existe
-    if (productIndex === -1) {
-      const newProduct = {
-        product: productId,
-        quantity,
-      };
-      cartProducts.push(newProduct);
-    } else {
-      // ! Si el producto existe actualizar la cantidad del producto
-      cartProducts[productIndex].quantity += quantity;
+      // ! Si el producto no existe
+      if (productIndex === -1) {
+        const newProduct = {
+          product: productId,
+          quantity,
+        };
+        cartProducts.push(newProduct);
+      } else {
+        // ! Si el producto existe actualizar la cantidad del producto
+        cartProducts[productIndex].quantity += quantity;
+      }
+
+      await CartsController.updateById(cartId, cartProducts);
+      res.status(200).json({
+        id: cart.id,
+        products: cartProducts,
+      });
+    } catch (error) {
+      next(error);
     }
-
-    await CartsController.updateById(cartId, cartProducts);
-    res.status(200).json({
-      id: cart.id,
-      products: cartProducts,
-    });
-  } catch (error) {
-    next(error);
   }
-});
+);
 
 // ! Elimina del carrito un producto seleccionado
 router.delete("/carts/:cartId/products/:productId", async (req, res) => {
@@ -229,5 +240,24 @@ router.delete("/carts/:cartId", async (req, res) => {
     next(error);
   }
 });
+
+// ! Ticket de compra
+router.post(
+  "/carts/:cartId/purchase",
+  authMiddleware("jwt"),
+  async (req, res, next) => {
+    try {
+      const { cartId } = req.params;
+      const availableProducts = await CartsController.doPurchase(cartId);
+      const ticket = await TicketsController.create({
+        availableProducts,
+        ...req.user,
+      });
+      res.status(200).json(ticket);
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 export default router;

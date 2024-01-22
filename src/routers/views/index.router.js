@@ -1,12 +1,16 @@
 import { Router } from "express";
+import { authMiddleware } from "../../utils.js";
+import UsersController from "../../controllers/users.controller.js";
 
 const router = Router();
 
-router.get("/profile", (req, res) => {
-  if (!req.user) {
-    return res.redirect("/views/login");
+router.get("/profile", authMiddleware("jwt"), async (req, res, next) => {
+  try {
+    const user = await UsersController.getById(req.user._id);
+    res.render("profile", { title: "Hello People 🖐️", user: user });
+  } catch (error) {
+    next(error);
   }
-  res.render("profile", { title: "Hello People 🖐️", user: req.user.toJSON() });
 });
 
 router.get("/login", (req, res) => {

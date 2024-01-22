@@ -58,6 +58,7 @@ router.get("/carts", async (req, res) => {
   }
 
   const result = await CartsController.get(criteria, options);
+  console.log(result);
   res
     .status(200)
     .json(buildResponsePaginatedCarts({ ...result, sort, search }));
@@ -75,7 +76,7 @@ router.post("/carts", async (req, res, next) => {
 });
 
 // ! Muestra el carrito con id específico
-router.get("/carts/:cartId", async (req, res) => {
+router.get("/carts/:cartId", async (req, res, next) => {
   const { cartId } = req.params;
   try {
     const cart = await CartsController.getById(cartId);
@@ -87,7 +88,7 @@ router.get("/carts/:cartId", async (req, res) => {
 
 // !* Añade al carrito con id: el producto con id: (en caso de que no exista el producto
 // !* en el carrito se agrega, si no se le suma la cantidad)
-router.post("/carts/:cartId/products/:productId", async (req, res) => {
+router.post("/carts/:cartId/products/:productId", async (req, res, next) => {
   try {
     const { cartId, productId } = req.params;
     const { quantity } = req.body;
@@ -96,7 +97,7 @@ router.post("/carts/:cartId/products/:productId", async (req, res) => {
     const cartProducts = cart.products;
 
     const productIndex = cartProducts.findIndex(
-      (product) => product.product.toString() === productId
+      (product) => product.product._id == productId
     );
 
     // ! Si el producto no existe

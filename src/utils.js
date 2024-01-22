@@ -1,8 +1,12 @@
 import path from "path";
 import url from "url";
 import bcrypt from "bcrypt";
+import passport from "passport";
+import jwt from "jsonwebtoken";
+import config from "./config/config.js";
 
 const __filename = url.fileURLToPath(import.meta.url);
+const JWT_SECRET = config.jwtSecret;
 export const __dirname = path.dirname(__filename);
 
 export const URL_BASE = "http://localhost:8080/api/products";
@@ -12,9 +16,9 @@ export const buildResponsePaginated = (data, baseUrl = URL_BASE) => {
     //status:success/error
     status: "success",
     //payload: Resultado de los productos solicitados
-    payload: data.docs.map((doc) => doc.toJSON()),
+    payload: data.products,
     //payload: Resultado de los productos solicitados
-    infoUser: data.infoUser.toJSON(),
+    infoUser: data.infoUser,
     //totalPages: Total de páginas
     totalPages: data.totalPages,
     //prevPage: Página anterior
@@ -44,7 +48,7 @@ export const buildResponsePaginatedCarts = (data, baseUrl = URL_BASE_CARTS) => {
     //status:success/error
     status: "success",
     //payload: Resultado de los productos solicitados
-    payload: data.docs.map((doc) => doc.toJSON()),
+    payload: data.carts,
     //totalPages: Total de páginas
     totalPages: data.totalPages,
     //prevPage: Página anterior
@@ -104,3 +108,52 @@ export class ForbiddenException extends Exception {
     super(message, 403);
   }
 }
+
+export const generateToken = (user) => {
+  const { _id, first_name, email, role } = user;
+  const payload = { _id, first_name, email, role };
+  return jwt.sign(payload, JWT_SECRET, { expiresIn: "30m" });
+};
+
+export const validateToken = (token) => {
+  return new Promise((resolve) => {
+    jwt.verify(token, JWT_SECRET, (error, payload) => {
+      if (error) {
+        return resolve(false);
+      }
+      resolve(payload);
+    });
+  });
+};
+
+export const authMiddleware = (strategy) => (req, res, next) => {
+  passport.authenticate(strategy, function (error, payload, info) {
+    if (error) {
+      return next(error);
+    }
+    if (!payload) {
+      return res.status(401).json({
+        message: info.message ? info.message : info.toString(),
+        login: "http://localhost:8080/views/login",
+      });
+    }
+    req.user = payload;
+    next();
+  })(req, res, next);
+};
+
+export const authRolesMiddleware = (roles) => (req, res, next) => {
+  if (!req.user) {
+    return res.status(401).json({ message: "Unauthorized" });
+  }
+  const { role: userRole } = req.user;
+  if (!roles.includes(userRole)) {
+    return res
+      .status(403)
+      .json({
+        message: "forbidden 😨",
+        return: "http://localhost:8080/views/profile",
+      });
+  }
+  next();
+};

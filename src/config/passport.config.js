@@ -2,6 +2,16 @@ import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import { Strategy as GithubStrategy } from "passport-github2";
 import UsersController from "../controllers/users.controller.js";
+import { Strategy as JWTStrategy, ExtractJwt } from "passport-jwt";
+import config from "../config/config.js";
+
+const cookieExtractor = (req) => {
+  let token = null;
+  if (req && req.signedCookies) {
+    token = req.signedCookies["access_token"];
+  }
+  return token;
+};
 
 export const init = () => {
   const registerOpts = {
@@ -18,6 +28,17 @@ export const init = () => {
       } catch (error) {
         return done(error);
       }
+    })
+  );
+
+  const jwtOptions = {
+    secretOrKey: config.jwtSecret,
+    jwtFromRequest: ExtractJwt.fromExtractors([cookieExtractor]),
+  };
+  passport.use(
+    "jwt",
+    new JWTStrategy(jwtOptions, (payload, done) => {
+      return done(null, payload);
     })
   );
 
@@ -68,18 +89,4 @@ export const init = () => {
       }
     )
   );
-
-  passport.serializeUser((user, done) => {
-    done(null, user._id);
-  });
-
-  passport.deserializeUser(async (uid, done) => {
-    // inflar la session
-    try {
-      const user = await UsersController.getById(uid);
-      done(null, user);
-    } catch (error) {
-      done(error.message);
-    }
-  });
 };

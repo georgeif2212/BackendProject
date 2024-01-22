@@ -1,9 +1,10 @@
 import ProductsController from "../../controllers/products.controller.js";
 import CartsController from "../../controllers/carts.controller.js";
-import { __dirname } from "../../utils.js";
+import { __dirname, authMiddleware, authRolesMiddleware } from "../../utils.js";
 import { Router } from "express";
 import { emit } from "../../socket.js";
 import { buildResponsePaginated } from "../../utils.js";
+import UsersController from "../../controllers/users.controller.js";
 
 const router = Router();
 // * Ruta con path porque sin ella no me daba
@@ -14,67 +15,75 @@ const router = Router();
 // export const products = await productManager.getProducts();
 
 // ! ENDPOINTS FOR PRODUCTS
-router.get("/products", async (req, res) => {
-  if (!req.user) {
-    return res.render("error", {
-      title: "Hello People 🖐️",
-      messageError: "No estas autenticado.",
+router.get(
+  "/products",
+  authMiddleware("jwt"),
+  authRolesMiddleware(["user"]),
+  async (req, res) => {
+    const { limit = 10, page = 1, sort, search } = req.query;
+
+    const criteria = {};
+    const options = { limit, page };
+    if (sort) {
+      options.sort = { price: sort };
+    }
+    if (search) {
+      criteria.category = search;
+    }
+    const baseUrl = "http://localhost:8080/views/products";
+    const result = await ProductsController.get(criteria, options);
+    const infoUser = await UsersController.getById(req.user._id);
+    const data = buildResponsePaginated(
+      { ...result, sort, search, infoUser },
+      baseUrl
+    );
+    res.status(200).render("home", {
+      title: "Products 🧴",
+      ...data,
     });
   }
+);
 
-  const { limit = 10, page = 1, sort, search } = req.query;
-
-  const criteria = {};
-  const options = { limit, page };
-  if (sort) {
-    options.sort = { price: sort };
+router.get(
+  "/editProducts",
+  authMiddleware("jwt"),
+  authRolesMiddleware(["admin"]),
+  async (req, res) => {
+    res.status(200).render("add-delete-products", { title: "Modify products" });
   }
-  if (search) {
-    criteria.category = search;
-  }
-  const baseUrl = "http://localhost:8080/views/products";
-  const result = await ProductsController.get(criteria, options);
-  const infoUser = req.user;
-  const data = buildResponsePaginated(
-    { ...result, sort, search, infoUser },
-    baseUrl
-  );
-  res.status(200).render("home", {
-    title: "Products 🧴",
-    ...data,
-  });
-});
+);
 
 // ! ENDPOINTS FOR REALTIMEPRODUCTS
-router.get("/realtimeproducts", async (req, res) => {
+router.get("/realtimeproducts", authMiddleware("jwt"), async (req, res) => {
   const products = await ProductsController.getAll();
   emit("update-list-products", { products });
   res.render("realTimeProducts", { title: "Limited Products 🧴" });
 });
 
 // ! ENDPOINTS FOR CHAT
-router.get("/chat", async (req, res) => {
-  res.render("chat", { title: "Chat 😎" });
-});
+router.get(
+  "/chat",
+  authMiddleware("jwt"),
+  authRolesMiddleware(["user"]),
+  async (req, res) => {
+    res.render("chat", { title: "Chat 😎" });
+  }
+);
 
 // ! ENDPOINTS FOR SPECIFIC CART
-router.get("/carts/:cartId", async (req, res, next) => {
-  const { cartId } = req.params;
-  if (req.user.cartId != cartId) {
-    res.status(400).render("error", {
-      title: "Errores",
-      messageError: "No estás permitido",
-    });
-  }
+router.get("/carts/:cartId", authMiddleware("jwt"), async (req, res, next) => {
   try {
+    const { cartId } = req.params;
+    const user = await UsersController.getById(req.user._id);
+    if (user.cartId != cartId) {
+      res.status(400).render("error", {
+        title: "Errores",
+        messageError: "No estás permitido",
+      });
+    }
     const cart = await CartsController.getById(cartId);
-    const result = cart.toJSON();
-    res.status(200).render("carts", { title: "Carts", ...result });
+    res.status(200).render("carts", { title: "Carts", ...cart });
   } catch (error) {
-    // res.status(400).render("error", {
-    //   title: "Errores",
-    //   messageError: error.message,
-    // });
     next(error);
   }
 });

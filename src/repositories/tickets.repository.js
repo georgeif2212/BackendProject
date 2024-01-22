@@ -58,4 +58,7 @@ export default class TicketsRepository {
     }
     return null;
   }
+  static async getByEmail(email) {
+    return TicketDaoMongoDB.getFilter({ purchaser: email });
+  }
 }

@@ -52,4 +52,8 @@ export default class TicketsController {
     await TicketsService.deleteById(tid);
     console.log(`ticket eliminado correctamente (${tid}) 🤔.`);
   }
+
+  static async getByEmail(email) {
+    return TicketsService.getByEmail(email);
+  }
 }

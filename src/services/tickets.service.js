@@ -30,4 +30,7 @@ export default class TicketsService {
     const result = await TicketsRepository.getByCode(code);
     return result;
   }
+  static async getByEmail(email) {
+    return TicketsRepository.getByEmail(email);
+  }
 }

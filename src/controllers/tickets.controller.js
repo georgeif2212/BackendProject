@@ -1,6 +1,6 @@
 import { InvalidDataException, NotFoundException } from "../utils.js";
 import TicketsService from "../services/tickets.service.js";
-
+import { v4 as uuidv4 } from "uuid";
 export default class TicketsController {
   static get(criteria, options) {
     return TicketsService.getPaginate(criteria, options);
@@ -19,23 +19,22 @@ export default class TicketsController {
   }
 
   static create(data) {
-    const { title, description, price, thumbnail, code, stock } = data;
+    const { email, availableProducts } = data;
+    if (!email || availableProducts.length == 0)
+      throw new InvalidDataException(
+        "There must be a buyer and products in the cart"
+      );
+    const amount = availableProducts.reduce((accumulator, element) => {
+      return accumulator + element.product.price * element.quantity;
+    }, 0);
+    const code = uuidv4();
+    const ticketInfo = {
+      code,
+      amount,
+      purchaser: email,
+    };
 
-    const requiredFields = [
-      "title",
-      "description",
-      "price",
-      "thumbnail",
-      "code",
-      "stock",
-    ];
-    const missingFields = requiredFields.filter((field) => !data[field]);
-
-    if (missingFields.length > 0) {
-      const missingFieldsString = missingFields.join(", ");
-      throw new InvalidDataException(`Data missing: ${missingFieldsString}`);
-    }
-    return TicketsService.create(data);
+    return TicketsService.create(ticketInfo);
   }
 
   static async updateById(tid, data) {

@@ -4,6 +4,7 @@ import { Strategy as GithubStrategy } from "passport-github2";
 import UsersController from "../controllers/users.controller.js";
 import { Strategy as JWTStrategy, ExtractJwt } from "passport-jwt";
 import config from "../config/config.js";
+import { sendWelcomeEmail } from "../utils.js";
 
 const cookieExtractor = (req) => {
   let token = null;
@@ -24,6 +25,8 @@ export const init = () => {
       try {
         const { body } = req;
         const newUser = await UsersController.register(body);
+        const email = await sendWelcomeEmail(newUser);
+        // console.log(email);
         done(null, newUser);
       } catch (error) {
         return done(error);
@@ -82,6 +85,8 @@ export const init = () => {
             providerId: profile.id,
           };
           const newUser = await UsersController.register(user);
+          sendWelcomeEmail(newUser);
+          // console.log(email);
           done(null, newUser);
         } catch (error) {
           done(error, false, { message: error.message });

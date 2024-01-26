@@ -12,6 +12,7 @@ import viewsRouter from "./routers/views/views.router.js";
 import sessionsRouter from "./routers/api/sessions.router.js";
 import indexRouter from "./routers/views/index.router.js";
 import { init as initPassport } from "./config/passport.config.js";
+import { errorHandlerMiddleware } from "./middlewares/error-handle.middleware.js";
 
 const app = express();
 
@@ -36,13 +37,14 @@ app.use("/api/sessions", sessionsRouter);
 app.use("/views", viewsRouter, indexRouter);
 
 // ! Middleware de error
-app.use((error, req, res, next) => {
-  const message =
-    error instanceof Exception
-      ? error.message
-      : `Ha ocurrido un error desconocido: ${error.message}`;
-  console.log(message);
-  res.status(error.statusCode || 500).json({ status: "error", message });
-});
+app.use(errorHandlerMiddleware);
+// app.use((error, req, res, next) => {
+//   const message =
+//     error instanceof Exception
+//       ? error.message
+//       : `Ha ocurrido un error desconocido: ${error.message}`;
+//   console.log(message);
+//   res.status(error.statusCode || 500).json({ status: "error", message });
+// });
 
 export default app;

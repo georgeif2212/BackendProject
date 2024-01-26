@@ -1,9 +1,10 @@
 import CartsService from "../services/carts.service.js";
 import {
-  InsufficientStockException,
-  InvalidDataException,
-  NotFoundException,
-} from "../utils.js";
+  generatorCartError,
+  generatorCartIdError,
+} from "../utils/CauseMessageError.js";
+import { CustomError } from "../utils/CustomError.js";
+import EnumsError from "../utils/EnumsError.js";
 import ProductsController from "./products.controller.js";
 
 export default class CartsController {
@@ -14,36 +15,50 @@ export default class CartsController {
   static async getById(cid) {
     const cart = await CartsService.getById(cid);
     if (!cart) {
-      throw new NotFoundException(`Cart with ${cid} not found`);
+      CustomError.create({
+        name: "Cart not found",
+        cause: generatorCartIdError(cid),
+        message: `Cart with ${cid} not found`,
+        code: EnumsError.NOT_FOUND_ERROR,
+      });
     }
     return cart;
   }
 
   static create(data) {
-    if (data.length != 0)
-      throw new InvalidDataException("El arreglo debe ser vacío");
-
+    if (data.length != 0) {
+      CustomError.create({
+        name: "Cart can't be created",
+        cause: generatorCartError(data),
+        message: `Array must be empty`,
+        code: EnumsError.BAD_REQUEST_ERROR,
+      });
+    }
     return CartsService.create(data);
   }
 
   static async updateById(cid, data) {
     const cart = await CartsController.getById(cid);
-    if (!cart) throw new NotFoundException(`Cart with ${cid} not found`);
-    await CartsService.updateById(cid, data);
+    await CartsService.updateById(cart._id, data);
     console.log(`Cart actualizado correctamente (${cid}) 😁.`);
   }
 
   static async deleteById(cid) {
     const cart = await CartsController.getById(cid);
-    if (!cart) throw new NotFoundException(`Cart with ${cid} not found`);
-    await CartsService.deleteById(cid);
+    await CartsService.deleteById(cart._id);
     console.log(`Cart eliminado correctamente (${cid}) 🤔.`);
   }
 
   static async doPurchase(cid) {
     const cart = await CartsController.getById(cid);
-    if (cart.products.length === 0)
-      throw new InvalidDataException("No tienes elementos en el carrito");
+    if (cart.products.length === 0) {
+      CustomError.create({
+        name: "Empty cart",
+        cause: "Empty cart",
+        message: `Empty cart`,
+        code: EnumsError.BAD_REQUEST_ERROR,
+      });
+    }
 
     const availableProducts = cart.products.filter((element) => {
       return element.quantity <= element.product.stock;

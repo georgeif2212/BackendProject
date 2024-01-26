@@ -8,3 +8,13 @@ export const generatorUserIdError = (id) => {
   return `The identifier must be valid
   - Received ID  :${id}`;
 };
+
+export const generatorCartIdError = (id) => {
+  return `The identifier must be valid
+  - Received ID  :${id}`;
+};
+
+export const generatorCartError = (data) => {
+  return `Products Array must be empty
+  - data  :${data}`;
+};

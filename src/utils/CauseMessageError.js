@@ -18,3 +18,14 @@ export const generatorCartError = (data) => {
   return `Products Array must be empty
   - data  :${data}`;
 };
+
+export const generatorMessageIdError = (id) => {
+  return `The identifier must be valid
+  - Received ID  :${id}`;
+};
+
+export const generatorMessageError = (data) => {
+  return `Todos los campos son requeridos
+  - user  :${data.user}
+  - message       :${data.message}`;
+};

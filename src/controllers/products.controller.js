@@ -1,5 +1,7 @@
 import { InvalidDataException, NotFoundException } from "../utils.js";
 import ProductsService from "../services/products.service.js";
+import { generatorProductError, generatorProductIdError } from "../utils/CauseMessageError.js";
+import EnumsError from "../utils/EnumsError.js";
 
 export default class ProductsController {
   static get(criteria, options) {
@@ -13,7 +15,12 @@ export default class ProductsController {
   static async getById(pid) {
     const product = await ProductsService.getById(pid);
     if (!product) {
-      throw new NotFoundException(`Product with ${pid} not found`);
+      CustomError.create({
+        name: "Product not found",
+        cause: generatorProductIdError(pid),
+        message: `Product with ${pid} not found`,
+        code: EnumsError.NOT_FOUND_ERROR,
+      });
     }
     return product;
   }
@@ -36,25 +43,26 @@ export default class ProductsController {
     const missingFields = requiredFields.filter((field) => !data[field]);
 
     if (missingFields.length > 0) {
-      const missingFieldsString = missingFields.join(", ");
-      throw new InvalidDataException(`Data missing: ${missingFieldsString}`);
+      CustomError.create({
+        name: "Invalid data product",
+        cause: generatorProductError(data),
+        message: `Array must be empty`,
+        code: EnumsError.BAD_REQUEST_ERROR,
+      });
     }
     return ProductsService.create(data);
   }
 
   static async updateById(pid, data) {
     const product = await ProductsController.getById(pid);
-    if (!product) throw new NotFoundException(`Product with ${pid} not found`);
 
-    await ProductsService.updateById(pid, data);
+    await ProductsService.updateById(product._id, data);
     console.log(`Producto actualizado correctamente (${pid}) 😁.`);
   }
 
   static async deleteById(pid) {
     const product = await ProductsController.getById(pid);
-    if (!product) throw new NotFoundException(`Product with ${pid} not found`);
-
-    await ProductsService.deleteById(pid);
+    await ProductsService.deleteById(product._id);
     console.log(`Producto eliminado correctamente (${pid}) 🤔.`);
   }
 }

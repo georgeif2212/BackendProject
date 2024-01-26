@@ -29,3 +29,18 @@ export const generatorMessageError = (data) => {
   - user  :${data.user}
   - message       :${data.message}`;
 };
+
+export const generatorProductIdError = (id) => {
+  return `The identifier must be valid
+  - Received ID  :${id}`;
+};
+
+export const generatorProductError = (data) => {
+  return `Todos los campos son requeridos
+  - title  :${data.title}
+  - description: ${data.description}     
+  - price: ${data.price}
+  - thumbnail: ${data.thumbnail}
+  - code: ${data.code}
+  - stock: ${data.stock}`;
+};

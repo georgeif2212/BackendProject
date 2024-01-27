@@ -44,3 +44,14 @@ export const generatorProductError = (data) => {
   - code: ${data.code}
   - stock: ${data.stock}`;
 };
+
+export const generatorTicketIdError = (id) => {
+  return `The identifier must be valid
+  - Received ID  :${id}`;
+};
+
+export const generatorTicketError = (data) => {
+  return `Todos los campos son requeridos
+  - email  :${data.email}
+  - availableProducts: ${data.availableProducts}`;
+};

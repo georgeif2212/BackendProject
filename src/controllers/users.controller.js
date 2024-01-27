@@ -6,6 +6,15 @@ import {
   createHash,
   isValidPassword,
 } from "../utils.js";
+import {
+  generatorUserAlreadyExistsError,
+  generatorUserError,
+  generatorUserIdError,
+  generatorUserLoginDataError,
+  generatorUserLoginError,
+} from "../utils/CauseMessageError.js";
+import { CustomError } from "../utils/CustomError.js";
+import EnumsError from "../utils/EnumsError.js";
 import CartsController from "./carts.controller.js";
 export default class UsersController {
   static get(criteria, options) {
@@ -15,16 +24,31 @@ export default class UsersController {
   static async login(data) {
     const { email, password } = data;
     if (!email || !password) {
-      throw new InvalidDataException(`Todos los campos son requeridos`);
+      CustomError.create({
+        name: "Invalid user data",
+        cause: generatorUserLoginError(data),
+        message: `"There must be an email and password"`,
+        code: EnumsError.BAD_REQUEST_ERROR,
+      });
     }
 
     const user = await UsersService.getByEmail(email);
     if (!user) {
-      throw new UnauthorizedException(`Correo o contraseña invalidos`);
+      CustomError.create({
+        name: "Invalid user data",
+        cause: generatorUserLoginDataError(),
+        message: `Correo o contraseña inválidos`,
+        code: EnumsError.UNAUTHORIZED_ERROR,
+      });
     }
 
     if (!isValidPassword(password, user)) {
-      throw new UnauthorizedException(`Correo o contraseña invalidos`);
+      CustomError.create({
+        name: "Invalid user data",
+        cause: generatorUserLoginDataError(),
+        message: `Correo o contraseña inválidos`,
+        code: EnumsError.UNAUTHORIZED_ERROR,
+      });
     }
     return user;
   }
@@ -32,7 +56,12 @@ export default class UsersController {
   static async getById(id) {
     const user = await UsersService.getById(id);
     if (!user) {
-      throw new NotFoundException(`user with ${id} not found`);
+      CustomError.create({
+        name: "User not found",
+        cause: generatorUserIdError(id),
+        message: `User with ${id} not found`,
+        code: EnumsError.NOT_FOUND_ERROR,
+      });
     }
     return user;
   }
@@ -47,16 +76,21 @@ export default class UsersController {
     const missingFields = requiredFields.filter((field) => !data[field]);
 
     if (missingFields.length > 0) {
-      const missingFieldsString = missingFields.join(", ");
-      throw new InvalidDataException(
-        `Los campos: ${missingFieldsString} son requeridos`
-      );
+      CustomError.create({
+        name: "Invalid user data",
+        cause: generatorUserError(data),
+        message: `Correo o contraseña inválidos`,
+        code: EnumsError.UNAUTHORIZED_ERROR,
+      });
     }
     const user = await UsersService.getByEmail(email);
     if (user) {
-      throw new UnauthorizedException(
-        `Ya existe un usuario con el correo ${email} en el sistema.`
-      );
+      CustomError.create({
+        name: "User already exists",
+        cause: generatorUserAlreadyExistsError(),
+        message: `User already exists`,
+        code: EnumsError.CONFLICT,
+      });
     }
     data.password = createHash(password);
     const products = [];
@@ -67,31 +101,37 @@ export default class UsersController {
 
   static async updateById(uid, data) {
     const user = await UsersController.getById(uid);
-    if (!user) throw new NotFoundException(`user with ${uid} not found`);
 
-    await UsersService.updateById(uid, data);
+    await UsersService.updateById(user._id, data);
     console.log(`User actualizado correctamente (${uid}) 😁.`);
   }
 
   static async deleteById(uid) {
     const user = await UsersController.getById(uid);
-    if (!user) throw new NotFoundException(`user with ${uid} not found`);
 
-    await UsersService.deleteById(uid);
+    await UsersService.deleteById(user._id);
     console.log(`User eliminado correctamente (${uid}) 🤔.`);
   }
 
   static async recoverPassword(data) {
     const { email, password } = data;
     if (!email || !password) {
-      throw new InvalidDataException(`Todos los campos son requeridos`);
+      CustomError.create({
+        name: "Invalid user data",
+        cause: generatorUserLoginError(data),
+        message: `"There must be an email and password"`,
+        code: EnumsError.BAD_REQUEST_ERROR,
+      });
     }
 
     const user = await UsersService.getByEmail(email);
     if (!user) {
-      throw new InvalidDataException(
-        `Correo o contraseña invalidos ${user.email}`
-      );
+      CustomError.create({
+        name: "Invalid user data",
+        cause: generatorUserLoginDataError(),
+        message: `Correo o contraseña inválidos`,
+        code: EnumsError.UNAUTHORIZED_ERROR,
+      });
     }
     user.password = createHash(password);
     await UsersService.updateById(user._id, user);

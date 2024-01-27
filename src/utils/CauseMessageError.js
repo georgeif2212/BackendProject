@@ -4,6 +4,20 @@ export const generatorUserError = (data) => {
   - email       :${data.email}`;
 };
 
+export const generatorUserLoginError = (data) => {
+  return `Todos los campos son requeridos
+  - email  :${data.email}
+  - password       :${data.password}`;
+};
+
+export const generatorUserLoginDataError = () => {
+  return `Invalid email or password`;
+};
+
+export const generatorUserAlreadyExistsError = (data) => {
+  return `The user with the email: ${data.email} already exists`;
+};
+
 export const generatorUserIdError = (id) => {
   return `The identifier must be valid
   - Received ID  :${id}`;

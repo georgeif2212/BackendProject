@@ -4,7 +4,7 @@ import { Strategy as GithubStrategy } from "passport-github2";
 import UsersController from "../controllers/users.controller.js";
 import { Strategy as JWTStrategy, ExtractJwt } from "passport-jwt";
 import config from "../config/config.js";
-import { sendWelcomeEmail } from "../utils.js";
+import { sendWelcomeEmail } from "../utils/utils.js";
 
 const cookieExtractor = (req) => {
   let token = null;

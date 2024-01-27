@@ -1,4 +1,4 @@
-import EnumsError from "../utils/EnumsError";
+import EnumsError from "../utils/EnumsError.js";
 
 export const errorHandlerMiddleware = (error, req, res, next) => {
   console.error(error.cause || error.message);

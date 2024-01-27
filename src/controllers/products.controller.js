@@ -1,4 +1,3 @@
-import { InvalidDataException, NotFoundException } from "../utils.js";
 import ProductsService from "../services/products.service.js";
 import { generatorProductError, generatorProductIdError } from "../utils/CauseMessageError.js";
 import EnumsError from "../utils/EnumsError.js";

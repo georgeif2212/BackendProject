@@ -1,7 +1,7 @@
 import express from "express";
 import handlebars from "express-handlebars";
 import path from "path";
-import { Exception, __dirname } from "./utils.js";
+import { Exception, __dirname } from "./utils/utils.js";
 import passport from "passport";
 import cookieParser from "cookie-parser";
 import config from "./config/config.js";
@@ -19,10 +19,10 @@ const app = express();
 app.use(cookieParser(config.cookieSecret));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, "../public")));
+app.use(express.static(path.join(__dirname, "../../public")));
 
 app.engine("handlebars", handlebars.engine());
-app.set("views", path.join(__dirname, "./views"));
+app.set("views", path.join(__dirname, ".././views"));
 app.set("view engine", "handlebars");
 
 initPassport();

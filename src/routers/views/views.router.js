@@ -1,9 +1,9 @@
 import ProductsController from "../../controllers/products.controller.js";
 import CartsController from "../../controllers/carts.controller.js";
-import { __dirname, authMiddleware, authRolesMiddleware } from "../../utils.js";
+import { __dirname, authMiddleware, authRolesMiddleware } from "../../utils/utils.js";
 import e, { Router } from "express";
 import { emit } from "../../socket.js";
-import { buildResponsePaginated } from "../../utils.js";
+import { buildResponsePaginated } from "../../utils/utils.js";
 import UsersController from "../../controllers/users.controller.js";
 import TicketsController from "../../controllers/tickets.controller.js";
 

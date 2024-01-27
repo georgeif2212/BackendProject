@@ -3,8 +3,8 @@ import url from "url";
 import bcrypt from "bcrypt";
 import passport from "passport";
 import jwt from "jsonwebtoken";
-import config from "./config/config.js";
-import EmailService from "./services/email.service.js";
+import config from "../config/config.js";
+import EmailService from "../services/email.service.js";
 // import emailTemplate from "./resources/welcomeEmail.html";
 
 const __filename = url.fileURLToPath(import.meta.url);

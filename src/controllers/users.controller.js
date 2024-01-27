@@ -1,11 +1,8 @@
 import UsersService from "../services/users.service.js";
 import {
-  InvalidDataException,
-  NotFoundException,
-  UnauthorizedException,
   createHash,
   isValidPassword,
-} from "../utils.js";
+} from "../utils/utils.js";
 import {
   generatorUserAlreadyExistsError,
   generatorUserError,

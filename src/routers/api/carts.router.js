@@ -5,7 +5,7 @@ import {
   authMiddleware,
   authRolesMiddleware,
   buildResponsePaginatedCarts,
-} from "../../utils.js";
+} from "../../utils/utils.js";
 import TicketsController from "../../controllers/tickets.controller.js";
 
 const router = Router();

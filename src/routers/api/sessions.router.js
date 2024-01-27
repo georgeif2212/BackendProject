@@ -1,7 +1,7 @@
 import { Router } from "express";
 import UsersController from "../../controllers/users.controller.js";
 import passport from "passport";
-import { authMiddleware, generateToken } from "../../utils.js";
+import { authMiddleware, generateToken } from "../../utils/utils.js";
 
 const router = Router();
 

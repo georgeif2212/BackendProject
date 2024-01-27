@@ -1,7 +1,7 @@
 import { Server } from "socket.io";
 // import ProductManager from "./dao/ProductManagerFS.js";
 import ProductsController from "./controllers/products.controller.js";
-import { __dirname } from "./utils.js";
+import { __dirname } from "./utils/utils.js";
 import ChatsController from "./controllers/chats.controller.js";
 
 let socketServer;

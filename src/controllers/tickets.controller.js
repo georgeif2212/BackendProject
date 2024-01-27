@@ -4,6 +4,7 @@ import {
   generatorTicketError,
   generatorTicketIdError,
 } from "../utils/CauseMessageError.js";
+import { CustomError } from "../utils/CustomError.js";
 export default class TicketsController {
   static get(criteria, options) {
     return TicketsService.getPaginate(criteria, options);

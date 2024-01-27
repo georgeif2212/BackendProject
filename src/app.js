@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 import config from "./config/config.js";
 
 import productsRouter from "./routers/api/products.router.js";
+import mocksRouter from "./routers/api/mocks.router.js";
 import cartsRouter from "./routers/api/carts.router.js";
 import viewsRouter from "./routers/views/views.router.js";
 import sessionsRouter from "./routers/api/sessions.router.js";
@@ -32,7 +33,7 @@ app.get("/", (req, res) => {
   res.redirect("/views/login");
 });
 
-app.use("/api", productsRouter, cartsRouter, sessionsRouter);
+app.use("/api", productsRouter, cartsRouter, sessionsRouter, mocksRouter);
 app.use("/api/sessions", sessionsRouter);
 app.use("/views", viewsRouter, indexRouter);
 

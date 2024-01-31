@@ -5,6 +5,7 @@ import passport from "passport";
 import jwt from "jsonwebtoken";
 import config from "../config/config.js";
 import EmailService from "../services/email.service.js";
+import { faker } from '@faker-js/faker';
 // import emailTemplate from "./resources/welcomeEmail.html";
 
 const __filename = url.fileURLToPath(import.meta.url);
@@ -180,7 +181,20 @@ export const sendWelcomeEmail = async (user) => {
         path: path.join(__dirname, "./resources/hello.png"),
         cid: "hello",
       },
-    ],
+    ]
   );
   return result;
+};
+
+export const generateProduct = () => {
+  return {
+    id: faker.database.mongodbObjectId(),
+    title: faker.commerce.productName(),
+    description: faker.lorem.paragraph(),
+    code: faker.string.alphanumeric({ length: 10 }),
+    price: faker.commerce.price(),
+    category: faker.commerce.department(),
+    stock: faker.number.int({ min: 10000, max: 99999 }),
+    image: faker.image.url(),
+  };
 };

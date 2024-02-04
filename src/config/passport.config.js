@@ -28,7 +28,7 @@ export const init = () => {
         const email = await sendWelcomeEmail(newUser);
         done(null, newUser);
       } catch (error) {
-        return done(error);
+        return done(null, false, { message: error.message });
       }
     })
   );

@@ -54,14 +54,11 @@ export default class ProductsController {
 
   static async updateById(pid, data) {
     const product = await ProductsController.getById(pid);
-
     await ProductsService.updateById(product._id, data);
-    console.log(`Producto actualizado correctamente (${pid}) 😁.`);
   }
 
   static async deleteById(pid) {
     const product = await ProductsController.getById(pid);
     await ProductsService.deleteById(product._id);
-    console.log(`Producto eliminado correctamente (${pid}) 🤔.`);
   }
 }

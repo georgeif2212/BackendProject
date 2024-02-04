@@ -98,16 +98,12 @@ export default class UsersController {
 
   static async updateById(uid, data) {
     const user = await UsersController.getById(uid);
-
     await UsersService.updateById(user._id, data);
-    console.log(`User actualizado correctamente (${uid}) 😁.`);
   }
 
   static async deleteById(uid) {
     const user = await UsersController.getById(uid);
-
     await UsersService.deleteById(user._id);
-    console.log(`User eliminado correctamente (${uid}) 🤔.`);
   }
 
   static async recoverPassword(data) {

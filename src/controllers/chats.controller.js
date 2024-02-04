@@ -39,6 +39,5 @@ export default class ChatsController {
   static async deleteById(cid) {
     const message = await ChatsController.getById(cid);
     await ChatsService.deleteById(message._id);
-    console.log(`Message eliminado correctamente (${cid}) 🤔.`);
   }
 }

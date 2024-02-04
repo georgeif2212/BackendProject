@@ -3,12 +3,12 @@ import config from "./config.js";
 
 const customLevelOpts = {
   levels: {
-    debug: 0,
-    http: 1,
-    info: 2,
-    warning: 3,
-    error: 4,
-    fatal: 5,
+    debug: 5,
+    http: 4,
+    info: 3,
+    warning: 2,
+    error: 1,
+    fatal: 0,
   },
   colors: {
     debug: "white",
@@ -24,7 +24,7 @@ export const devLogger = winston.createLogger({
   levels: customLevelOpts.levels,
   transports: [
     new winston.transports.Console({
-      level: "fatal",
+      level: "debug",
       format: winston.format.combine(
         winston.format.colorize({ colors: customLevelOpts.colors }),
         winston.format.simple()
@@ -46,10 +46,7 @@ export const prodLogger = winston.createLogger({
     new winston.transports.File({
       filename: "./errors.log",
       level: "error",
-      format: winston.format.combine(
-        winston.format.colorize({ colors: customLevelOpts.colors }),
-        winston.format.simple()
-      ),
+      format: winston.format.simple(),
     }),
   ],
 });

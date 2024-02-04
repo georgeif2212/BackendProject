@@ -1,11 +1,12 @@
 import express from "express";
 import handlebars from "express-handlebars";
 import path from "path";
-import { Exception, __dirname } from "./utils/utils.js";
+import { __dirname } from "./utils/utils.js";
 import passport from "passport";
 import cookieParser from "cookie-parser";
 import config from "./config/config.js";
 
+import loggerRouter from "./routers/api/logger.router.js";
 import productsRouter from "./routers/api/products.router.js";
 import mocksRouter from "./routers/api/mocks.router.js";
 import cartsRouter from "./routers/api/carts.router.js";
@@ -18,7 +19,7 @@ import { addLogger } from "./config/logger.js";
 
 const app = express();
 
-app.use(addLogger)
+app.use(addLogger);
 app.use(cookieParser(config.cookieSecret));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -38,16 +39,9 @@ app.get("/", (req, res) => {
 app.use("/api", productsRouter, cartsRouter, sessionsRouter, mocksRouter);
 app.use("/api/sessions", sessionsRouter);
 app.use("/views", viewsRouter, indexRouter);
+app.use("/logger", loggerRouter);
 
 // ! Middleware de error
 app.use(errorHandlerMiddleware);
-// app.use((error, req, res, next) => {
-//   const message =
-//     error instanceof Exception
-//       ? error.message
-//       : `Ha ocurrido un error desconocido: ${error.message}`;
-//   console.log(message);
-//   res.status(error.statusCode || 500).json({ status: "error", message });
-// });
 
 export default app;

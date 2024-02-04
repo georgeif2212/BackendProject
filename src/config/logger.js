@@ -1,4 +1,5 @@
 import winston from "winston";
+import config from "./config.js";
 
 const customLevelOpts = {
   levels: {
@@ -23,7 +24,7 @@ export const devLogger = winston.createLogger({
   levels: customLevelOpts.levels,
   transports: [
     new winston.transports.Console({
-      level: "debug",
+      level: "fatal",
       format: winston.format.combine(
         winston.format.colorize({ colors: customLevelOpts.colors }),
         winston.format.simple()

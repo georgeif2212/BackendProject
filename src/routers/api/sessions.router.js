@@ -39,7 +39,7 @@ router.post(
 router.post(
   "/register",
   passport.authenticate("register", {
-    failureRedirect: "/register",
+    failureRedirect: "/views/register",
     session: false,
   }),
   async (req, res, next) => {

@@ -14,9 +14,11 @@ import sessionsRouter from "./routers/api/sessions.router.js";
 import indexRouter from "./routers/views/index.router.js";
 import { init as initPassport } from "./config/passport.config.js";
 import { errorHandlerMiddleware } from "./middlewares/error-handle.middleware.js";
+import { addLogger } from "./config/logger.js";
 
 const app = express();
 
+app.use(addLogger)
 app.use(cookieParser(config.cookieSecret));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

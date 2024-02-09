@@ -6,6 +6,7 @@ export default {
   mongodbUri: process.env.MONGODB_URI,
   jwtSecret: process.env.JWT_SECRET,
   cookieSecret: process.env.COOKIE_SECRET,
+  env: process.env.NODE_ENV || "development",
   mail: {
     emailService: process.env.EMAIL_SERVICE || "gmail",
     emailPort: process.env.EMAIL_PORT || 587,

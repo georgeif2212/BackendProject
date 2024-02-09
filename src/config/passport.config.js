@@ -26,10 +26,9 @@ export const init = () => {
         const { body } = req;
         const newUser = await UsersController.register(body);
         const email = await sendWelcomeEmail(newUser);
-        // console.log(email);
         done(null, newUser);
       } catch (error) {
-        return done(error);
+        return done(null, false, { message: error.message });
       }
     })
   );
@@ -86,7 +85,6 @@ export const init = () => {
           };
           const newUser = await UsersController.register(user);
           sendWelcomeEmail(newUser);
-          // console.log(email);
           done(null, newUser);
         } catch (error) {
           done(error, false, { message: error.message });

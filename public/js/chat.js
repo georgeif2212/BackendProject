@@ -39,6 +39,5 @@
     },
   }).then((result) => {
     email = result.value.trim();
-    console.log(`Hola ${email}, bienvenido 🖐️`);
   });
 })();

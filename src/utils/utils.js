@@ -81,42 +81,6 @@ export const createHash = (password) =>
 export const isValidPassword = (password, user) =>
   bcrypt.compareSync(password, user.password);
 
-export class Exception extends Error {
-  constructor(message, statusCode) {
-    super(message);
-    this.statusCode = statusCode;
-  }
-}
-
-export class InvalidDataException extends Exception {
-  constructor(message) {
-    super(message, 400);
-  }
-}
-
-export class NotFoundException extends Exception {
-  constructor(message) {
-    super(message, 404);
-  }
-}
-
-export class UnauthorizedException extends Exception {
-  constructor(message) {
-    super(message, 401);
-  }
-}
-
-export class ForbiddenException extends Exception {
-  constructor(message) {
-    super(message, 403);
-  }
-}
-
-export class InsufficientStockException extends Exception {
-  constructor(message) {
-    super(message, 422); // Código de estado HTTP 422
-  }
-}
 
 export const generateToken = (user) => {
   const { _id, first_name, email, role } = user;
@@ -178,7 +142,7 @@ export const sendWelcomeEmail = async (user) => {
     [
       {
         filename: "hello.png",
-        path: path.join(__dirname, "./resources/hello.png"),
+        path: path.join(__dirname, "../resources/hello.png"),
         cid: "hello",
       },
     ]

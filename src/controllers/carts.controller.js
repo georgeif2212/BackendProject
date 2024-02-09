@@ -40,13 +40,11 @@ export default class CartsController {
   static async updateById(cid, data) {
     const cart = await CartsController.getById(cid);
     await CartsService.updateById(cart._id, data);
-    console.log(`Cart actualizado correctamente (${cid}) 😁.`);
   }
 
   static async deleteById(cid) {
     const cart = await CartsController.getById(cid);
     await CartsService.deleteById(cart._id);
-    console.log(`Cart eliminado correctamente (${cid}) 🤔.`);
   }
 
   static async doPurchase(cid) {

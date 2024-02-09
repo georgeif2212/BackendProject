@@ -1,54 +1,15 @@
 import { Router } from "express";
 import CartsController from "../../controllers/carts.controller.js";
 import {
-  NotFoundException,
   authMiddleware,
   authRolesMiddleware,
   buildResponsePaginatedCarts,
 } from "../../utils/utils.js";
 import TicketsController from "../../controllers/tickets.controller.js";
+import { CustomError } from "../../utils/CustomError.js";
+import { generatorProductIdError } from "../../utils/CauseMessageError.js";
 
 const router = Router();
-
-const carts = [
-  {
-    id: "8e1e9f2c-41e6-48b8-8fc5-33a9c0e7da1f",
-    products: [
-      {
-        id: 1,
-        title: "Esto es para actualizar el producto 1 por su id",
-        description: "Este es un producto actualizado 1",
-        quantity: 3,
-      },
-      {
-        id: 5,
-        title: "Producto prueba 5",
-        description: "Este es un producto prueba 5",
-        price: 543,
-        quantity: 12,
-      },
-    ],
-  },
-  {
-    id: "3df64235-0e45-44c8-a082-378677ef7f96",
-    products: [
-      {
-        id: 10,
-        title: "Producto prueba 10",
-        description: "Este es un producto prueba 10",
-        price: 654,
-        quantity: 5,
-      },
-      {
-        id: "faddee08-eb7d-426d-abe5-7ecb3c83aaf2",
-        title: "Producto prueba POST",
-        description: "Este es un producto prueba POST",
-        price: 2924.45,
-        quantity: 9,
-      },
-    ],
-  },
-];
 
 // ! Muestra todos los carritos
 router.get("/carts", async (req, res) => {
@@ -64,7 +25,7 @@ router.get("/carts", async (req, res) => {
   }
 
   const result = await CartsController.get(criteria, options);
-  console.log(result);
+  req.logger.debug("Debug message: result", result);
   res
     .status(200)
     .json(buildResponsePaginatedCarts({ ...result, sort, search }));
@@ -75,8 +36,10 @@ router.post("/carts", async (req, res, next) => {
   try {
     const products = [];
     const cart = await CartsController.create(products);
+    req.logger.debug("Debug message: cart", cart);
     res.status(201).json(cart);
   } catch (error) {
+    req.logger.error("Error message: ", error);
     next(error);
   }
 });
@@ -86,8 +49,10 @@ router.get("/carts/:cartId", async (req, res, next) => {
   const { cartId } = req.params;
   try {
     const cart = await CartsController.getById(cartId);
+    req.logger.debug("Debug message: cart", cart);
     res.status(200).json({ id: cart.id, products: cart.products });
   } catch (error) {
+    req.logger.error("Error message: ", error);
     next(error);
   }
 });
@@ -128,6 +93,7 @@ router.post(
         products: cartProducts,
       });
     } catch (error) {
+      req.logger.error("Error message: ", error);
       next(error);
     }
   }
@@ -145,9 +111,12 @@ router.delete("/carts/:cartId/products/:productId", async (req, res) => {
     );
 
     if (productIndex === -1) {
-      throw new Error(
-        `Product with ${productId} not found in the cart ${cartId}`
-      );
+      CustomError.create({
+        name: "Product not found",
+        cause: generatorProductIdError(productId),
+        message: `Product with ${productId} not found in the cart ${cartId}`,
+        code: EnumsError.NOT_FOUND_ERROR,
+      });
     } else {
       // ! Si el producto existe eliminarlo del carrito
       cartProducts.splice(productIndex, 1);
@@ -182,12 +151,14 @@ router.put("/carts/:cartId", async (req, res) => {
     const cart = await CartsController.getById(cartId);
     let cartProducts = cart.products;
     cartProducts = body;
+    req.logger.debug("Debug message: cartProducts", cartProducts);
     await CartsController.updateById(cartId, cartProducts);
     res.status(200).json({
       id: cart.id,
       products: cartProducts,
     });
   } catch (error) {
+    req.logger.error("Error message: ", error);
     next(error);
   }
 });
@@ -205,10 +176,12 @@ router.put("/carts/:cartId/products/:productId", async (req, res) => {
     );
 
     if (productIndex === -1) {
-      // ! Si el producto no existe
-      throw new NotFoundException(
-        `Product with ID: ${productId} not found in the cart: ${cartId}`
-      );
+      CustomError.create({
+        name: "Product not found",
+        cause: generatorProductIdError(productId),
+        message: `Product with ${productId} not found in the cart ${cartId}`,
+        code: EnumsError.NOT_FOUND_ERROR,
+      });
     } else {
       // ! Si el producto existe actualizar la cantidad del producto
       cartProducts[productIndex].quantity += quantity;
@@ -220,6 +193,7 @@ router.put("/carts/:cartId/products/:productId", async (req, res) => {
       products: cartProducts,
     });
   } catch (error) {
+    req.logger.error("Error message: ", error);
     next(error);
   }
 });
@@ -237,6 +211,7 @@ router.delete("/carts/:cartId", async (req, res) => {
       products: cartProducts,
     });
   } catch (error) {
+    req.logger.error("Error message: ", error);
     next(error);
   }
 });
@@ -249,12 +224,14 @@ router.post(
     try {
       const { cartId } = req.params;
       const availableProducts = await CartsController.doPurchase(cartId);
+      req.logger.debug("Debug message: availableProducts", availableProducts);
       const ticket = await TicketsController.create({
         availableProducts,
         ...req.user,
       });
       res.status(200).json(ticket);
     } catch (error) {
+      req.logger.error("Error message: ", error);
       next(error);
     }
   }

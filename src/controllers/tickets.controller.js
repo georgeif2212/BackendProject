@@ -53,13 +53,11 @@ export default class TicketsController {
   static async updateById(tid, data) {
     const ticket = await TicketsController.getById(tid);
     await TicketsService.updateById(ticket._id, data);
-    console.log(`ticket actualizado correctamente (${tid}) 😁.`);
   }
 
   static async deleteById(tid) {
     const ticket = await TicketsController.getById(tid);
     await TicketsService.deleteById(ticket._id);
-    console.log(`ticket eliminado correctamente (${tid}) 🤔.`);
   }
 
   static async getByEmail(email) {

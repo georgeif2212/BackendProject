@@ -73,7 +73,7 @@ export default class UsersController {
     const missingFields = requiredFields.filter((field) => !data[field]);
 
     if (missingFields.length > 0) {
-      CustomError.create({
+      return CustomError.create({
         name: "Invalid user data",
         cause: generatorUserError(data),
         message: `Correo o contraseña inválidos`,
@@ -84,7 +84,7 @@ export default class UsersController {
     if (user) {
       CustomError.create({
         name: "User already exists",
-        cause: generatorUserAlreadyExistsError(),
+        cause: generatorUserAlreadyExistsError(data),
         message: `User already exists`,
         code: EnumsError.CONFLICT,
       });
@@ -98,16 +98,12 @@ export default class UsersController {
 
   static async updateById(uid, data) {
     const user = await UsersController.getById(uid);
-
     await UsersService.updateById(user._id, data);
-    console.log(`User actualizado correctamente (${uid}) 😁.`);
   }
 
   static async deleteById(uid) {
     const user = await UsersController.getById(uid);
-
     await UsersService.deleteById(user._id);
-    console.log(`User eliminado correctamente (${uid}) 🤔.`);
   }
 
   static async recoverPassword(data) {

@@ -10,6 +10,10 @@ export const generatorUserLoginError = (data) => {
   - password       :${data.password}`;
 };
 
+export const generatorAdminPremiumError = () => {
+  return `Admin cant be changed to premium user`;
+};
+
 export const generatorUserLoginDataError = () => {
   return `Invalid email or password`;
 };

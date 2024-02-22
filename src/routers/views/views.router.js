@@ -52,7 +52,7 @@ router.get(
 router.get(
   "/editProducts",
   authMiddleware("jwt"),
-  authRolesMiddleware(["admin"]),
+  authRolesMiddleware(["admin", "premium"]),
   async (req, res) => {
     res.status(200).render("add-delete-products", { title: "Modify products" });
   }

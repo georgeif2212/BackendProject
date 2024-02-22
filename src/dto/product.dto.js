@@ -8,6 +8,13 @@ export default class ProductDTO {
     this.code = product.code;
     this.stock = product.stock;
     this.category = product.category;
-    this.owner = product.owner;
+    this.owner = this.mapOwner(product.owner);
+  }
+
+  mapOwner(owner) {
+    if (!owner) return null;
+
+    const { first_name, last_name, email } = owner;
+    return { first_name, last_name, email };
   }
 }

@@ -2,6 +2,8 @@ import UsersService from "../services/users.service.js";
 import {
   createHash,
   isValidPassword,
+  sendRecoverPasswordEmail,
+  validateToken,
 } from "../utils/utils.js";
 import {
   generatorUserAlreadyExistsError,
@@ -106,27 +108,38 @@ export default class UsersController {
     await UsersService.deleteById(user._id);
   }
 
-  static async recoverPassword(data) {
-    const { email, password } = data;
-    if (!email || !password) {
+  static async recoverPasswordbyEmail(data) {
+    const { email } = data;
+    if (!email) {
       CustomError.create({
         name: "Invalid user data",
         cause: generatorUserLoginError(data),
-        message: `"There must be an email and password"`,
+        message: `"There must be an email "`,
         code: EnumsError.BAD_REQUEST_ERROR,
       });
     }
-
     const user = await UsersService.getByEmail(email);
     if (!user) {
+      return null;
+    }
+    sendRecoverPasswordEmail(user);
+  }
+
+  static async createNewPassword(data) {
+    let { password, token } = data;
+    const payload = await validateToken(token);
+    const user = await UsersService.getByEmail(payload.email);
+
+    if (isValidPassword(password, user)) {
       CustomError.create({
         name: "Invalid user data",
         cause: generatorUserLoginDataError(),
-        message: `Correo o contraseña inválidos`,
-        code: EnumsError.UNAUTHORIZED_ERROR,
+        message: `The password is the same`,
+        code: EnumsError.BAD_REQUEST_ERROR,
       });
     }
-    user.password = createHash(password);
-    await UsersService.updateById(user._id, user);
+    password = createHash(password);
+    user.password = password;
+    UsersController.updateById(user._id, user);
   }
 }

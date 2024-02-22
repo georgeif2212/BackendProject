@@ -6,6 +6,7 @@ import {
   validateToken,
 } from "../utils/utils.js";
 import {
+  generatorAdminPremiumError,
   generatorUserAlreadyExistsError,
   generatorUserError,
   generatorUserIdError,
@@ -100,12 +101,12 @@ export default class UsersController {
 
   static async updateById(uid, data) {
     const user = await UsersController.getById(uid);
-    await UsersService.updateById(user._id, data);
+    return UsersService.updateById(user._id, data);
   }
 
   static async deleteById(uid) {
     const user = await UsersController.getById(uid);
-    await UsersService.deleteById(user._id);
+    return UsersService.deleteById(user._id);
   }
 
   static async recoverPasswordbyEmail(data) {
@@ -140,6 +141,21 @@ export default class UsersController {
     }
     password = createHash(password);
     user.password = password;
+    UsersController.updateById(user._id, user);
+  }
+
+  static async premiumOrNotUser(data) {
+    const user = await UsersController.getById(data.uid);
+
+    if (user.role === "admin") {
+      CustomError.create({
+        name: "Invalid admin change",
+        cause: generatorAdminPremiumError(),
+        message: `The admin can't be changed to premium user`,
+        code: EnumsError.BAD_REQUEST_ERROR,
+      });
+    }
+    user.role = user.role == "user" ? "premium" : "user";
     UsersController.updateById(user._id, user);
   }
 }

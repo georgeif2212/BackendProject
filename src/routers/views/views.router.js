@@ -1,7 +1,11 @@
 import ProductsController from "../../controllers/products.controller.js";
 import CartsController from "../../controllers/carts.controller.js";
-import { __dirname, authMiddleware, authRolesMiddleware } from "../../utils/utils.js";
-import e, { Router } from "express";
+import { __dirname } from "../../utils/utils.js";
+import {
+  authMiddleware,
+  authRolesMiddleware,
+} from "../../middlewares/auth.middleware.js";
+import { Router } from "express";
 import { emit } from "../../socket.js";
 import { buildResponsePaginated } from "../../utils/utils.js";
 import UsersController from "../../controllers/users.controller.js";

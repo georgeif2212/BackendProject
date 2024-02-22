@@ -1,8 +1,7 @@
 import { Router } from "express";
 import CartsController from "../../controllers/carts.controller.js";
+import { authMiddleware,authRolesMiddleware } from "../../middlewares/auth.middleware.js";
 import {
-  authMiddleware,
-  authRolesMiddleware,
   buildResponsePaginatedCarts,
 } from "../../utils/utils.js";
 import TicketsController from "../../controllers/tickets.controller.js";

@@ -1,7 +1,8 @@
 import { Router } from "express";
 import UsersController from "../../controllers/users.controller.js";
 import passport from "passport";
-import { authMiddleware, generateToken } from "../../utils/utils.js";
+import { generateToken } from "../../utils/utils.js";
+import { authMiddleware } from "../../middlewares/auth.middleware.js";
 
 const router = Router();
 
@@ -18,7 +19,7 @@ router.post(
       })
       .status(200)
       .redirect("/views/profile");
-     // try {
+    // try {
     //   const { body } = req;
     //   const user = await UsersController.login(body);
     //   const token = generateToken(user);
@@ -54,10 +55,19 @@ router.post(
   }
 );
 
-router.post("/recovery-password", async (req, res, next) => {
+router.post("/email-recovery-password", async (req, res, next) => {
   try {
     const { body } = req;
-    await UsersController.recoverPassword(body);
+    await UsersController.recoverPasswordbyEmail(body);
+    res.redirect("/views/login");
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.post("/create-new-password", async (req, res, next) => {
+  try {
+    await UsersController.createNewPassword({ ...req.body, ...req.query });
     res.redirect("/views/login");
   } catch (error) {
     next(error);

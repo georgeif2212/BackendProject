@@ -5,7 +5,7 @@ import passport from "passport";
 import jwt from "jsonwebtoken";
 import config from "../config/config.js";
 import EmailService from "../services/email.service.js";
-import { faker } from '@faker-js/faker';
+import { faker } from "@faker-js/faker";
 // import emailTemplate from "./resources/welcomeEmail.html";
 
 const __filename = url.fileURLToPath(import.meta.url);
@@ -81,11 +81,11 @@ export const createHash = (password) =>
 export const isValidPassword = (password, user) =>
   bcrypt.compareSync(password, user.password);
 
-
-export const generateToken = (user) => {
+export const generateToken = (user, type = "auth") => {
   const { _id, first_name, email, role } = user;
-  const payload = { _id, first_name, email, role };
-  return jwt.sign(payload, JWT_SECRET, { expiresIn: "30m" });
+  const payload = { _id, first_name, email, role, type };
+  const expiresIn = type === "auth" ? "30m" : "1h";
+  return jwt.sign(payload, JWT_SECRET, { expiresIn });
 };
 
 export const validateToken = (token) => {
@@ -99,35 +99,7 @@ export const validateToken = (token) => {
   });
 };
 
-export const authMiddleware = (strategy) => (req, res, next) => {
-  passport.authenticate(strategy, function (error, payload, info) {
-    if (error) {
-      return next(error);
-    }
-    if (!payload) {
-      return res.status(401).json({
-        message: info.message ? info.message : info.toString(),
-        login: "http://localhost:8080/views/login",
-      });
-    }
-    req.user = payload;
-    next();
-  })(req, res, next);
-};
 
-export const authRolesMiddleware = (roles) => (req, res, next) => {
-  if (!req.user) {
-    return res.status(401).json({ message: "Unauthorized" });
-  }
-  const { role: userRole } = req.user;
-  if (!roles.includes(userRole)) {
-    return res.status(403).json({
-      message: "forbidden 😨",
-      return: "http://localhost:8080/views/profile",
-    });
-  }
-  next();
-};
 
 export const sendWelcomeEmail = async (user) => {
   const emailService = EmailService.getInstance();
@@ -148,6 +120,21 @@ export const sendWelcomeEmail = async (user) => {
     ]
   );
   return result;
+};
+
+export const sendRecoverPasswordEmail = async (user) => {
+  const emailService = EmailService.getInstance();
+  const token = generateToken(user, "recoverPassword");
+  const recoveryLink = `http://localhost:8080/views/create-new-password?token=${token}`;
+
+  await emailService.sendEmail(
+    user.email,
+    `¿Quieres recuperar tu contraseña, ${user.first_name}?`,
+    `<div>
+      <h1>Da click en el siguiente enlace para recuperar tu contraseña</h1>
+      <a href="${recoveryLink}" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px;">Recuperar Contraseña</a>
+    </div>`
+  );
 };
 
 export const generateProduct = () => {

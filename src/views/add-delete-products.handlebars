@@ -1,0 +1,43 @@
+<div>
+  <h1>Add and delete products </h1>
+  <div style="display: none;" id="access-token">{{accessToken}}</div>
+  <div style="display: flex; justify-content:space-between">
+    <div style="width: 40%;">
+      <h2>Formulario para crear producto</h2>
+      <form action="/api/products" method="post">
+        <label for="title">Título:</label>
+        <input id="title" type="text" name="title" required /><br />
+        <label for="description">Descripción:</label>
+        <input id="description" type="text" name="description" required /><br />
+        <label for="category">Categoría:</label>
+        <input id="category" type="text" name="category" required /><br />
+        <label for="price">Precio:</label>
+        <input id="price" type="number" name="price" required /><br />
+        <label for="thumbnail">URL de la Imagen (Thumbnail):</label>
+        <input id="thumbnail" type="url" name="thumbnail" required /><br />
+        <label for="code">Código:</label>
+        <input id="code" type="text" name="code" required /><br />
+        <label for="stock">Cantidad en Stock:</label>
+        <input id="stock" type="number" name="stock" required /><br />
+        <input type="submit" value="Enviar" />
+      </form>
+    </div>
+    <div style="width: 40%;">
+      <h2>Formulario para eliminar producto</h2>
+      <form id="deleteForm">
+        <label for="id">Id:</label>
+        <input id="id" type="text" name="id" required /><br />
+        <button type="submit">Eliminar Producto</button>
+      </form>
+    </div>
+
+  </div>
+  <footer>
+    <a href="/api/sessions/logout" role="button">Salir</a>
+    <a href="/views/profile" role="button">Ver mi perfil</a>
+    <a href="/views/products" role="button">Ver productos</a>
+    <a href="/views/editProducts" role="button">Añadir/Eliminar productos</a>
+  </footer>
+</div>
+
+<script src="/js/products.js"></script>

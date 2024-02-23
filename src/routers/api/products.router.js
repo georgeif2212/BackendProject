@@ -3,6 +3,7 @@ import ProductsController from "../../controllers/products.controller.js";
 import { __dirname } from "../../utils/utils.js";
 import { Router } from "express";
 import { buildResponsePaginated } from "../../utils/utils.js";
+import { authMiddleware } from "../../middlewares/auth.middleware.js";
 
 const router = Router();
 // * Ruta con path porque sin ella no me daba
@@ -27,7 +28,7 @@ router.get("/products", async (req, res) => {
   res.status(200).json(buildResponsePaginated({ ...result, sort, search }));
 });
 
-router.post("/products", async (req, res, next) => {
+router.post("/products", authMiddleware("jwt"), async (req, res, next) => {
   const { body } = req;
   const existingProduct = await ProductsController.alreadyExists(body.code);
 
@@ -39,6 +40,7 @@ router.post("/products", async (req, res, next) => {
 
   // * Try catch para ver si el producto cumple con todos los campos requeridos
   try {
+    body.owner = req.user._id;
     const product = await ProductsController.create(body);
     res.status(201).json(product);
   } catch (error) {
@@ -67,14 +69,18 @@ router.put("/products/:productId", async (req, res, next) => {
   }
 });
 
-router.delete("/products/:productId", async (req, res, next) => {
-  const { productId } = req.params;
-  try {
-    await ProductsController.deleteById(productId);
-    res.status(200).end();
-  } catch (error) {
-    next(error);
+router.delete(
+  "/products/:productId",
+  authMiddleware("jwt"),
+  async (req, res, next) => {
+    const { productId } = req.params;
+    try {
+      await ProductsController.deleteById(productId, req.user);
+      res.status(200).json("Se eliminó correctamente");
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 export default router;

@@ -1,5 +1,10 @@
 import ProductsService from "../services/products.service.js";
-import { generatorProductError, generatorProductIdError } from "../utils/CauseMessageError.js";
+import {
+  generatorPermissionError,
+  generatorProductError,
+  generatorProductIdError,
+} from "../utils/CauseMessageError.js";
+import { CustomError } from "../utils/CustomError.js";
 import EnumsError from "../utils/EnumsError.js";
 
 export default class ProductsController {
@@ -57,8 +62,25 @@ export default class ProductsController {
     await ProductsService.updateById(product._id, data);
   }
 
-  static async deleteById(pid) {
+  static async deleteById(pid, user) {
     const product = await ProductsController.getById(pid);
-    await ProductsService.deleteById(product._id);
+
+    if (user.role === "admin") {
+      await ProductsService.deleteById(product._id);
+      return;
+    }
+    if (user.role === "premium" && product.owner.email === user.email) {
+      await ProductsService.deleteById(product._id);
+      return;
+    }
+
+    // Si no es admin ni propietario, lanza error de permiso
+    CustomError.create({
+      name: "Invalid permission",
+      cause: generatorPermissionError(),
+      message:
+        "Unauthorized: User without permission or product belongs to someone else",
+      code: EnumsError.UNAUTHORIZED_ERROR,
+    });
   }
 }

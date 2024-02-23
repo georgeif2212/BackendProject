@@ -73,3 +73,7 @@ export const generatorTicketError = (data) => {
   - email  :${data.email}
   - availableProducts: ${data.availableProducts}`;
 };
+
+export const generatorPermissionError = () => {
+  return `User doesn't have permission`;
+};

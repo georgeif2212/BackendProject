@@ -31,6 +31,7 @@ export const authMiddleware = (strategy) => (req, res, next) => {
       });
     }
     req.user = payload;
+    res.locals.accessToken = req.signedCookies["access_token"] || null;
     next();
   })(req, res, next);
 };

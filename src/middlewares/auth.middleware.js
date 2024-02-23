@@ -24,7 +24,7 @@ export const authMiddleware = (strategy) => (req, res, next) => {
     if (error) {
       return next(error);
     }
-    if (!payload) {
+    if (!payload || payload.type !== "auth") {
       return res.status(401).json({
         message: info.message ? info.message : info.toString(),
         login: "http://localhost:8080/views/login",

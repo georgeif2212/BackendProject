@@ -10,6 +10,10 @@ export const generatorUserLoginError = (data) => {
   - password       :${data.password}`;
 };
 
+export const generatorAdminPremiumError = () => {
+  return `Admin cant be changed to premium user`;
+};
+
 export const generatorUserLoginDataError = () => {
   return `Invalid email or password`;
 };
@@ -68,4 +72,8 @@ export const generatorTicketError = (data) => {
   return `Todos los campos son requeridos
   - email  :${data.email}
   - availableProducts: ${data.availableProducts}`;
+};
+
+export const generatorPermissionError = () => {
+  return `User doesn't have permission`;
 };

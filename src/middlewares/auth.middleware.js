@@ -1,3 +1,4 @@
+import passport from "passport";
 import { validateToken } from "../utils/utils.js";
 
 export const tokenRecoverPassword = async (req, res, next) => {
@@ -5,7 +6,7 @@ export const tokenRecoverPassword = async (req, res, next) => {
   const payload = await validateToken(token);
   if (!payload) {
     return res.status(401).json({
-      message: "JWT Token is invalid, do you want to recover again?",
+      message: "JWT Token is invalid, do you want to recover password again?",
       recover: "http://localhost:8080/views/email-recover-password",
       login: "http://localhost:8080/views/login",
     });
@@ -23,13 +24,14 @@ export const authMiddleware = (strategy) => (req, res, next) => {
     if (error) {
       return next(error);
     }
-    if (!payload) {
+    if (!payload || payload.type !== "auth") {
       return res.status(401).json({
         message: info.message ? info.message : info.toString(),
         login: "http://localhost:8080/views/login",
       });
     }
     req.user = payload;
+    res.locals.accessToken = req.signedCookies["access_token"] || null;
     next();
   })(req, res, next);
 };

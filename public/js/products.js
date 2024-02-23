@@ -35,4 +35,35 @@ document.addEventListener("DOMContentLoaded", () => {
       console.error("Error de red:", error);
     }
   }
+
+  document
+    .getElementById("deleteForm")
+    .addEventListener("submit", function (event) {
+      event.preventDefault();
+      const access_token = document.getElementById("access-token").value;
+      const productId = document.getElementById("id").value;
+      console.log("HOLA: ", access_token);
+      // Realiza la solicitud a la API con el ID del producto
+      fetch(`/api/products/${productId}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${access_token}`,
+        },
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log("Producto eliminado:", data);
+          // Puedes manejar la respuesta como desees
+        })
+        .catch((error) => {
+          console.error("Error eliminando producto:", error);
+          // Puedes manejar el error como desees
+        });
+    });
 });

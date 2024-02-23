@@ -54,7 +54,7 @@ router.get(
   authMiddleware("jwt"),
   authRolesMiddleware(["admin", "premium"]),
   async (req, res) => {
-    res.status(200).render("add-delete-products", { title: "Modify products" });
+    res.status(200).render("add-delete-products-Socket", { title: "Modify products" });
   }
 );
 

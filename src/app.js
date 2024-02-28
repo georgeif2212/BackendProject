@@ -36,6 +36,22 @@ app.get("/", (req, res) => {
   res.redirect("/views/login");
 });
 
+if (process.env.NODE_ENV !== "production") {
+  const swaggerOpts = {
+    definition: {
+      openapi: "3.0.0",
+      info: {
+        title: "Backend API",
+        description:
+          "Backend API Documentation",
+      },
+    },
+    apis: [path.join(__dirname, "..", "docs", "**", "*.yaml")],
+  };
+  const specs = swaggerJsDoc(swaggerOpts);
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
+}
+
 app.use("/api", productsRouter, cartsRouter, sessionsRouter, mocksRouter);
 app.use("/api/sessions", sessionsRouter);
 app.use("/views", viewsRouter, indexRouter);

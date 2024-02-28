@@ -23,6 +23,42 @@ paths:
         500:
           description: Internal Server Error.
 
+  /api/products/{productId}:
+    get:
+      summary: Get an user by identifer
+      tags:
+        - Products
+      parameters:
+      - in: path
+        name: productId
+        required: true
+        description: Identifier of the product to search
+        schema:
+          type: string
+      responses:
+        200:
+          description: Product with valid identifier
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Product'
+        404:
+          description: Product not found
+          content: 
+            application/json:
+              schema: 
+                type: object
+                properties:
+                  status: 
+                    type: string
+                    description: error
+                    example: error
+                  message:
+                    type: string
+                    description: product with productId not found
+                    example: "Product with 655a45ff59dcc07a93eff698 not found"      
+        500:
+          description: Internal Server Error.
 
 
 components:

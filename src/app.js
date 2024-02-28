@@ -5,6 +5,8 @@ import { __dirname } from "./utils/utils.js";
 import passport from "passport";
 import cookieParser from "cookie-parser";
 import config from "./config/config.js";
+import swaggerJsDoc from "swagger-jsdoc";
+import swaggerUi from "swagger-ui-express";
 
 import loggerRouter from "./routers/api/logger.router.js";
 import productsRouter from "./routers/api/products.router.js";
@@ -42,8 +44,7 @@ if (process.env.NODE_ENV !== "production") {
       openapi: "3.0.0",
       info: {
         title: "Backend API",
-        description:
-          "Backend API Documentation",
+        description: "Backend API Documentation",
       },
     },
     apis: [path.join(__dirname, "..", "docs", "**", "*.yaml")],

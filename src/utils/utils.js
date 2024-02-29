@@ -75,6 +75,13 @@ export const buildResponsePaginatedCarts = (data, baseUrl = URL_BASE_CARTS) => {
   };
 };
 
+export const buildResponseUpdate = () => {
+  return {
+    status: "success",
+    message: "The resource has been updated succesfully",
+  };
+};
+
 export const createHash = (password) =>
   bcrypt.hashSync(password, bcrypt.genSaltSync(10));
 
@@ -98,8 +105,6 @@ export const validateToken = (token) => {
     });
   });
 };
-
-
 
 export const sendWelcomeEmail = async (user) => {
   const emailService = EmailService.getInstance();

@@ -1,8 +1,11 @@
 // import ProductManager from "../dao/ProductManagerFS.js"; // ! FS Product manager
 import ProductsController from "../../controllers/products.controller.js";
-import { __dirname } from "../../utils/utils.js";
 import { Router } from "express";
-import { buildResponsePaginated } from "../../utils/utils.js";
+import {
+  buildResponsePaginated,
+  __dirname,
+  buildResponseUpdate,
+} from "../../utils/utils.js";
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
 
 const router = Router();
@@ -63,7 +66,9 @@ router.put("/products/:productId", async (req, res, next) => {
   const { body } = req;
   try {
     await ProductsController.updateById(productId, body);
-    res.status(200).end();
+    req.logger.debug("Producto actualizado");
+
+    res.status(200).json(buildResponseUpdate());
   } catch (error) {
     next(error);
   }

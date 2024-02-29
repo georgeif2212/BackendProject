@@ -82,6 +82,13 @@ export const buildResponseUpdate = () => {
   };
 };
 
+export const buildResponseDelete = () => {
+  return {
+    status: "success",
+    message: "The resource has been deleted succesfully",
+  };
+};
+
 export const createHash = (password) =>
   bcrypt.hashSync(password, bcrypt.genSaltSync(10));
 

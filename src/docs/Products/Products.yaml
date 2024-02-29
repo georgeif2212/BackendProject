@@ -22,6 +22,42 @@ paths:
                       $ref: "#/components/schemas/Product"
         500:
           description: Internal Server Error.
+    post:
+      summary: Create new product
+      tags:
+        - Products
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/requestBodies/createProduct"
+      responses:
+        201:
+          description: Product created succesfully
+          content:
+            application/json:
+              schema:
+              $ref: "#/components/schemas/Product"
+        400:
+          description: There is a product with the same code
+        401:
+          description: No auth token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Response status
+                    example: No auth token
+                  login:
+                    type: string
+                    description: Link of login view
+                    example: http://localhost:8080/views/login
+        500:
+          description: Error interno del servidor.
 
   /api/products/{productId}:
     get:
@@ -29,38 +65,38 @@ paths:
       tags:
         - Products
       parameters:
-      - in: path
-        name: productId
-        required: true
-        description: Identifier of the product to search
-        schema:
-          type: string
+        - in: path
+          name: productId
+          required: true
+          description: Identifier of the product to search
+          schema:
+            type: string
       responses:
         200:
           description: Product with valid identifier
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Product'
+                $ref: "#/components/schemas/Product"
         404:
           description: Product not found
-          content: 
+          content:
             application/json:
-              schema: 
+              schema:
                 type: object
                 properties:
-                  status: 
+                  status:
                     type: string
                     description: error
                     example: error
                   message:
                     type: string
                     description: product with productId not found
-                    example: "Product with 655a45ff59dcc07a93eff698 not found"      
+                    example: "Product with 655a45ff59dcc07a93eff698 not found"
         500:
           description: Internal Server Error.
     put:
-      summary: Update a product by id
+      summary: Update a product by identifier
       tags:
         - Products
       parameters:
@@ -75,7 +111,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/requestBodies/updateProduct'
+              $ref: "#/components/requestBodies/updateProduct"
       responses:
         200:
           description: Product updated succesfully
@@ -110,7 +146,7 @@ paths:
         500:
           description: Internal Server Error.
     delete:
-      summary: Delete a product by id
+      summary: Delete a product by identifier
       tags:
         - Products
       parameters:
@@ -169,7 +205,6 @@ paths:
         500:
           description: Internal Server Error.
 
-
 components:
   schemas:
     Product:
@@ -226,6 +261,42 @@ components:
           email: jinfante2212@gmail.com
   requestBodies:
     updateProduct:
+      type: object
+      properties:
+        title:
+          type: string
+          description: Product title
+        description:
+          type: string
+          description: Product features and information
+        price:
+          type: float
+          description: Product price
+        thumbnail:
+          type: string
+          description: Product Image URL
+        code:
+          type: string
+          description: A product unique code
+        stock:
+          type: int
+          description: Number of available products
+        category:
+          type: string
+          description: Department which product belongs
+        owner:
+          type: string
+          description: Owner product id
+      example:
+        title: Microondas Panasonic
+        description: Microondas con capacidad de 1.2 cu. ft. y múltiples ajustes de cocción para una fácil preparación de alimentos.
+        price: 1599
+        thumbnail: https://www.costco.com.mx/medias/sys_master/products/h47/h1d/11023491596318.jpg
+        code: PAN567
+        stock: 11
+        category: cocina
+        owner: 653a45ff59dcb07a93afk68b
+    createProduct:
       type: object
       properties:
         title:

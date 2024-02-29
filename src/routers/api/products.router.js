@@ -5,6 +5,7 @@ import {
   buildResponsePaginated,
   __dirname,
   buildResponseUpdate,
+  buildResponseDelete,
 } from "../../utils/utils.js";
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
 
@@ -67,9 +68,9 @@ router.put("/products/:productId", async (req, res, next) => {
   try {
     await ProductsController.updateById(productId, body);
     req.logger.debug("Producto actualizado");
-
     res.status(200).json(buildResponseUpdate());
   } catch (error) {
+    req.logger.error("Error updating");
     next(error);
   }
 });
@@ -81,8 +82,10 @@ router.delete(
     const { productId } = req.params;
     try {
       await ProductsController.deleteById(productId, req.user);
-      res.status(200).json("Se eliminó correctamente");
+      req.logger.debug("Removed product");
+      res.status(200).json(buildResponseDelete());
     } catch (error) {
+      req.logger.error("Error deleting");
       next(error);
     }
   }

@@ -46,6 +46,7 @@ router.post("/products", authMiddleware("jwt"), async (req, res, next) => {
   try {
     body.owner = req.user._id;
     const product = await ProductsController.create(body);
+    req.logger.debug("Product created");
     res.status(201).json(product);
   } catch (error) {
     next(error);

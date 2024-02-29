@@ -109,6 +109,65 @@ paths:
                     example: Product with 655a45ff59dcc07a93eff682 not found
         500:
           description: Internal Server Error.
+    delete:
+      summary: Delete a product by id
+      tags:
+        - Products
+      parameters:
+        - in: path
+          name: productId
+          required: true
+          description: Identifier of the product to delete
+          schema:
+            type: string
+      responses:
+        200:
+          description: Product deleted succesfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Response status
+                    example: success
+                  message:
+                    type: string
+                    description: Response message
+                    example: The resource has been deleted succesfully
+        401:
+          description: No auth token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Response status
+                    example: No auth token
+                  login:
+                    type: string
+                    description: Link of login view
+                    example: http://localhost:8080/views/login
+        404:
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Response status
+                    example: error
+                  message:
+                    type: string
+                    description: Response message
+                    example: Product with 655a45ff59dcc07a93eff682 not found
+        500:
+          description: Internal Server Error.
 
 
 components:

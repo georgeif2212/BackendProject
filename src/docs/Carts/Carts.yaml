@@ -81,6 +81,69 @@ paths:
                     description: cart with cartId not found
                     example: "Cart with 655a45ff59dcc07a93eff698 not found"
 
+  /api/carts/{cartId}/products/{productId}:
+    post:
+      summary: Add to the cartId the quantity of productId 
+      tags:
+        - Carts
+      parameters:
+          - in: path
+            name: cartId
+            required: true
+            description: Identifier of the cart to search
+            schema:
+              type: string
+          - in: path
+            name: productId
+            required: true
+            description: Identifier of the product to add
+            schema:
+              type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/requestBodies/addProductToCart"
+      responses:
+        200:
+          description: Product added to  the cart succesfully
+          content:
+            application/json:
+              schema:
+              $ref: "#/components/schemas/Cart"
+        401:
+          description: No auth token
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: Response status
+                    example: No auth token
+                  login:
+                    type: string
+                    description: Link of login view
+                    example: http://localhost:8080/views/login
+        404:
+          description: Cart with identifier not found
+          content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                  status:
+                    type: string
+                    description: error
+                    example: error
+                  message:
+                    type: string
+                    description: cart with cartId not found
+                    example: "Cart with 655a45ff59dcc07a93eff698 not found"
+
+
 components:
   schemas:
     Cart:
@@ -96,4 +159,11 @@ components:
         _id: 655a45ff59dcc07a93eff688
         products: []
   requestBodies:
-    
+    addProductToCart:
+        type: object
+        properties:
+          quantity:
+            type: int
+            description: Product quantity to add to cart
+        example:
+          quantity: 3

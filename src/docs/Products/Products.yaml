@@ -14,7 +14,7 @@ paths:
                 properties:
                   status:
                     type: string
-                    description: Estado de la respuesta
+                    description: Response status
                     example: success
                   payload:
                     type: array

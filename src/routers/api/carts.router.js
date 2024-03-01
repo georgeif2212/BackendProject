@@ -8,6 +8,7 @@ import { buildResponsePaginatedCarts } from "../../utils/utils.js";
 import TicketsController from "../../controllers/tickets.controller.js";
 import { CustomError } from "../../utils/CustomError.js";
 import { generatorProductIdError } from "../../utils/CauseMessageError.js";
+import EnumsError from "../../utils/EnumsError.js";
 
 const router = Router();
 
@@ -49,9 +50,7 @@ router.get("/carts/:cartId", async (req, res, next) => {
   const { cartId } = req.params;
   try {
     const cart = await CartsController.getById(cartId);
-    res
-      .status(200)
-      .json({id: cart._id, products: cart.products });
+    res.status(200).json({ id: cart._id, products: cart.products });
   } catch (error) {
     req.logger.error("Error message: ", error);
     next(error);
@@ -101,16 +100,14 @@ router.post(
 );
 
 // ! Elimina del carrito un producto seleccionado
-router.delete("/carts/:cartId/products/:productId", async (req, res) => {
+router.delete("/carts/:cartId/products/:productId", async (req, res, next) => {
   try {
     const { cartId, productId } = req.params;
     const cart = await CartsController.getById(cartId);
     const cartProducts = cart.products;
-
     const productIndex = cartProducts.findIndex(
-      (product) => product.product.toString() === productId
+      (element) => element.product._id.toString() === productId
     );
-
     if (productIndex === -1) {
       CustomError.create({
         name: "Product not found",

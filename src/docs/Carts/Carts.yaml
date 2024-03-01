@@ -1,0 +1,25 @@
+paths:
+  /api/carts:
+    get:
+      summary: List of carts
+      tags:
+        - Carts
+      responses:
+        200:
+          description: Carts were listed correctly.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    description: Response status
+                    example: success
+                  payload:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Product"
+        500:
+          description: Internal Server Error.
+    

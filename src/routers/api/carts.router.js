@@ -1,9 +1,10 @@
 import { Router } from "express";
 import CartsController from "../../controllers/carts.controller.js";
-import { authMiddleware,authRolesMiddleware } from "../../middlewares/auth.middleware.js";
 import {
-  buildResponsePaginatedCarts,
-} from "../../utils/utils.js";
+  authMiddleware,
+  authRolesMiddleware,
+} from "../../middlewares/auth.middleware.js";
+import { buildResponsePaginatedCarts } from "../../utils/utils.js";
 import TicketsController from "../../controllers/tickets.controller.js";
 import { CustomError } from "../../utils/CustomError.js";
 import { generatorProductIdError } from "../../utils/CauseMessageError.js";
@@ -48,8 +49,9 @@ router.get("/carts/:cartId", async (req, res, next) => {
   const { cartId } = req.params;
   try {
     const cart = await CartsController.getById(cartId);
-    req.logger.debug("Debug message: cart", cart);
-    res.status(200).json({ id: cart.id, products: cart.products });
+    res
+      .status(200)
+      .json({id: cart._id, products: cart.products });
   } catch (error) {
     req.logger.error("Error message: ", error);
     next(error);

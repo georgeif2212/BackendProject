@@ -1,8 +1,12 @@
 // import ProductManager from "../dao/ProductManagerFS.js"; // ! FS Product manager
 import ProductsController from "../../controllers/products.controller.js";
-import { __dirname } from "../../utils/utils.js";
 import { Router } from "express";
-import { buildResponsePaginated } from "../../utils/utils.js";
+import {
+  buildResponsePaginated,
+  __dirname,
+  buildResponseUpdate,
+  buildResponseDelete,
+} from "../../utils/utils.js";
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
 
 const router = Router();
@@ -42,6 +46,7 @@ router.post("/products", authMiddleware("jwt"), async (req, res, next) => {
   try {
     body.owner = req.user._id;
     const product = await ProductsController.create(body);
+    req.logger.debug("Product created");
     res.status(201).json(product);
   } catch (error) {
     next(error);
@@ -63,8 +68,10 @@ router.put("/products/:productId", async (req, res, next) => {
   const { body } = req;
   try {
     await ProductsController.updateById(productId, body);
-    res.status(200).end();
+    req.logger.debug("Producto actualizado");
+    res.status(200).json(buildResponseUpdate());
   } catch (error) {
+    req.logger.error("Error updating");
     next(error);
   }
 });
@@ -76,8 +83,10 @@ router.delete(
     const { productId } = req.params;
     try {
       await ProductsController.deleteById(productId, req.user);
-      res.status(200).json("Se eliminó correctamente");
+      req.logger.debug("Removed product");
+      res.status(200).json(buildResponseDelete());
     } catch (error) {
+      req.logger.error("Error deleting");
       next(error);
     }
   }

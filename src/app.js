@@ -5,6 +5,8 @@ import { __dirname } from "./utils/utils.js";
 import passport from "passport";
 import cookieParser from "cookie-parser";
 import config from "./config/config.js";
+import swaggerJsDoc from "swagger-jsdoc";
+import swaggerUi from "swagger-ui-express";
 
 import loggerRouter from "./routers/api/logger.router.js";
 import productsRouter from "./routers/api/products.router.js";
@@ -35,6 +37,21 @@ app.use(passport.initialize());
 app.get("/", (req, res) => {
   res.redirect("/views/login");
 });
+
+if (process.env.NODE_ENV !== "production") {
+  const swaggerOpts = {
+    definition: {
+      openapi: "3.0.0",
+      info: {
+        title: "Backend API",
+        description: "Backend API Documentation",
+      },
+    },
+    apis: [path.join(__dirname, "..", "docs", "**", "*.yaml")],
+  };
+  const specs = swaggerJsDoc(swaggerOpts);
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
+}
 
 app.use("/api", productsRouter, cartsRouter, sessionsRouter, mocksRouter);
 app.use("/api/sessions", sessionsRouter);

@@ -58,8 +58,10 @@ describe("Testing products router", function () {
   });
 
   it("GET: Should get a product by identifier", async function () {
-    const id = "655a45ff59dcc07a93eff693";
-    const { statusCode, ok, _body } = await requester.get(`/api/products/${id}`);
+    const id = "65ea6ce84a8982e861dd7cc4";
+    const { statusCode, ok, _body } = await requester.get(
+      `/api/products/${id}`
+    );
     expect(statusCode).to.be.equal(200);
     expect(ok).to.be.ok;
     expect(_body).to.be.has.property("_id");
@@ -71,5 +73,27 @@ describe("Testing products router", function () {
     expect(_body).to.be.has.property("stock");
     expect(_body).to.be.has.property("category");
     expect(_body).to.be.has.property("owner");
+  });
+
+  it("PUT: Should update a product by identifier", async function () {
+    const productMock = {
+      title: "Secadora de Ropa Whirlpool",
+      description:
+        "Secadora de ropa de carga frontal con capacidad de 7.4 cu. ft. y múltiples programas de secado.",
+      price: 3499.5,
+      thumbnail: "https://ss634.liverpool.com.mx/xl/1090644161.jpg",
+      code: `WHIRL${Date.now() / 1000}`,
+      stock: 9,
+      category: "lavanderia",
+    };
+    const { _body: product } = await requester
+      .post("/api/products")
+      .send(productMock)
+      .set("Cookie", [`${this.cookie.key}=${this.cookie.value}`]);
+    const { statusCode, ok, _body } = await requester
+      .put(`/api/products/${product._id}`)
+      .send({ price: 2000 });
+    expect(statusCode).to.be.equal(200);
+    expect(ok).to.be.ok;
   });
 });

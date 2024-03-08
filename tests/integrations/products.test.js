@@ -1,5 +1,4 @@
 import { expect } from "chai";
-import { ExpressHandlebars } from "express-handlebars";
 import supertest from "supertest";
 
 const requester = supertest("http://localhost:8080");

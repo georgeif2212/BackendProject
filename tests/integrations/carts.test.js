@@ -6,6 +6,7 @@ const requester = supertest("http://localhost:8080");
 describe("Testing carts router", function () {
   before(async function () {
     this.cartToDelete;
+    this.product = "65ea77e1346a5813231a8a62";
     this.cookie = {};
     const user = {
       email: "jinfante2212@gmail.com",
@@ -64,21 +65,30 @@ describe("Testing carts router", function () {
       quantity: 3,
     };
     const { statusCode, ok, _body } = await requester
-      .post(
-        `/api/carts/${this.cartToDelete._id}/products/65ea77e1346a5813231a8a62`
-      )
+      .post(`/api/carts/${this.cartToDelete._id}/products/${this.product}`)
       .send(quantity)
       .set("Cookie", [`${this.cookie.key}=${this.cookie.value}`]);
 
-    console.log(statusCode, ok, _body);
     expect(statusCode).to.be.equal(201);
     expect(ok).to.be.ok;
     expect(_body).to.be.has.property("_id");
     expect(_body).to.be.has.property("products");
     expect(_body.products).to.be.an("array");
     _body.products.forEach((element) => {
-      expect(element).to.have.property("product", "65ea77e1346a5813231a8a62");
+      expect(element).to.have.property("product", this.product);
       expect(element).to.have.property("quantity", 3);
     });
+  });
+
+  it("DELETE: Should delete a productId from the cartId", async function () {
+    const { statusCode, ok, _body } = await requester
+      .delete(`/api/carts/${this.cartToDelete._id}/products/${this.product}`)
+      .set("Cookie", [`${this.cookie.key}=${this.cookie.value}`]);
+
+    expect(statusCode).to.be.equal(200);
+    expect(ok).to.be.ok;
+    expect(_body).to.be.has.property("_id");
+    expect(_body).to.be.has.property("products");
+    expect(_body.products).to.be.an("array");
   });
 });

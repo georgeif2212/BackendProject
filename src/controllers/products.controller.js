@@ -64,14 +64,15 @@ export default class ProductsController {
 
   static async deleteById(pid, user) {
     const product = await ProductsController.getById(pid);
-
     if (user.role === "admin") {
-      await ProductsService.deleteById(product._id);
-      return;
+      return ProductsService.deleteById(product._id);
     }
     if (user.role === "premium" && product.owner.email === user.email) {
-      await ProductsService.deleteById(product._id);
-      return;
+      return ProductsService.deleteById(product._id);
+    }
+
+    if (product.owner.email === user.email) {
+      return ProductsService.deleteById(product._id);
     }
 
     // Si no es admin ni propietario, lanza error de permiso

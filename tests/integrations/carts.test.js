@@ -58,5 +58,27 @@ describe("Testing carts router", function () {
     expect(_body).to.be.has.property("products");
     expect(_body.products).to.be.an("array");
   });
-  
+
+  it("POST: Should add to cartId the quantity of productId", async function () {
+    const quantity = {
+      quantity: 3,
+    };
+    const { statusCode, ok, _body } = await requester
+      .post(
+        `/api/carts/${this.cartToDelete._id}/products/65ea77e1346a5813231a8a62`
+      )
+      .send(quantity)
+      .set("Cookie", [`${this.cookie.key}=${this.cookie.value}`]);
+
+    console.log(statusCode, ok, _body);
+    expect(statusCode).to.be.equal(201);
+    expect(ok).to.be.ok;
+    expect(_body).to.be.has.property("_id");
+    expect(_body).to.be.has.property("products");
+    expect(_body.products).to.be.an("array");
+    _body.products.forEach((element) => {
+      expect(element).to.have.property("product", "65ea77e1346a5813231a8a62");
+      expect(element).to.have.property("quantity", 3);
+    });
+  });
 });

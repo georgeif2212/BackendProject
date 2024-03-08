@@ -1,4 +1,5 @@
 import { expect } from "chai";
+import { ExpressHandlebars } from "express-handlebars";
 import supertest from "supertest";
 
 const requester = supertest("http://localhost:8080");
@@ -58,7 +59,7 @@ describe("Testing products router", function () {
   });
 
   it("GET: Should get a product by identifier", async function () {
-    const id = "65ea6ce84a8982e861dd7cc4";
+    const id = "65ea77e0346a5813231a8a5e";
     const { statusCode, ok, _body } = await requester.get(
       `/api/products/${id}`
     );
@@ -95,5 +96,41 @@ describe("Testing products router", function () {
       .send({ price: 2000 });
     expect(statusCode).to.be.equal(200);
     expect(ok).to.be.ok;
+    expect(_body).to.has.property("status", "success");
+    expect(_body).to.has.property(
+      "message",
+      "The resource has been updated succesfully"
+    );
+  });
+
+  it("DELETE: Should delete a product by identifier", async function () {
+    const productMock = {
+      title: "Licuadora Oster",
+      description:
+        "Licuadora de alto rendimiento con cuchillas de acero inoxidable y jarra de vidrio resistente.",
+      price: 800,
+      thumbnail:
+        "https://m.media-amazon.com/images/I/51X0jzGB9NL._AC_UF894,1000_QL80_.jpg",
+      code: `OST${Date.now() / 1000}`,
+      stock: 16,
+      category: "cocina",
+    };
+
+    const { _body: product } = await requester
+      .post("/api/products")
+      .send(productMock)
+      .set("Cookie", [`${this.cookie.key}=${this.cookie.value}`]);
+
+    const { statusCode, ok, _body } = await requester
+      .delete(`/api/products/${product._id}`)
+      .set("Cookie", [`${this.cookie.key}=${this.cookie.value}`]);
+
+    expect(statusCode).to.be.equal(200);
+    expect(ok).to.be.ok;
+    expect(_body).to.has.property("status", "success");
+    expect(_body).to.has.property(
+      "message",
+      "The resource has been deleted succesfully"
+    );
   });
 });

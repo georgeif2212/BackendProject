@@ -14,11 +14,11 @@ describe("Testing products router", function () {
     const { headers, statusCode, ok } = await requester
       .post("/api/sessions/login")
       .send(user)
-      .redirects(0)
+      .redirects(0);
 
     expect(statusCode).to.be.equal(302);
     expect(ok).to.be.not.ok;
-    
+
     const [key, value] = headers["set-cookie"][0].split("=");
     this.cookie.key = key;
     this.cookie.value = value;
@@ -54,6 +54,22 @@ describe("Testing products router", function () {
     expect(statusCode).to.be.equal(201);
     expect(ok).to.be.ok;
     expect(_body).to.be.has.property("_id");
+    expect(_body).to.be.has.property("owner");
+  });
+
+  it("GET: Should get a product by identifier", async function () {
+    const id = "655a45ff59dcc07a93eff693";
+    const { statusCode, ok, _body } = await requester.get(`/api/products/${id}`);
+    expect(statusCode).to.be.equal(200);
+    expect(ok).to.be.ok;
+    expect(_body).to.be.has.property("_id");
+    expect(_body).to.be.has.property("title");
+    expect(_body).to.be.has.property("description");
+    expect(_body).to.be.has.property("price");
+    expect(_body).to.be.has.property("thumbnail");
+    expect(_body).to.be.has.property("code");
+    expect(_body).to.be.has.property("stock");
+    expect(_body).to.be.has.property("category");
     expect(_body).to.be.has.property("owner");
   });
 });

@@ -3,7 +3,10 @@ import dotenv from "dotenv";
 dotenv.config();
 export default {
   port: process.env.PORT,
-  mongodbUri: process.env.MONGODB_URI,
+  mongodbUri:
+    process.env.NODE_ENV == "testing"
+      ? process.env.MONGODB_URI_TEST
+      : process.env.MONGODB_URI,
   jwtSecret: process.env.JWT_SECRET,
   cookieSecret: process.env.COOKIE_SECRET,
   env: process.env.NODE_ENV || "development",

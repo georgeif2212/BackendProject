@@ -88,8 +88,8 @@ router.post(
       }
 
       await CartsController.updateById(cartId, cartProducts);
-      res.status(200).json({
-        id: cart.id,
+      res.status(201).json({
+        _id: cart._id,
         products: cartProducts,
       });
     } catch (error) {

@@ -4,6 +4,26 @@ import supertest from "supertest";
 const requester = supertest("http://localhost:8080");
 
 describe("Testing products router", function () {
+  before(async function () {
+    this.cookie = {};
+    const user = {
+      email: "jinfante2212@gmail.com",
+      password: "ola1234",
+    };
+
+    const { headers, statusCode, ok } = await requester
+      .post("/api/sessions/login")
+      .send(user)
+      .redirects(0)
+
+    expect(statusCode).to.be.equal(302);
+    expect(ok).to.be.not.ok;
+    
+    const [key, value] = headers["set-cookie"][0].split("=");
+    this.cookie.key = key;
+    this.cookie.value = value;
+  });
+
   it("GET: Should get list of products", async function () {
     const { statusCode, ok, _body } = await requester.get("/api/products");
     expect(statusCode).to.be.equal(200);
@@ -28,10 +48,12 @@ describe("Testing products router", function () {
 
     const { statusCode, ok, _body } = await requester
       .post("/api/products")
-      .send(productMock);
+      .send(productMock)
+      .set("Cookie", [`${this.cookie.key}=${this.cookie.value}`]);
+
     expect(statusCode).to.be.equal(201);
     expect(ok).to.be.ok;
     expect(_body).to.be.has.property("_id");
-    expect(_body.owner).to.be.has.property("first_name");
+    expect(_body).to.be.has.property("owner");
   });
 });

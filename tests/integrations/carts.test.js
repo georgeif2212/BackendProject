@@ -5,6 +5,7 @@ const requester = supertest("http://localhost:8080");
 
 describe("Testing carts router", function () {
   before(async function () {
+    this.cartToDelete
     this.cookie = {};
     const user = {
       email: "jinfante2212@gmail.com",
@@ -35,6 +36,16 @@ describe("Testing carts router", function () {
     _body.payload.forEach((element) => {
       expect(element).to.have.property("products");
     });
+  });
+
+  it.only("POST: Should create a new cart", async function () {
+    const { statusCode, ok, _body } = await requester.post("/api/carts");
+    expect(statusCode).to.be.equal(201);
+    expect(ok).to.be.ok;
+    expect(_body).to.be.has.property("_id");
+    expect(_body).to.be.has.property("products");
+    expect(_body.products).to.be.an("array");
+    this.cartToDelete=_body
   });
 
 });

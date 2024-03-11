@@ -35,7 +35,7 @@ describe("Sessions testing", function () {
       .post("/api/sessions/login")
       .send(userMock)
       .redirects(0);
-    
+
     expect(statusCode).to.be.equal(302);
     expect(ok).to.be.not.ok;
 
@@ -44,4 +44,14 @@ describe("Sessions testing", function () {
     this.cookie.value = value;
   });
 
+  it("Should obtain user's info", async function () {
+    const { statusCode, ok, _body } = await requester
+      .get("/api/sessions/me")
+      .set("Cookie", [`${this.cookie.key}=${this.cookie.value}`]);
+    expect(statusCode).to.be.equal(200);
+    expect(ok).to.be.ok;
+    expect(_body).to.be.has.property("_id");
+    expect(_body).to.be.has.property("role");
+    expect(_body).to.be.has.property("email", this.user.email);
+  });
 });

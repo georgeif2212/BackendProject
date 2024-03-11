@@ -79,14 +79,6 @@ router.get("/me", authMiddleware("jwt"), (req, res) => {
   res.status(200).json(req.user);
 });
 
-router.patch("/users/premium/:uid", async (req, res, next) => {
-  try {
-    await UsersController.premiumOrNotUser(req.params);
-    res.status(201).json({message:"The user role has been changed"})
-  } catch (error) {
-    next(error);
-  }
-});
 
 router.get("/logout", (req, res) => {
   res.clearCookie("access_token").redirect("/views/login");

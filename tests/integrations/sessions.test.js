@@ -25,4 +25,23 @@ describe("Sessions testing", function () {
     expect(statusCode).to.be.equal(302);
     expect(ok).to.be.not.ok;
   });
+
+  it("Should login as user", async function () {
+    const userMock = {
+      email: this.user.email,
+      password: this.user.password,
+    };
+    const { headers, statusCode, ok } = await requester
+      .post("/api/sessions/login")
+      .send(userMock)
+      .redirects(0);
+    
+    expect(statusCode).to.be.equal(302);
+    expect(ok).to.be.not.ok;
+
+    const [key, value] = headers["set-cookie"][0].split("=");
+    this.cookie.key = key;
+    this.cookie.value = value;
+  });
+
 });

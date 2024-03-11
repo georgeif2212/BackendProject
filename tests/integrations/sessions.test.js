@@ -11,6 +11,7 @@ describe("Sessions testing", function () {
       password: "ola1234",
     };
   });
+
   it("Should register a new user", async function () {
     const userMock = {
       first_name: "Prueba",
@@ -58,7 +59,7 @@ describe("Sessions testing", function () {
 
   it("Should change user's role to premium", async function () {
     const { statusCode, ok, _body } = await requester
-      .patch(`/api/sessions/users/premium/${this.user._id}`)
+      .patch(`/api/users/premium/${this.user._id}`)
       .set("Cookie", [`${this.cookie.key}=${this.cookie.value}`]);
     expect(statusCode).to.be.equal(201);
     expect(ok).to.be.ok;
@@ -66,5 +67,13 @@ describe("Sessions testing", function () {
       "message",
       "The user role has been changed"
     );
+  });
+
+  after(async function () {
+    const { statusCode, ok } = await requester.delete(
+      `/api/users/${this.user._id}`
+    );
+    expect(statusCode).to.be.equal(200);
+    expect(ok).to.be.ok;
   });
 });

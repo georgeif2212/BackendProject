@@ -13,8 +13,12 @@ router.patch("/premium/:uid", async (req, res, next) => {
 });
 
 router.delete("/:uid", async (req, res, next) => {
-  await UsersController.deleteById(req.params.uid);
-  res.status(204);
+  try {
+    await UsersController.deleteById(req.params.uid);
+    res.status(200).json({ message: "User deleted" });
+  } catch (error) {
+    next(error);
+  }
 });
 
 export default router;

@@ -50,8 +50,21 @@ describe("Sessions testing", function () {
       .set("Cookie", [`${this.cookie.key}=${this.cookie.value}`]);
     expect(statusCode).to.be.equal(200);
     expect(ok).to.be.ok;
+    this.user._id = _body._id;
     expect(_body).to.be.has.property("_id");
-    expect(_body).to.be.has.property("role");
+    expect(_body).to.be.has.property("role", "user");
     expect(_body).to.be.has.property("email", this.user.email);
+  });
+
+  it("Should change user's role to premium", async function () {
+    const { statusCode, ok, _body } = await requester
+      .patch(`/api/sessions/users/premium/${this.user._id}`)
+      .set("Cookie", [`${this.cookie.key}=${this.cookie.value}`]);
+    expect(statusCode).to.be.equal(201);
+    expect(ok).to.be.ok;
+    expect(_body).to.be.has.property(
+      "message",
+      "The user role has been changed"
+    );
   });
 });

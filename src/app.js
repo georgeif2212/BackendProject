@@ -9,6 +9,7 @@ import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 
 import loggerRouter from "./routers/api/logger.router.js";
+import usersRouter from "./routers/api/users.router.js";
 import productsRouter from "./routers/api/products.router.js";
 import mocksRouter from "./routers/api/mocks.router.js";
 import cartsRouter from "./routers/api/carts.router.js";
@@ -54,6 +55,7 @@ if (process.env.NODE_ENV !== "production") {
 }
 
 app.use("/api", productsRouter, cartsRouter, sessionsRouter, mocksRouter);
+app.use("/api/users", usersRouter);
 app.use("/api/sessions", sessionsRouter);
 app.use("/views", viewsRouter, indexRouter);
 app.use("/logger", loggerRouter);

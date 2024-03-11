@@ -88,8 +88,8 @@ router.post(
       }
 
       await CartsController.updateById(cartId, cartProducts);
-      res.status(200).json({
-        id: cart.id,
+      res.status(201).json({
+        _id: cart._id,
         products: cartProducts,
       });
     } catch (error) {
@@ -122,7 +122,7 @@ router.delete("/carts/:cartId/products/:productId", async (req, res, next) => {
 
     await CartsController.updateById(cartId, cartProducts);
     res.status(200).json({
-      id: cart.id,
+      _id: cart._id,
       products: cartProducts,
     });
   } catch (error) {
@@ -152,7 +152,7 @@ router.put("/carts/:cartId", async (req, res) => {
     req.logger.debug("Debug message: cartProducts", cartProducts);
     await CartsController.updateById(cartId, cartProducts);
     res.status(200).json({
-      id: cart.id,
+      _id: cart._id,
       products: cartProducts,
     });
   } catch (error) {
@@ -187,7 +187,7 @@ router.put("/carts/:cartId/products/:productId", async (req, res) => {
 
     await CartsController.updateById(cartId, cartProducts);
     res.status(200).json({
-      id: cart.id,
+      _id: cart._id,
       products: cartProducts,
     });
   } catch (error) {
@@ -205,7 +205,7 @@ router.delete("/carts/:cartId", async (req, res) => {
     const cartProducts = [];
     await CartsController.updateById(cartId, cartProducts);
     res.status(200).json({
-      id: cart.id,
+      _id: cart._id,
       products: cartProducts,
     });
   } catch (error) {

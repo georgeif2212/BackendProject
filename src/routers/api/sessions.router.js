@@ -11,6 +11,9 @@ router.post(
   "/login",
   passport.authenticate("login", { failureRedirect: "/login", session: false }),
   async (req, res, next) => {
+    await UsersController.updateById(req.user._id, {
+      last_connection: Date.now(),
+    });
     const token = generateToken(req.user);
     res
       .cookie("access_token", token, {
@@ -79,9 +82,13 @@ router.get("/me", authMiddleware("jwt"), (req, res) => {
   res.status(200).json(req.user);
 });
 
-
-router.get("/logout", (req, res) => {
-  res.clearCookie("access_token").redirect("/views/login");
+router.get("/logout", authMiddleware("jwt"), async (req, res) => {
+  try {
+    await UsersController.updateById(req.user._id, {
+      last_connection: Date.now(),
+    });
+    res.clearCookie("access_token").redirect("/views/login");
+  } catch (error) {}
 });
 
 router.get(

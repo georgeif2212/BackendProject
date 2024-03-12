@@ -3,7 +3,6 @@ import UsersController from "../../controllers/users.controller.js";
 import passport from "passport";
 import { generateToken } from "../../utils/utils.js";
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
-import { nextTick } from "process";
 
 const router = Router();
 

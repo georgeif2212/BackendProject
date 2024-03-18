@@ -8,6 +8,7 @@ import {
   buildResponseDelete,
 } from "../../utils/utils.js";
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
+import { uploaderMiddleware } from "../../utils/uploader.js";
 
 const router = Router();
 // * Ruta con path porque sin ella no me daba

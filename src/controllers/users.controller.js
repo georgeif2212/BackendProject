@@ -163,16 +163,36 @@ export default class UsersController {
 
   static async uploadDocuments(uid, documents) {
     const user = await UsersController.getById(uid);
-    user.documents = Object.keys(documents).map(function (key) {
+    const updatedDocuments = user.documents || [];
+
+    Object.keys(documents).map(function (key) {
       const document = documents[key][0];
-      return {
-        name: `${document.fieldname}`,
-        reference: `${path.join(
-          __dirname,
-          `../../public/documents/${document.filename}`
-        )}`,
-      };
+      const existingDocumentIndex = updatedDocuments.findIndex(
+        (doc) => doc.name === document.fieldname
+      );
+      
+      // * Si el documento existe, se actualiza
+      if (existingDocumentIndex !== -1) {
+        updatedDocuments[existingDocumentIndex] = {
+          name: document.fieldname,
+          reference: path.join(
+            __dirname,
+            `../../public/documents/${document.filename}`
+          ),
+        };
+      } else {
+        // * Si el documento no existe, se agrega
+        updatedDocuments.push({
+          name: document.fieldname,
+          reference: path.join(
+            __dirname,
+            `../../public/documents/${document.filename}`
+          ),
+        });
+      }
     });
+    
+    user.documents = updatedDocuments;
 
     return UsersController.updateById(user._id, user);
   }

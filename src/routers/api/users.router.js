@@ -34,6 +34,7 @@ router.post(
   async (req, res, next) => {
     try {
       await UsersController.uploadDocuments(req.user._id, req.files);
+      res.status(200).redirect("/views/profile");
     } catch (error) {
       next(error);
     }

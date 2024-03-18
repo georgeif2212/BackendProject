@@ -23,7 +23,7 @@ const router = Router();
 router.get(
   "/products",
   authMiddleware("jwt"),
-  authRolesMiddleware(["user"]),
+  authRolesMiddleware(["user", "premium"]),
   async (req, res) => {
     const { limit = 10, page = 1, sort, search } = req.query;
 

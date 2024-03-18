@@ -48,15 +48,16 @@ export const uploaderMiddleware = (typeFile) => {
         user: { _id },
       } = req;
       let filename = null;
+      const fileExtension = file.mimetype.split("/");
       switch (file.fieldname) {
         case "identification":
-          filename = `${_id}_identification`;
+          filename = `${_id}_identification.${fileExtension[1]}`;
           break;
         case "proofOfAddress":
-          filename = `${_id}_proofOfAdress`;
+          filename = `${_id}_proofOfAdress.${fileExtension[1]}`;
           break;
         case "bankStatement":
-          filename = `${_id}_bankStatement`;
+          filename = `${_id}_bankStatement.${fileExtension[1]}`;
           break;
         default:
           filename = `${_id}_${file.originalname}`;

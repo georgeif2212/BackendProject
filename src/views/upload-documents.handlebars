@@ -1,0 +1,15 @@
+<form action="/api/users/{{uid}}/documents" method="post" enctype="multipart/form-data">
+  <div>
+    <label for="identification">Identificación:</label>
+    <input type="file" id="identification" name="identification" accept="image/*,.pdf" required>
+  </div>
+  <div>
+    <label for="proof_of_address">Comprobante de domicilio:</label>
+    <input type="file" id="proof_of_address" name="proofOfAddress" accept="image/*,.pdf" required>
+  </div>
+  <div>
+    <label for="bank_statement">Comprobante de estado de cuenta:</label>
+    <input type="file" id="bank_statement" name="bankStatement" accept="image/*,.pdf" required>
+  </div>
+  <button type="submit">Subir documentos</button>
+</form>

@@ -7,6 +7,7 @@ import {
 } from "../utils/utils.js";
 import {
   generatorAdminPremiumError,
+  generatorDocumentsAreMissingError,
   generatorUserAlreadyExistsError,
   generatorUserError,
   generatorUserIdError,
@@ -145,10 +146,33 @@ export default class UsersController {
     user.password = password;
     UsersController.updateById(user._id, user);
   }
-
   static async premiumOrNotUser(data) {
     const user = await UsersController.getById(data.uid);
+    // Verificar si el usuario tiene los documentos requeridos
+    const requiredDocuments = [
+      "identification",
+      "proofOfAddress",
+      "bankStatement",
+    ];
+    const userDocuments = user.documents.map((doc) => doc.name);
 
+    const missingDocuments = requiredDocuments.filter(
+      (document) => !userDocuments.includes(document)
+    );
+
+    // ! Si el usuario no tiene todos los documentos requeridos, se le asigna el rol de "user"
+    if (missingDocuments.length > 0) {
+      user.role = "user";
+      await UsersController.updateById(user._id, user);
+      CustomError.create({
+        name: "Required documents are missing",
+        cause: generatorDocumentsAreMissingError(),
+        message: `There are required documents missing`,
+        code: EnumsError.BAD_REQUEST_ERROR,
+      });
+    }
+
+    // * Si el usuario es administrador, lanzar un error
     if (user.role === "admin") {
       CustomError.create({
         name: "Invalid admin change",
@@ -158,7 +182,7 @@ export default class UsersController {
       });
     }
     user.role = user.role == "user" ? "premium" : "user";
-    UsersController.updateById(user._id, user);
+    await UsersController.updateById(user._id, user);
   }
 
   static async uploadDocuments(uid, documents) {
@@ -170,7 +194,7 @@ export default class UsersController {
       const existingDocumentIndex = updatedDocuments.findIndex(
         (doc) => doc.name === document.fieldname
       );
-      
+
       // * Si el documento existe, se actualiza
       if (existingDocumentIndex !== -1) {
         updatedDocuments[existingDocumentIndex] = {
@@ -191,7 +215,7 @@ export default class UsersController {
         });
       }
     });
-    
+
     user.documents = updatedDocuments;
 
     return UsersController.updateById(user._id, user);

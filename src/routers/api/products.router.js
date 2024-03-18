@@ -32,26 +32,31 @@ router.get("/products", async (req, res) => {
   res.status(200).json(buildResponsePaginated({ ...result, sort, search }));
 });
 
-router.post("/products", authMiddleware("jwt"), async (req, res, next) => {
-  const { body } = req;
-  const existingProduct = await ProductsController.alreadyExists(body.code);
+router.post(
+  "/products",
+  authMiddleware("jwt"),
+  uploaderMiddleware("product").single("photo"),
+  async (req, res, next) => {
+    const { body } = req;
+    const existingProduct = await ProductsController.alreadyExists(body.code);
 
-  if (existingProduct) {
-    return res
-      .status(400)
-      .json({ error: "Product with the same code already exists" });
-  }
+    if (existingProduct) {
+      return res
+        .status(400)
+        .json({ error: "Product with the same code already exists" });
+    }
 
-  // * Try catch para ver si el producto cumple con todos los campos requeridos
-  try {
-    body.owner = req.user._id;
-    const product = await ProductsController.create(body);
-    req.logger.debug("Product created");
-    res.status(201).json(product);
-  } catch (error) {
-    next(error);
+    // * Try catch para ver si el producto cumple con todos los campos requeridos
+    try {
+      body.owner = req.user._id;
+      const product = await ProductsController.create(body);
+      req.logger.debug("Product created");
+      res.status(201).json(product);
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 router.get("/products/:productId", async (req, res, next) => {
   const { productId } = req.params;

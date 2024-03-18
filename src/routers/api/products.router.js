@@ -40,7 +40,6 @@ router.post(
   async (req, res, next) => {
     const { body } = req;
     const existingProduct = await ProductsController.alreadyExists(body.code);
-
     if (existingProduct) {
       return res
         .status(400)
@@ -50,8 +49,12 @@ router.post(
     // * Try catch para ver si el producto cumple con todos los campos requeridos
     try {
       body.owner = req.user._id;
-      const product = await ProductsController.create(body);
-      req.logger.debug("Product created");
+      console.log();
+      const product = await ProductsController.create({
+        body,
+        files: req.files,
+      });
+      req.logger.debug("Product created", product);
       res.status(201).json(product);
     } catch (error) {
       next(error);

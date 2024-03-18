@@ -59,6 +59,9 @@ export const uploaderMiddleware = (typeFile) => {
         case "bankStatement":
           filename = `${_id}_bankStatement.${fileExtension[1]}`;
           break;
+        case "photos":
+          filename = `${_id}_${Date.now() / 1000}.${fileExtension[1]}`;
+          break;
         default:
           filename = `${_id}_${file.originalname}`;
       }

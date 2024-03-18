@@ -4,7 +4,7 @@
   <div style="display: flex; justify-content:space-between">
     <div style="width: 40%;">
       <h2>Formulario para crear producto</h2>
-      <form action="/api/products" method="post">
+      <form action="/api/products" method="post" enctype="multipart/form-data">
         <label for="title">Título:</label>
         <input id="title" type="text" name="title" required /><br />
         <label for="description">Descripción:</label>
@@ -13,12 +13,20 @@
         <input id="category" type="text" name="category" required /><br />
         <label for="price">Precio:</label>
         <input id="price" type="number" name="price" required /><br />
-        <label for="thumbnail">URL de la Imagen (Thumbnail):</label>
-        <input id="thumbnail" type="url" name="thumbnail" required /><br />
         <label for="code">Código:</label>
         <input id="code" type="text" name="code" required /><br />
         <label for="stock">Cantidad en Stock:</label>
         <input id="stock" type="number" name="stock" required /><br />
+        <div>
+          <label for="photos">Fotos:</label>
+          <input
+            type="file"
+            id="photos"
+            name="photos"
+            accept="image/*"
+            multiple="multiple"
+          />
+        </div>
         <input type="submit" value="Enviar" />
       </form>
     </div>

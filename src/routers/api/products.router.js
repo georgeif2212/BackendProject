@@ -35,7 +35,7 @@ router.get("/products", async (req, res) => {
 router.post(
   "/products",
   authMiddleware("jwt"),
-  uploaderMiddleware("product").single("photo"),
+  uploaderMiddleware("product").array("photos"),
   async (req, res, next) => {
     const { body } = req;
     const existingProduct = await ProductsController.alreadyExists(body.code);

@@ -16,6 +16,8 @@ import {
 import { CustomError } from "../utils/CustomError.js";
 import EnumsError from "../utils/EnumsError.js";
 import CartsController from "./carts.controller.js";
+import { __dirname } from "../utils/utils.js";
+import path from "path";
 export default class UsersController {
   static get(criteria, options) {
     return UsersService.getPaginate(criteria, options);
@@ -158,4 +160,22 @@ export default class UsersController {
     user.role = user.role == "user" ? "premium" : "user";
     UsersController.updateById(user._id, user);
   }
+
+  static async uploadDocuments(uid, documents) {
+    const user = await UsersController.getById(uid);
+    user.documents = Object.keys(documents).map(function (key) {
+      const document = documents[key][0];
+      return {
+        name: `${document.fieldname}`,
+        reference: `${path.join(
+          __dirname,
+          `../../public/documents/${document.filename}`
+        )}`,
+      };
+    });
+
+    return UsersController.updateById(user._id, user);
+  }
+
+  static async deleteDocuments(document) {}
 }

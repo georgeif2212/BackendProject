@@ -14,6 +14,10 @@ export const generatorAdminPremiumError = () => {
   return `Admin cant be changed to premium user`;
 };
 
+export const generatorDocumentsAreMissingError = () => {
+  return `Required documents are missing`;
+};
+
 export const generatorUserLoginDataError = () => {
   return `Invalid email or password`;
 };

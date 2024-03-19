@@ -21,7 +21,7 @@ const ProductSchema = new mongoose.Schema(
     owner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      default: "65a1936875ec102080026e04",
+      default: "65f8f9b1eb340ec36076d2d5",
     },
   },
   { timestamps: true }

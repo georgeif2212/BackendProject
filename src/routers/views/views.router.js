@@ -43,7 +43,9 @@ router.get(
       baseUrl
     );
     // ! Handlebars no me está dejando iterar el array photso que está en payload por eso está fuera la referencia
-    data.payload[0].mainPhoto = data.payload[0].photos[0].reference;
+    data.payload.forEach((producto) => {
+      producto.mainPhoto = producto.photos[0].reference;
+    });
     res.status(200).render("home", {
       title: "Products 🧴",
       ...data,

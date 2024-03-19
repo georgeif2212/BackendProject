@@ -47,7 +47,7 @@ export default class ProductsController {
     data.body.photos = data.files.map((file) => {
       return {
         name: file.filename,
-        reference: file.path,
+        reference: `/images/products/${file.filename}`,
       };
     });
     return ProductsService.create(data.body);

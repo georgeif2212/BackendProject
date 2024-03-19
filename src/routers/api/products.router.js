@@ -8,6 +8,7 @@ import {
   buildResponseDelete,
 } from "../../utils/utils.js";
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
+import { uploaderMiddleware } from "../../utils/uploader.js";
 
 const router = Router();
 // * Ruta con path porque sin ella no me daba
@@ -32,26 +33,34 @@ router.get("/products", async (req, res) => {
   res.status(200).json(buildResponsePaginated({ ...result, sort, search }));
 });
 
-router.post("/products", authMiddleware("jwt"), async (req, res, next) => {
-  const { body } = req;
-  const existingProduct = await ProductsController.alreadyExists(body.code);
+router.post(
+  "/products",
+  authMiddleware("jwt"),
+  uploaderMiddleware("product").array("photos"),
+  async (req, res, next) => {
+    const { body } = req;
+    const existingProduct = await ProductsController.alreadyExists(body.code);
+    if (existingProduct) {
+      return res
+        .status(400)
+        .json({ error: "Product with the same code already exists" });
+    }
 
-  if (existingProduct) {
-    return res
-      .status(400)
-      .json({ error: "Product with the same code already exists" });
+    // * Try catch para ver si el producto cumple con todos los campos requeridos
+    try {
+      body.owner = req.user._id;
+      console.log();
+      const product = await ProductsController.create({
+        body,
+        files: req.files,
+      });
+      req.logger.debug("Product created", product);
+      res.status(201).json(product);
+    } catch (error) {
+      next(error);
+    }
   }
-
-  // * Try catch para ver si el producto cumple con todos los campos requeridos
-  try {
-    body.owner = req.user._id;
-    const product = await ProductsController.create(body);
-    req.logger.debug("Product created");
-    res.status(201).json(product);
-  } catch (error) {
-    next(error);
-  }
-});
+);
 
 router.get("/products/:productId", async (req, res, next) => {
   const { productId } = req.params;

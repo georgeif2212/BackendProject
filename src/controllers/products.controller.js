@@ -34,27 +34,23 @@ export default class ProductsController {
   }
 
   static create(data) {
-    const { title, description, price, thumbnail, code, stock } = data;
-
-    const requiredFields = [
-      "title",
-      "description",
-      "price",
-      "thumbnail",
-      "code",
-      "stock",
-    ];
-    const missingFields = requiredFields.filter((field) => !data[field]);
-
+    const requiredFields = ["title", "description", "price", "code", "stock"];
+    const missingFields = requiredFields.filter((field) => !data.body[field]);
     if (missingFields.length > 0) {
       CustomError.create({
         name: "Invalid data product",
         cause: generatorProductError(data),
-        message: `Array must be empty`,
+        message: `There are required files empty`,
         code: EnumsError.BAD_REQUEST_ERROR,
       });
     }
-    return ProductsService.create(data);
+    data.body.photos = data.files.map((file) => {
+      return {
+        name: file.filename,
+        reference: `/images/products/${file.filename}`,
+      };
+    });
+    return ProductsService.create(data.body);
   }
 
   static async updateById(pid, data) {

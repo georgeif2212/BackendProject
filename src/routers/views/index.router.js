@@ -33,4 +33,11 @@ router.get("/create-new-password", tokenRecoverPassword, async (req, res) => {
   });
 });
 
+router.get("/upload-documents", authMiddleware("jwt"), (req, res) => {
+  res.render("upload-documents", {
+    title: "Upload documents",
+    uid: req.user._id,
+  });
+});
+
 export default router;

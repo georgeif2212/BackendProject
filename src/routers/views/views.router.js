@@ -23,7 +23,7 @@ const router = Router();
 router.get(
   "/products",
   authMiddleware("jwt"),
-  authRolesMiddleware(["user"]),
+  authRolesMiddleware(["user", "premium"]),
   async (req, res) => {
     const { limit = 10, page = 1, sort, search } = req.query;
 
@@ -42,6 +42,10 @@ router.get(
       { ...result, sort, search, infoUser },
       baseUrl
     );
+    // ! Handlebars no me está dejando iterar el array photso que está en payload por eso está fuera la referencia
+    data.payload.forEach((producto) => {
+      producto.mainPhoto = producto.photos[0].reference;
+    });
     res.status(200).render("home", {
       title: "Products 🧴",
       ...data,

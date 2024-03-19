@@ -1,5 +1,7 @@
 import { Router } from "express";
 import UsersController from "../../controllers/users.controller.js";
+import { authMiddleware } from "../../middlewares/auth.middleware.js";
+import { uploaderMiddleware } from "../../utils/uploader.js";
 
 const router = Router();
 
@@ -20,5 +22,23 @@ router.delete("/:uid", async (req, res, next) => {
     next(error);
   }
 });
+
+router.post(
+  "/:uid/documents",
+  authMiddleware("jwt"),
+  uploaderMiddleware("document").fields([
+    { name: "identification" },
+    { name: "proofOfAddress" },
+    { name: "bankStatement" },
+  ]),
+  async (req, res, next) => {
+    try {
+      await UsersController.uploadDocuments(req.user._id, req.files);
+      res.status(200).redirect("/views/profile");
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 export default router;

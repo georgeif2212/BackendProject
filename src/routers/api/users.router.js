@@ -2,6 +2,7 @@ import { Router } from "express";
 import UsersController from "../../controllers/users.controller.js";
 import { authMiddleware } from "../../middlewares/auth.middleware.js";
 import { uploaderMiddleware } from "../../utils/uploader.js";
+import { buildResponsePaginatedProducts, buildResponsePaginatedUsers } from "../../utils/utils.js";
 
 const router = Router();
 
@@ -40,5 +41,26 @@ router.post(
     }
   }
 );
+
+router.get("/", authMiddleware("jwt"), async (req, res, next) => {
+  try {
+    const { limit = 10, page = 1, sort, search } = req.query;
+
+    const criteria = {};
+    const options = { limit, page };
+    if (sort) {
+      options.sort = { price: sort };
+    }
+    if (search) {
+      criteria.category = search;
+    }
+
+    const result = await UsersController.get(criteria, options);
+    console.log(result);
+    res.status(200).json(buildResponsePaginatedUsers({ ...result, sort, search }));
+  } catch (error) {
+    next(error);
+  }
+});
 
 export default router;

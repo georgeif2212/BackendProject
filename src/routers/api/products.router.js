@@ -30,7 +30,7 @@ router.get("/products", async (req, res) => {
   }
 
   const result = await ProductsController.get(criteria, options);
-  res.status(200).json(buildResponsePaginated({ ...result, sort, search }));
+  res.status(200).json(buildResponsePaginatedProducts({ ...result, sort, search }));
 });
 
 router.post(

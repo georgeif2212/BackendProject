@@ -2,7 +2,7 @@
 import ProductsController from "../../controllers/products.controller.js";
 import { Router } from "express";
 import {
-  buildResponsePaginated,
+  buildResponsePaginatedProducts,
   __dirname,
   buildResponseUpdate,
   buildResponseDelete,

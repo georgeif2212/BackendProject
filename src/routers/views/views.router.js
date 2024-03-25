@@ -7,7 +7,7 @@ import {
 } from "../../middlewares/auth.middleware.js";
 import { Router } from "express";
 import { emit } from "../../socket.js";
-import { buildResponsePaginated } from "../../utils/utils.js";
+import { buildResponsePaginatedProducts } from "../../utils/utils.js";
 import UsersController from "../../controllers/users.controller.js";
 import TicketsController from "../../controllers/tickets.controller.js";
 
@@ -38,7 +38,7 @@ router.get(
     const baseUrl = "http://localhost:8080/views/products";
     const result = await ProductsController.get(criteria, options);
     const infoUser = await UsersController.getById(req.user._id);
-    const data = buildResponsePaginated(
+    const data = buildResponsePaginatedProducts(
       { ...result, sort, search, infoUser },
       baseUrl
     );

@@ -11,24 +11,12 @@ const __filename = url.fileURLToPath(import.meta.url);
 const JWT_SECRET = config.jwtSecret;
 export const __dirname = path.dirname(__filename);
 
-export const URL_BASE = "http://localhost:8080/api/products";
-
-export const buildResponsePaginatedProducts = (data, baseUrl = URL_BASE) => {
+export const buildResponsePaginated = (data, baseUrl = URL_BASE, payloadKey) => {
   return {
-    //status:success/error
-    //payload: Resultado de los productos solicitados
-    //totalPages: Total de páginas
-    //prevPage: Página anterior
-    //nextPage: Página siguiente
-    //page: Página actual
-    //hasPrevPage: Indicador para saber si la página previa existe
-    //hasNextPage: Indicador para saber si la página siguiente existe.
-    //prevLink: Link directo a la página previa (null si hasPrevPage=false)
-    //nextLink: Link directo a la página siguiente (null si hasNextPage=false)
     status: "success",
-    payload: data.products,
-    infoUser: data.infoUser,
+    payload: data[payloadKey],
     totalPages: data.totalPages,
+    infoUser: data.infoUser,
     prevPage: data.prevPage,
     nextPage: data.nextPage,
     page: data.page,
@@ -42,35 +30,17 @@ export const buildResponsePaginatedProducts = (data, baseUrl = URL_BASE) => {
       : null,
   };
 };
+export const URL_BASE = "http://localhost:8080/api";
+export const buildResponsePaginatedProducts = (data, baseUrl = `${URL_BASE}/products`) => {
+  return buildResponsePaginated(data, baseUrl, 'products');
+};
 
-export const URL_BASE_CARTS = "http://localhost:8080/api/carts";
-export const buildResponsePaginatedCarts = (data, baseUrl = URL_BASE_CARTS) => {
-  return {
-    //status:success/error
-    status: "success",
-    //payload: Resultado de los productos solicitados
-    payload: data.carts,
-    //totalPages: Total de páginas
-    totalPages: data.totalPages,
-    //prevPage: Página anterior
-    prevPage: data.prevPage,
-    //nextPage: Página siguiente
-    nextPage: data.nextPage,
-    //page: Página actual
-    page: data.page,
-    //hasPrevPage: Indicador para saber si la página previa existe
-    hasPrevPage: data.hasPrevPage,
-    //hasNextPage: Indicador para saber si la página siguiente existe.
-    hasNextPage: data.hasNextPage,
-    //prevLink: Link directo a la página previa (null si hasPrevPage=false)
-    prevLink: data.hasPrevPage
-      ? `${baseUrl}?limit=${data.limit}&page=${data.prevPage}`
-      : null,
-    //nextLink: Link directo a la página siguiente (null si hasNextPage=false)
-    nextLink: data.hasNextPage
-      ? `${baseUrl}?limit=${data.limit}&page=${data.nextPage}`
-      : null,
-  };
+export const buildResponsePaginatedUsers = (data, baseUrl = `${URL_BASE}/users`) => {
+  return buildResponsePaginated(data, baseUrl, 'users');
+};
+
+export const buildResponsePaginatedCarts = (data, baseUrl = `${URL_BASE}/carts`) => {
+  return buildResponsePaginated(data, baseUrl, 'carts');
 };
 
 export const buildResponseUpdate = () => {

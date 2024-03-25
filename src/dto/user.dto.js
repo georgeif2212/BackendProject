@@ -9,14 +9,16 @@ export default class UserDTO {
     this.cartId = user.cartId;
     this.password = user.password;
     this.documents = user.documents;
+    this.last_connection = user.last_connection
   }
 
-  static getAllUsers(user) {
+  static generalInfoUsers(user) {
     return {
       first_name: user.first_name,
       last_name: user.last_name,
       email: user.email,
       role: user.role,
+      last_connection: user.last_connection
     };
   }
 }

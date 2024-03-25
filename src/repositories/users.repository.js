@@ -3,8 +3,22 @@ import UserDaoMongoDB from "../dao/user.dao.js";
 
 export default class UserRepository {
   static async getPaginate(filter = {}, opts = {}) {
-    const users = await UserDaoMongoDB.getPaginate(filter, opts);
-    return users.map((user) => new UserDto(user));
+    const paginatedUsers = await UserDaoMongoDB.getPaginate(filter, opts);
+    const users = paginatedUsers.docs.map(
+      (user) => UserDto.getAllUsers(user)
+    );
+    return {
+      users,
+      totalDocs: paginatedUsers.totalDocs,
+      limit: paginatedUsers.limit,
+      totalPages: paginatedUsers.totalPages,
+      page: paginatedUsers.page,
+      pagingCounter: paginatedUsers.pagingCounter,
+      hasPrevPage: paginatedUsers.hasPrevPage,
+      hasNextPage: paginatedUsers.hasNextPage,
+      prevPage: paginatedUsers.prevPage,
+      nextPage: paginatedUsers.nextPage,
+    };
   }
 
   static async getById(uid) {

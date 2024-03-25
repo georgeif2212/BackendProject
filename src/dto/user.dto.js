@@ -8,6 +8,15 @@ export default class UserDTO {
     this.age = user.age;
     this.cartId = user.cartId;
     this.password = user.password;
-    this.documents=user.documents;
+    this.documents = user.documents;
+  }
+
+  static getAllUsers(user) {
+    return {
+      first_name: user.first_name,
+      last_name: user.last_name,
+      email: user.email,
+      role: user.role,
+    };
   }
 }

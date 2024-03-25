@@ -56,7 +56,6 @@ router.get("/", authMiddleware("jwt"), async (req, res, next) => {
     }
 
     const result = await UsersController.get(criteria, options);
-    console.log(result);
     res.status(200).json(buildResponsePaginatedUsers({ ...result, sort, search }));
   } catch (error) {
     next(error);

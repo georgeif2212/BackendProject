@@ -5,7 +5,7 @@ export default class UserRepository {
   static async getPaginate(filter = {}, opts = {}) {
     const paginatedUsers = await UserDaoMongoDB.getPaginate(filter, opts);
     const users = paginatedUsers.docs.map(
-      (user) => UserDto.getAllUsers(user)
+      (user) => UserDto.generalInfoUsers(user)
     );
     return {
       users,
@@ -23,8 +23,7 @@ export default class UserRepository {
 
   static async getAll(filter = {}) {
     const users = await UserDaoMongoDB.getAll(filter);
-    console.log(users);
-    return users.map((user) => new UserDto(user));
+    return users.map((user) => UserDto.generalInfoUsers(user));
   }
 
   static async getById(uid) {

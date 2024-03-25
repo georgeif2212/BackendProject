@@ -5,6 +5,10 @@ export default class UserDaoMongoDB {
     return UserModel.paginate(criteria, options);
   }
 
+  static getAll(criteria = {}) {
+    return UserModel.find(criteria);
+  }
+
   static getFilter(criteria = {}) {
     return UserModel.find(criteria);
   }

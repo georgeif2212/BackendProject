@@ -21,6 +21,12 @@ export default class UserRepository {
     };
   }
 
+  static async getAll(filter = {}) {
+    const users = await UserDaoMongoDB.getAll(filter);
+    console.log(users);
+    return users.map((user) => new UserDto(user));
+  }
+
   static async getById(uid) {
     let user = await UserDaoMongoDB.getFilter({ _id: uid });
     if (user.length !== 0) {

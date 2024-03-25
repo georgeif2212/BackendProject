@@ -24,6 +24,10 @@ export default class UsersController {
     return UsersService.getPaginate(criteria, options);
   }
 
+  static getAll() {
+    return UsersService.getAll({});
+  }
+
   static async login(data) {
     const { email, password } = data;
     if (!email || !password) {
@@ -221,5 +225,5 @@ export default class UsersController {
     return UsersController.updateById(user._id, user);
   }
 
-  static async deleteDocuments(document) {}
+  static async deleteDocuments(document) { }
 }

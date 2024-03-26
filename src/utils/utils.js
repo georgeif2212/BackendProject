@@ -11,7 +11,11 @@ const __filename = url.fileURLToPath(import.meta.url);
 const JWT_SECRET = config.jwtSecret;
 export const __dirname = path.dirname(__filename);
 
-export const buildResponsePaginated = (data, baseUrl = URL_BASE, payloadKey) => {
+export const buildResponsePaginated = (
+  data,
+  baseUrl = URL_BASE,
+  payloadKey
+) => {
   return {
     status: "success",
     payload: data[payloadKey],
@@ -31,16 +35,25 @@ export const buildResponsePaginated = (data, baseUrl = URL_BASE, payloadKey) => 
   };
 };
 export const URL_BASE = "http://localhost:8080/api";
-export const buildResponsePaginatedProducts = (data, baseUrl = `${URL_BASE}/products`) => {
-  return buildResponsePaginated(data, baseUrl, 'products');
+export const buildResponsePaginatedProducts = (
+  data,
+  baseUrl = `${URL_BASE}/products`
+) => {
+  return buildResponsePaginated(data, baseUrl, "products");
 };
 
-export const buildResponsePaginatedUsers = (data, baseUrl = `${URL_BASE}/users`) => {
-  return buildResponsePaginated(data, baseUrl, 'users');
+export const buildResponsePaginatedUsers = (
+  data,
+  baseUrl = `${URL_BASE}/users`
+) => {
+  return buildResponsePaginated(data, baseUrl, "users");
 };
 
-export const buildResponsePaginatedCarts = (data, baseUrl = `${URL_BASE}/carts`) => {
-  return buildResponsePaginated(data, baseUrl, 'carts');
+export const buildResponsePaginatedCarts = (
+  data,
+  baseUrl = `${URL_BASE}/carts`
+) => {
+  return buildResponsePaginated(data, baseUrl, "carts");
 };
 
 export const buildResponseUpdate = () => {
@@ -115,6 +128,17 @@ export const sendRecoverPasswordEmail = async (user) => {
       <a href="${recoveryLink}" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px;">Recuperar Contraseña</a>
     </div>`
   );
+};
+
+// * Función to delete inactive users
+export const inactiveUsers = (user) => {
+  const currentDate = new Date();
+  const lastConnectionDate = new Date(user.last_connection);
+  const timeDifference = currentDate.getTime() - lastConnectionDate.getTime();
+  const daysDifference = timeDifference / (1000 * 3600 * 24); // Convertir a días
+
+  // * Eliminar usuarios que no se han conectado en más de 30 días
+  if (daysDifference > 30) return user;
 };
 
 export const generateProduct = () => {

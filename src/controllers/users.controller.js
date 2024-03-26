@@ -1,10 +1,6 @@
 import UsersService from "../services/users.service.js";
-import {
-  createHash,
-  isValidPassword,
-  sendRecoverPasswordEmail,
-  validateToken,
-} from "../utils/utils.js";
+import { createHash, isValidPassword, validateToken } from "../utils/utils.js";
+import { sendRecoverPasswordEmail } from "../utils/emailTemplates.js";
 import {
   generatorAdminPremiumError,
   generatorDocumentsAreMissingError,
@@ -225,5 +221,5 @@ export default class UsersController {
     return UsersController.updateById(user._id, user);
   }
 
-  static async deleteDocuments(document) { }
+  static async deleteDocuments(document) {}
 }

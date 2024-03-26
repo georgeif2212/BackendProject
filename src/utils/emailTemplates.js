@@ -37,3 +37,16 @@ export const sendRecoverPasswordEmail = async (user) => {
     </div>`
   );
 };
+
+export const sendDeletedProductEmail = async (user, product) => {
+  const emailService = EmailService.getInstance();
+  const result = await emailService.sendEmail(
+    user.email,
+    `Tu producto fue eliminado`,
+    `<div>
+      <h1>Hola ${user.first_name}! </h1>
+      <p>Te notificamos que tu producto con nombre ${product.title} fue eliminado </p>
+    </div>`
+  );
+  return result;
+};

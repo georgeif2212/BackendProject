@@ -6,6 +6,8 @@ import {
 } from "../utils/CauseMessageError.js";
 import { CustomError } from "../utils/CustomError.js";
 import EnumsError from "../utils/EnumsError.js";
+import { sendDeletedProductEmail } from "../utils/emailTemplates.js";
+import UsersController from "./users.controller.js";
 
 export default class ProductsController {
   static get(criteria, options) {
@@ -71,7 +73,10 @@ export default class ProductsController {
       return ProductsService.deleteById(product._id);
     }
 
-    // Si no es admin ni propietario, lanza error de permiso
+    const owner = await UsersController.alreadyExists(product.owner.email);
+    if (owner.role === "premium") sendDeletedProductEmail(owner, product);
+
+    //Si no es admin ni propietario, lanza error de permiso
     CustomError.create({
       name: "Invalid permission",
       cause: generatorPermissionError(),

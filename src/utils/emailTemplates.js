@@ -1,3 +1,7 @@
+import EmailService from "../services/email.service.js";
+import { generateToken } from "./utils.js";
+import path from "path";
+
 export const sendWelcomeEmail = async (user) => {
   const emailService = EmailService.getInstance();
   const result = await emailService.sendEmail(

@@ -3,9 +3,7 @@ import url from "url";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import config from "../config/config.js";
-import EmailService from "../services/email.service.js";
 import { faker } from "@faker-js/faker";
-// import emailTemplate from "./resources/welcomeEmail.html";
 
 const __filename = url.fileURLToPath(import.meta.url);
 const JWT_SECRET = config.jwtSecret;

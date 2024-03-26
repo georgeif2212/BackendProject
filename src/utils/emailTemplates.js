@@ -45,7 +45,7 @@ export const sendDeletedProductEmail = async (user, product) => {
     `Tu producto fue eliminado`,
     `<div>
       <h1>Hola ${user.first_name}! </h1>
-      <p>Te notificamos que tu producto con nombre ${product.title} fue eliminado </p>
+      <p>Te notificamos que tu producto con nombre <b>${product.title}</b> fue eliminado </p>
     </div>`
   );
   return result;

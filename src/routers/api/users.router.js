@@ -1,8 +1,16 @@
 import { Router } from "express";
 import UsersController from "../../controllers/users.controller.js";
-import { authMiddleware } from "../../middlewares/auth.middleware.js";
+import {
+  authMiddleware,
+  authRolesMiddleware,
+} from "../../middlewares/auth.middleware.js";
 import { uploaderMiddleware } from "../../utils/uploader.js";
-import { buildResponsePaginatedProducts, buildResponsePaginatedUsers } from "../../utils/utils.js";
+import {
+  buildResponseDelete,
+  buildResponsePaginatedProducts,
+  buildResponsePaginatedUsers,
+  inactiveUsers,
+} from "../../utils/utils.js";
 
 const router = Router();
 
@@ -42,6 +50,7 @@ router.post(
   }
 );
 
+// * GET ALL USERS
 router.get("/", authMiddleware("jwt"), async (req, res, next) => {
   try {
     const { limit = 10, page = 1, sort, search } = req.query;
@@ -56,10 +65,33 @@ router.get("/", authMiddleware("jwt"), async (req, res, next) => {
     }
 
     const result = await UsersController.get(criteria, options);
-    res.status(200).json(buildResponsePaginatedUsers({ ...result, sort, search }));
+    res
+      .status(200)
+      .json(buildResponsePaginatedUsers({ ...result, sort, search }));
   } catch (error) {
     next(error);
   }
 });
+
+// * DELETE INACTIVE USERS
+router.delete(
+  "/",
+  authMiddleware("jwt"),
+  authRolesMiddleware(["admin"]),
+  async (req, res, next) => {
+    try {
+      const users = await UsersController.getAll();
+      const inactiveUsersArray = users.filter((user) => inactiveUsers(user));
+      inactiveUsersArray.forEach((user) =>UsersController.deleteById(user._id));
+      
+      res.status(200).json({
+          message: "Successful",
+          payload: { deleted_users: inactiveUsersArray },
+        });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 export default router;

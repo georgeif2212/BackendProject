@@ -115,7 +115,12 @@ router.get(
   authRolesMiddleware(["user", "premium"]),
   async (req, res, next) => {
     try {
-      res.status(200).render("payment-method", { title: "Payment method 📄", });
+      res
+        .status(200)
+        .render("payment-method", {
+          title: "Payment method 📄",
+          cartId: req.user.cartId,
+        });
     } catch (error) {
       next(error);
     }

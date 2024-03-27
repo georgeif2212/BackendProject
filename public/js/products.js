@@ -27,7 +27,6 @@ document.addEventListener("DOMContentLoaded", () => {
       if (response.ok) {
         const result = await response.json();
         console.log("Producto agregado al carrito", result);
-        // Puedes realizar acciones adicionales aquí, como actualizar la interfaz de usuario
       } else {
         console.error("Error al agregar el producto al carrito");
       }

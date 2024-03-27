@@ -1,5 +1,5 @@
 import Stripe from "stripe";
-import config from "../config/config";
+import config from "../config/config.js";
 
 export default class PaymentsService {
   constructor() {

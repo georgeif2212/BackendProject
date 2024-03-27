@@ -62,7 +62,7 @@ router.get("/carts/:cartId", async (req, res, next) => {
 router.post(
   "/carts/:cartId/products/:productId",
   authMiddleware("jwt"),
-  authRolesMiddleware(["user"]),
+  authRolesMiddleware(["user", "premium"]),
   async (req, res, next) => {
     try {
       const { cartId, productId } = req.params;

@@ -1,0 +1,23 @@
+<h2>Información de Pago</h2>
+<form action="/procesar-pago" method="post">
+  <label for="numero-tarjeta">Número de Tarjeta:</label>
+  <input type="text" id="card-number" name="numero-tarjeta" placeholder="1234 5678 9012 3456" required>
+
+  <label for="caducidad">Caducidad:</label>
+  <input type="text" id="expiration" name="caducidad" placeholder="MM/AA" pattern="\d{2}/\d{2}" required>
+
+  <label for="cvv">CVV:</label>
+  <input type="number" id="cvv" name="cvv" placeholder="123" min="100" max="999" required>
+
+  <label for="country">País:</label>
+  <select id="country" name="country" required>
+    <option value="">Seleccionar país</option>
+    <option value="US">Estados Unidos</option>
+    <option value="CA">Canadá</option>
+    <option value="MX">México</option>
+    <option value="ARG">Argentina</option>
+    <option value="MX">Colombia</option>
+  </select>
+
+  <input type="submit" value="Realizar Pago">
+</form>

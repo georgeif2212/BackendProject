@@ -109,4 +109,17 @@ router.get("/tickets", authMiddleware("jwt"), async (req, res, next) => {
   }
 });
 
+router.get(
+  "/payment-method",
+  authMiddleware("jwt"),
+  authRolesMiddleware(["user", "premium"]),
+  async (req, res, next) => {
+    try {
+      res.status(200).render("payment-method", { title: "Payment method 📄", });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
+
 export default router;

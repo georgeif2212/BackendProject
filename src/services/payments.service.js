@@ -1,6 +1,6 @@
 import Stripe from "stripe";
 
-export default class PayementsService {
+export default class PaymentsService {
   constructor() {
     this.stripe = new Stripe("Secrete Key");
   }

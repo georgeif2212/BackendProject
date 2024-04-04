@@ -116,13 +116,6 @@ router.get(
   async (req, res, next) => {
     try {
       const user = await UsersController.getById(req.user._id);
-      const availableProducts = await CartsController.returnAvailableProducts(
-        user.cartId
-      );
-      console.log(availableProducts);
-      // * Se crea un payment intent
-      await CartsController.paymentIntent({ availableProducts, user });
-
       res.status(200).render("payment-method", {
         title: "Payment method 📄",
         cartId: user.cartId,

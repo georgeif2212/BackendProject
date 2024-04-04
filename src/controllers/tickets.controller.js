@@ -5,6 +5,7 @@ import {
   generatorTicketIdError,
 } from "../utils/CauseMessageError.js";
 import { CustomError } from "../utils/CustomError.js";
+import PaymentsService from "../services/payments.service.js";
 export default class TicketsController {
   static get(criteria, options) {
     return TicketsService.getPaginate(criteria, options);
@@ -27,9 +28,9 @@ export default class TicketsController {
     return ticket;
   }
 
-  static create(data) {
-    const { email, availableProducts } = data;
-    if (!email || availableProducts.length == 0) {
+  static async create(data) {
+    const { user, availableProducts } = data;
+    if (!user.email || availableProducts.length == 0) {
       CustomError.create({
         name: "Invalid ticket data",
         cause: generatorTicketError(data),
@@ -44,7 +45,7 @@ export default class TicketsController {
     const ticketInfo = {
       code,
       amount,
-      purchaser: email,
+      purchaser: user.email,
     };
 
     return TicketsService.create(ticketInfo);

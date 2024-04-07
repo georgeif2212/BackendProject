@@ -54,6 +54,13 @@ export const buildResponsePaginatedCarts = (
   return buildResponsePaginated(data, baseUrl, "carts");
 };
 
+export const buildGeneralResponse = (payload) => {
+  return {
+    status: "success",
+    payload: payload,
+  };
+};
+
 export const buildResponseUpdate = () => {
   return {
     status: "success",
@@ -91,7 +98,6 @@ export const validateToken = (token) => {
     });
   });
 };
-
 
 // * Función to delete inactive users
 export const inactiveUsers = (user) => {

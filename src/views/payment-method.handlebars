@@ -1,5 +1,5 @@
 <h2>Información de Pago</h2>
-<form id="payment-form" method="post" data-client-secret="{{clientSecret}}">
+<form id="payment-form" method="post" data-client-secret="{{clientSecret}}" data-cart-id="{{cartId}}">
   <label for="name">
     Name
   </label>
@@ -13,4 +13,5 @@
 </form>
 
 <script src="https://js.stripe.com/v3/"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="/js/stripe.js"></script>

@@ -103,7 +103,10 @@ router.get("/carts/:cartId", authMiddleware("jwt"), async (req, res, next) => {
 router.get("/tickets", authMiddleware("jwt"), async (req, res, next) => {
   try {
     const tickets = await TicketsController.getByEmail(req.user.email);
-    res.status(200).render("tickets", { title: "Tickets 📄", tickets });
+    const plainTickets = tickets.map((ticket) => ticket.toObject()); // Convertir los objetos en objetos planos
+    res
+      .status(200)
+      .render("tickets", { title: "Tickets 📄", tickets: plainTickets });
   } catch (error) {
     next(error);
   }

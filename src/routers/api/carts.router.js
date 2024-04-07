@@ -4,7 +4,10 @@ import {
   authMiddleware,
   authRolesMiddleware,
 } from "../../middlewares/auth.middleware.js";
-import { buildResponsePaginatedCarts } from "../../utils/utils.js";
+import {
+  buildGeneralResponse,
+  buildResponsePaginatedCarts,
+} from "../../utils/utils.js";
 import TicketsController from "../../controllers/tickets.controller.js";
 import { CustomError } from "../../utils/CustomError.js";
 import { generatorProductIdError } from "../../utils/CauseMessageError.js";
@@ -222,11 +225,15 @@ router.post(
   async (req, res, next) => {
     try {
       const { cartId } = req.params;
+      const availableProducts = await CartsController.returnAvailableProducts(
+        cartId,
+        true
+      );
       const ticket = await TicketsController.create({
         availableProducts,
         user: req.user,
       });
-      res.status(200).json(ticket);
+      res.status(200).json(buildGeneralResponse(ticket));
     } catch (error) {
       req.logger.error("Error message: ", error);
       next(error);

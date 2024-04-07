@@ -22,7 +22,7 @@ router.get("/register", (req, res) => {
   res.render("register", { title: "Hello People 🖐️" });
 });
 
-router.get("/email-recover-password", (req, res) => {
+router.get("/email-recover-password", authMiddleware("jwt"), (req, res) => {
   res.render("email-recover-password", { title: "Recover password-email 🖐️" });
 });
 

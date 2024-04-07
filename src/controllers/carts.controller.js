@@ -65,13 +65,15 @@ export default class CartsController {
     const notAvailableProducts = cart.products.filter((element) => {
       return element.quantity > element.product.stock;
     });
-
     // Actualiza el stock de los productos en DB si se especifica y el carrito con los productos que no se pudieron comprar
     if (shouldUpdateDB) {
-      CartsController.updateById(cid, notAvailableProducts);
+      await CartsController.updateById(cid, notAvailableProducts);
+      
       availableProducts.forEach((element) => {
         element.product.stock -= element.quantity;
-        ProductsController.updateById(element.product._id, element.product);
+        ProductsController.updateById(element.product._id, {
+          stock: element.product.stock,
+        });
       });
     }
 

@@ -9,6 +9,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const form = document.getElementById("payment-form");
   const clientSecret =
     document.getElementById("payment-form").dataset.clientSecret;
+  const cartId = document.getElementById("payment-form").dataset.cartId;
 
   let submitted = false;
   form.addEventListener("submit", async (e) => {
@@ -47,19 +48,51 @@ document.addEventListener("DOMContentLoaded", function () {
       form.querySelector("button").disabled = false;
       return;
     }
-    console.log(paymentIntent);
+
     if (paymentIntent.status == "succeeded") {
-      Swal.fire({
-        position: "center",
-        icon: "success",
-        title: "¡Tu pago ha sido exitoso!",
-        showConfirmButton: true,
-        allowOutsideClick: false,
-      }).then((result) => {
-        if (result.isConfirmed) {
-          window.location.href = "http://localhost:8080/views/profile";
-        }
-      });
+      fetch(`/api/carts/${cartId}/purchase`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Failed to complete purchase");
+          }
+          return response.json();
+        })
+        .then((ticket) => {
+          // Verifica si la compra fue exitosa
+          if (ticket.status === "success") {
+            Swal.fire({
+              position: "center",
+              icon: "success",
+              title: "¡Tu pago ha sido exitoso!",
+              showConfirmButton: true,
+              allowOutsideClick: false,
+            }).then((result) => {
+              if (result.isConfirmed) {
+                window.location.href = "http://localhost:8080/views/tickets";
+              }
+            });
+          } else {
+            // La compra no fue exitosa
+            throw new Error("Failed to complete purchase");
+          }
+        })
+        .catch((error) => {
+          console.error("Error completing purchase:", error);
+          // Maneja el error, muestra un mensaje de error al usuario, etc.
+          Swal.fire({
+            position: "center",
+            icon: "error",
+            title: "Error al procesar la compra",
+            text: "Hubo un problema al procesar tu compra. Por favor, inténtalo de nuevo más tarde.",
+            showConfirmButton: true,
+            allowOutsideClick: false,
+          });
+        });
     }
   });
 });

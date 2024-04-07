@@ -41,5 +41,6 @@ document.addEventListener("DOMContentLoaded", function () {
       form.querySelector("button").disabled = false;
       return;
     }
+    console.log(paymentIntent);
   });
 });

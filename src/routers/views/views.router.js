@@ -116,9 +116,21 @@ router.get(
   async (req, res, next) => {
     try {
       const user = await UsersController.getById(req.user._id);
+      const availableProducts = await CartsController.returnAvailableProducts(
+        user.cartId
+      );
+      // * Se crea el payment intent cuando se va a renderizar la view de metodo de pago
+      const paymentIntent = await CartsController.paymentIntent({
+        availableProducts,
+        user,
+      });
+
+      req.logger.debug(paymentIntent);
+
       res.status(200).render("payment-method", {
         title: "Payment method 📄",
         cartId: user.cartId,
+        clientSecret: paymentIntent.client_secret,
       });
     } catch (error) {
       next(error);

@@ -14,7 +14,7 @@ import {
 
 const router = Router();
 
-router.patch("/premium/:uid", async (req, res, next) => {
+router.patch("/premium/:uid", authMiddleware("jwt"), async (req, res, next) => {
   try {
     await UsersController.premiumOrNotUser(req.params);
     res.status(201).json({ message: "The user role has been changed" });
@@ -23,14 +23,19 @@ router.patch("/premium/:uid", async (req, res, next) => {
   }
 });
 
-router.delete("/:uid", async (req, res, next) => {
-  try {
-    await UsersController.deleteById(req.params.uid);
-    res.status(200).json({ message: "User deleted" });
-  } catch (error) {
-    next(error);
+router.delete(
+  "/:uid",
+  authMiddleware("jwt"),
+  authRolesMiddleware("admin"),
+  async (req, res, next) => {
+    try {
+      await UsersController.deleteById(req.params.uid);
+      res.status(200).json({ message: "User deleted" });
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 router.post(
   "/:uid/documents",
@@ -51,27 +56,32 @@ router.post(
 );
 
 // * GET ALL USERS
-router.get("/", authMiddleware("jwt"), async (req, res, next) => {
-  try {
-    const { limit = 10, page = 1, sort, search } = req.query;
+router.get(
+  "/",
+  authMiddleware("jwt"),
+  authRolesMiddleware("admin"),
+  async (req, res, next) => {
+    try {
+      const { limit = 10, page = 1, sort, search } = req.query;
 
-    const criteria = {};
-    const options = { limit, page };
-    if (sort) {
-      options.sort = { price: sort };
-    }
-    if (search) {
-      criteria.category = search;
-    }
+      const criteria = {};
+      const options = { limit, page };
+      if (sort) {
+        options.sort = { price: sort };
+      }
+      if (search) {
+        criteria.category = search;
+      }
 
-    const result = await UsersController.get(criteria, options);
-    res
-      .status(200)
-      .json(buildResponsePaginatedUsers({ ...result, sort, search }));
-  } catch (error) {
-    next(error);
+      const result = await UsersController.get(criteria, options);
+      res
+        .status(200)
+        .json(buildResponsePaginatedUsers({ ...result, sort, search }));
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
 // * DELETE INACTIVE USERS
 router.delete(
@@ -82,12 +92,14 @@ router.delete(
     try {
       const users = await UsersController.getAll();
       const inactiveUsersArray = users.filter((user) => inactiveUsers(user));
-      inactiveUsersArray.forEach((user) =>UsersController.deleteById(user._id));
-      
+      inactiveUsersArray.forEach((user) =>
+        UsersController.deleteById(user._id)
+      );
+
       res.status(200).json({
-          message: "Successful",
-          payload: { deleted_users: inactiveUsersArray },
-        });
+        message: "Successful",
+        payload: { deleted_users: inactiveUsersArray },
+      });
     } catch (error) {
       next(error);
     }

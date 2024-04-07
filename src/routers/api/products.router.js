@@ -7,7 +7,10 @@ import {
   buildResponseUpdate,
   buildResponseDelete,
 } from "../../utils/utils.js";
-import { authMiddleware } from "../../middlewares/auth.middleware.js";
+import {
+  authMiddleware,
+  authRolesMiddleware,
+} from "../../middlewares/auth.middleware.js";
 import { uploaderMiddleware } from "../../utils/uploader.js";
 
 const router = Router();
@@ -17,7 +20,7 @@ const router = Router();
 // );
 
 // ! ENDPOINTS FOR PRODUCTS
-router.get("/products", async (req, res) => {
+router.get("/products", authMiddleware("jwt"), async (req, res) => {
   const { limit = 10, page = 1, sort, search } = req.query;
 
   const criteria = {};
@@ -30,7 +33,9 @@ router.get("/products", async (req, res) => {
   }
 
   const result = await ProductsController.get(criteria, options);
-  res.status(200).json(buildResponsePaginatedProducts({ ...result, sort, search }));
+  res
+    .status(200)
+    .json(buildResponsePaginatedProducts({ ...result, sort, search }));
 });
 
 router.post(
@@ -62,28 +67,36 @@ router.post(
   }
 );
 
-router.get("/products/:productId", async (req, res, next) => {
-  const { productId } = req.params;
-  try {
-    const product = await ProductsController.getById(productId);
-    res.status(200).json(product);
-  } catch (error) {
-    next(error);
+router.get(
+  "/products/:productId",
+  authMiddleware("jwt"),
+  async (req, res, next) => {
+    const { productId } = req.params;
+    try {
+      const product = await ProductsController.getById(productId);
+      res.status(200).json(product);
+    } catch (error) {
+      next(error);
+    }
   }
-});
+);
 
-router.put("/products/:productId", async (req, res, next) => {
-  const { productId } = req.params;
-  const { body } = req;
-  try {
-    await ProductsController.updateById(productId, body);
-    req.logger.debug("Producto actualizado");
-    res.status(200).json(buildResponseUpdate());
-  } catch (error) {
-    req.logger.error("Error updating");
-    next(error);
+router.put(
+  "/products/:productId",
+  authMiddleware("jwt"),
+  async (req, res, next) => {
+    const { productId } = req.params;
+    const { body } = req;
+    try {
+      await ProductsController.updateById(productId, body);
+      req.logger.debug("Producto actualizado");
+      res.status(200).json(buildResponseUpdate());
+    } catch (error) {
+      req.logger.error("Error updating");
+      next(error);
+    }
   }
-});
+);
 
 router.delete(
   "/products/:productId",

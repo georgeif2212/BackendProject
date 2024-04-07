@@ -36,11 +36,30 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
     if (stripeError) {
-      // reenable the form.
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "No se completó el pago",
+        footer: '<a href="#">Ayuda</a>',
+      });
+
       submitted = false;
       form.querySelector("button").disabled = false;
       return;
     }
     console.log(paymentIntent);
+    if (paymentIntent.status == "succeeded") {
+      Swal.fire({
+        position: "center",
+        icon: "success",
+        title: "¡Tu pago ha sido exitoso!",
+        showConfirmButton: true,
+        allowOutsideClick: false,
+      }).then((result) => {
+        if (result.isConfirmed) {
+          window.location.href = "http://localhost:8080/views/profile";
+        }
+      });
+    }
   });
 });

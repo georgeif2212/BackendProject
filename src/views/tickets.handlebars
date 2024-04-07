@@ -1,13 +1,23 @@
 <div>
   <h1>Mis tickets</h1>
-  <ul>
-    {{#each tickets}}
-      <li>
-        {{this}}
-      </li>
-    {{/each}}
-  </ul>
-    <footer>
+  <table>
+    <thead>
+      <tr>
+        <th>Code</th>
+        <th>Amount</th>
+        <th>Purchaser</th>
+      </tr>
+      {{#each tickets}}
+        <tr>
+          <td>{{this.code}}</td>
+          <td>$ {{this.amount}}</td>
+          <td>{{this.purchaser}}</td>
+        </tr>
+      {{/each}}
+    </thead>
+  </table>
+
+  <footer>
     <a href="/api/sessions/logout" role="button">Salir</a>
     <a href="/views/products" role="button">Ver productos</a>
     <a href="/views/editProducts" role="button">Añadir/Eliminar productos</a>

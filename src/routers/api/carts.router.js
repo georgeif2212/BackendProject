@@ -12,6 +12,7 @@ import TicketsController from "../../controllers/tickets.controller.js";
 import { CustomError } from "../../utils/CustomError.js";
 import { generatorProductIdError } from "../../utils/CauseMessageError.js";
 import EnumsError from "../../utils/EnumsError.js";
+import { sendSuccessfulPurchaseEmail } from "../../utils/emailTemplates.js";
 
 const router = Router();
 
@@ -262,6 +263,11 @@ router.post(
       const ticket = await TicketsController.create({
         availableProducts,
         user: req.user,
+      });
+      sendSuccessfulPurchaseEmail({
+        user: req.user,
+        availableProducts,
+        ticket,
       });
       res.status(200).json(buildGeneralResponse(ticket));
     } catch (error) {

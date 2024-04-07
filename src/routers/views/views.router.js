@@ -66,17 +66,22 @@ router.get(
 );
 
 // ! ENDPOINTS FOR REALTIMEPRODUCTS
-router.get("/realtimeproducts", authMiddleware("jwt"), async (req, res) => {
-  const products = await ProductsController.getAll();
-  emit("update-list-products", { products });
-  res.render("realTimeProducts", { title: "Limited Products 🧴" });
-});
+router.get(
+  "/realtimeproducts",
+  authMiddleware("jwt"),
+  authRolesMiddleware(["premium", "admin"]),
+  async (req, res) => {
+    const products = await ProductsController.getAll();
+    emit("update-list-products", { products });
+    res.render("realTimeProducts", { title: "Limited Products 🧴" });
+  }
+);
 
 // ! ENDPOINTS FOR CHAT
 router.get(
   "/chat",
   authMiddleware("jwt"),
-  authRolesMiddleware(["user"]),
+  authRolesMiddleware(["user", "premium", "admin"]),
   async (req, res) => {
     res.render("chat", { title: "Chat 😎" });
   }

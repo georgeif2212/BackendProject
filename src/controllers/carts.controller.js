@@ -48,7 +48,7 @@ export default class CartsController {
     await CartsService.deleteById(cart._id);
   }
 
-  static async returnAvailableProducts(cid) {
+  static async returnAvailableProducts(cid, shouldUpdateDB = false) {
     const cart = await CartsController.getById(cid);
     if (cart.products.length === 0) {
       CustomError.create({
@@ -65,14 +65,16 @@ export default class CartsController {
     const notAvailableProducts = cart.products.filter((element) => {
       return element.quantity > element.product.stock;
     });
-    // * Actualiza el carrito con los productos que no se pudieron comprar
-    // CartsController.updateById(cid, notAvailableProducts);
 
-    // * Actualiza el stock de los productos en DB
-    availableProducts.forEach((element) => {
-      element.product.stock -= element.quantity;
-      // ProductsController.updateById(element.product._id, element.product);
-    });
+    // Actualiza el stock de los productos en DB si se especifica y el carrito con los productos que no se pudieron comprar
+    if (shouldUpdateDB) {
+      CartsController.updateById(cid, notAvailableProducts);
+      availableProducts.forEach((element) => {
+        element.product.stock -= element.quantity;
+        ProductsController.updateById(element.product._id, element.product);
+      });
+    }
+
     return availableProducts;
   }
 

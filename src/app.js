@@ -58,7 +58,7 @@ if (process.env.NODE_ENV !== "production") {
 app.use("/api", productsRouter, cartsRouter, sessionsRouter, mocksRouter);
 app.use("/api/users", usersRouter);
 app.use("/api/sessions", sessionsRouter);
-app.use("/api/payments", sessionsRouter);
+app.use("/api/payments", paymentsRouter);
 app.use("/views", viewsRouter, indexRouter);
 app.use("/logger", loggerRouter);
 

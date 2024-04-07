@@ -1,4 +1,5 @@
 import CartsService from "../services/carts.service.js";
+import PaymentsService from "../services/payments.service.js";
 import {
   generatorCartError,
   generatorCartIdError,
@@ -47,7 +48,7 @@ export default class CartsController {
     await CartsService.deleteById(cart._id);
   }
 
-  static async doPurchase(cid) {
+  static async returnAvailableProducts(cid) {
     const cart = await CartsController.getById(cid);
     if (cart.products.length === 0) {
       CustomError.create({
@@ -64,11 +65,37 @@ export default class CartsController {
     const notAvailableProducts = cart.products.filter((element) => {
       return element.quantity > element.product.stock;
     });
-    CartsController.updateById(cid, notAvailableProducts);
+    // * Actualiza el carrito con los productos que no se pudieron comprar
+    // CartsController.updateById(cid, notAvailableProducts);
+
+    // * Actualiza el stock de los productos en DB
     availableProducts.forEach((element) => {
       element.product.stock -= element.quantity;
-      ProductsController.updateById(element.product._id, element.product);
+      // ProductsController.updateById(element.product._id, element.product);
     });
     return availableProducts;
+  }
+
+  static async paymentIntent(data) {
+    const orderDetail = data.availableProducts.map(({ product, quantity }) => ({
+      title: product.title,
+      price: product.price,
+      quantity: quantity,
+    }));
+
+    const amount = data.availableProducts.reduce((accumulator, element) => {
+      return accumulator + element.product.price * element.quantity;
+    }, 0);
+
+    const service = new PaymentsService();
+    const result = await service.createPaymentIntent({
+      amount: amount * 100,
+      currency: "mxn",
+      metadata: {
+        user_email: data.user.email,
+        order_detail: JSON.stringify(orderDetail),
+      },
+    });
+    return result;
   }
 }

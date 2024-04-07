@@ -1,10 +1,6 @@
 import UsersService from "../services/users.service.js";
-import {
-  createHash,
-  isValidPassword,
-  sendRecoverPasswordEmail,
-  validateToken,
-} from "../utils/utils.js";
+import { createHash, isValidPassword, validateToken } from "../utils/utils.js";
+import { sendRecoverPasswordEmail } from "../utils/emailTemplates.js";
 import {
   generatorAdminPremiumError,
   generatorDocumentsAreMissingError,
@@ -22,6 +18,10 @@ import path from "path";
 export default class UsersController {
   static get(criteria, options) {
     return UsersService.getPaginate(criteria, options);
+  }
+
+  static getAll() {
+    return UsersService.getAll({});
   }
 
   static async login(data) {

@@ -7,7 +7,7 @@ import {
 } from "../../middlewares/auth.middleware.js";
 import { Router } from "express";
 import { emit } from "../../socket.js";
-import { buildResponsePaginated } from "../../utils/utils.js";
+import { buildResponsePaginatedProducts } from "../../utils/utils.js";
 import UsersController from "../../controllers/users.controller.js";
 import TicketsController from "../../controllers/tickets.controller.js";
 
@@ -38,7 +38,7 @@ router.get(
     const baseUrl = "http://localhost:8080/views/products";
     const result = await ProductsController.get(criteria, options);
     const infoUser = await UsersController.getById(req.user._id);
-    const data = buildResponsePaginated(
+    const data = buildResponsePaginatedProducts(
       { ...result, sort, search, infoUser },
       baseUrl
     );
@@ -108,5 +108,34 @@ router.get("/tickets", authMiddleware("jwt"), async (req, res, next) => {
     next(error);
   }
 });
+
+router.get(
+  "/payment-method",
+  authMiddleware("jwt"),
+  authRolesMiddleware(["user", "premium"]),
+  async (req, res, next) => {
+    try {
+      const user = await UsersController.getById(req.user._id);
+      const availableProducts = await CartsController.returnAvailableProducts(
+        user.cartId
+      );
+      // * Se crea el payment intent cuando se va a renderizar la view de metodo de pago
+      const paymentIntent = await CartsController.paymentIntent({
+        availableProducts,
+        user,
+      });
+
+      req.logger.debug(paymentIntent);
+
+      res.status(200).render("payment-method", {
+        title: "Payment method 📄",
+        cartId: user.cartId,
+        clientSecret: paymentIntent.client_secret,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 export default router;

@@ -4,6 +4,10 @@ export default class UsersService {
     return UserRepository.getPaginate(criteria, options);
   }
 
+  static getAll(filter = {}) {
+    return UserRepository.getAll(filter);
+  }
+
   static create(data) {
     return UserRepository.create(data);
   }

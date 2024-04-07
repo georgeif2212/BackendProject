@@ -1,13 +1,22 @@
 <div>
   <h1>Cart {{_id}} Information</h1>
-  <ul>
-    {{#each products}}
-      <li>
-        {{this}}
-      </li>
-    {{/each}}
-  </ul>
-  <form action="/api/carts/{{_id}}/purchase" method="post">
+  <table>
+    <thead>
+      <tr>
+        <th>Nombre</th>
+        <th>Cantidad</th>
+        <th>Precio</th>
+      </tr>
+      {{#each products}}
+        <tr>
+          <td>{{this.product.title}}</td>
+          <td class="product-quantity">{{this.quantity}}</td>
+          <td class="product-price">$ {{this.product.price}}</td>
+        </tr>
+      {{/each}}
+    </thead>
+  </table>
+  <form action="/views/payment-method">
     <button type="submit">Comprar</button>
   </form>
 

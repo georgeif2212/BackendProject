@@ -9,6 +9,7 @@ import TicketsController from "../../controllers/tickets.controller.js";
 import { CustomError } from "../../utils/CustomError.js";
 import { generatorProductIdError } from "../../utils/CauseMessageError.js";
 import EnumsError from "../../utils/EnumsError.js";
+import PaymentsService from "../../services/payments.service.js";
 
 const router = Router();
 
@@ -62,7 +63,7 @@ router.get("/carts/:cartId", async (req, res, next) => {
 router.post(
   "/carts/:cartId/products/:productId",
   authMiddleware("jwt"),
-  authRolesMiddleware(["user"]),
+  authRolesMiddleware(["user", "premium"]),
   async (req, res, next) => {
     try {
       const { cartId, productId } = req.params;
@@ -221,11 +222,9 @@ router.post(
   async (req, res, next) => {
     try {
       const { cartId } = req.params;
-      const availableProducts = await CartsController.doPurchase(cartId);
-      req.logger.debug("Debug message: availableProducts", availableProducts);
       const ticket = await TicketsController.create({
         availableProducts,
-        ...req.user,
+        user: req.user,
       });
       res.status(200).json(ticket);
     } catch (error) {

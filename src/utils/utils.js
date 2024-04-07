@@ -3,75 +3,55 @@ import url from "url";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import config from "../config/config.js";
-import EmailService from "../services/email.service.js";
 import { faker } from "@faker-js/faker";
-// import emailTemplate from "./resources/welcomeEmail.html";
 
 const __filename = url.fileURLToPath(import.meta.url);
 const JWT_SECRET = config.jwtSecret;
 export const __dirname = path.dirname(__filename);
 
-export const URL_BASE = "http://localhost:8080/api/products";
-
-export const buildResponsePaginated = (data, baseUrl = URL_BASE) => {
+export const buildResponsePaginated = (
+  data,
+  baseUrl = URL_BASE,
+  payloadKey
+) => {
   return {
-    //status:success/error
     status: "success",
-    //payload: Resultado de los productos solicitados
-    payload: data.products,
-    //payload: Resultado de los productos solicitados
-    infoUser: data.infoUser,
-    //totalPages: Total de páginas
+    payload: data[payloadKey],
     totalPages: data.totalPages,
-    //prevPage: Página anterior
+    infoUser: data.infoUser,
     prevPage: data.prevPage,
-    //nextPage: Página siguiente
     nextPage: data.nextPage,
-    //page: Página actual
     page: data.page,
-    //hasPrevPage: Indicador para saber si la página previa existe
     hasPrevPage: data.hasPrevPage,
-    //hasNextPage: Indicador para saber si la página siguiente existe.
     hasNextPage: data.hasNextPage,
-    //prevLink: Link directo a la página previa (null si hasPrevPage=false)
     prevLink: data.hasPrevPage
       ? `${baseUrl}?limit=${data.limit}&page=${data.prevPage}`
       : null,
-    //nextLink: Link directo a la página siguiente (null si hasNextPage=false)
     nextLink: data.hasNextPage
       ? `${baseUrl}?limit=${data.limit}&page=${data.nextPage}`
       : null,
   };
 };
+export const URL_BASE = "http://localhost:8080/api";
+export const buildResponsePaginatedProducts = (
+  data,
+  baseUrl = `${URL_BASE}/products`
+) => {
+  return buildResponsePaginated(data, baseUrl, "products");
+};
 
-export const URL_BASE_CARTS = "http://localhost:8080/api/carts";
-export const buildResponsePaginatedCarts = (data, baseUrl = URL_BASE_CARTS) => {
-  return {
-    //status:success/error
-    status: "success",
-    //payload: Resultado de los productos solicitados
-    payload: data.carts,
-    //totalPages: Total de páginas
-    totalPages: data.totalPages,
-    //prevPage: Página anterior
-    prevPage: data.prevPage,
-    //nextPage: Página siguiente
-    nextPage: data.nextPage,
-    //page: Página actual
-    page: data.page,
-    //hasPrevPage: Indicador para saber si la página previa existe
-    hasPrevPage: data.hasPrevPage,
-    //hasNextPage: Indicador para saber si la página siguiente existe.
-    hasNextPage: data.hasNextPage,
-    //prevLink: Link directo a la página previa (null si hasPrevPage=false)
-    prevLink: data.hasPrevPage
-      ? `${baseUrl}?limit=${data.limit}&page=${data.prevPage}`
-      : null,
-    //nextLink: Link directo a la página siguiente (null si hasNextPage=false)
-    nextLink: data.hasNextPage
-      ? `${baseUrl}?limit=${data.limit}&page=${data.nextPage}`
-      : null,
-  };
+export const buildResponsePaginatedUsers = (
+  data,
+  baseUrl = `${URL_BASE}/users`
+) => {
+  return buildResponsePaginated(data, baseUrl, "users");
+};
+
+export const buildResponsePaginatedCarts = (
+  data,
+  baseUrl = `${URL_BASE}/carts`
+) => {
+  return buildResponsePaginated(data, baseUrl, "carts");
 };
 
 export const buildResponseUpdate = () => {
@@ -112,40 +92,16 @@ export const validateToken = (token) => {
   });
 };
 
-export const sendWelcomeEmail = async (user) => {
-  const emailService = EmailService.getInstance();
-  const result = await emailService.sendEmail(
-    user.email,
-    `Bienvenido ${user.first_name}!`,
-    `<div>
-      <h1>Hola ${user.first_name}! Soy Jorge.</h1>
-      <h2>Te damos la bienvenida</h2>
-      <img src="cid:hello" alt="Hello" />
-    </div>`,
-    [
-      {
-        filename: "hello.png",
-        path: path.join(__dirname, "../resources/hello.png"),
-        cid: "hello",
-      },
-    ]
-  );
-  return result;
-};
 
-export const sendRecoverPasswordEmail = async (user) => {
-  const emailService = EmailService.getInstance();
-  const token = generateToken(user, "recoverPassword");
-  const recoveryLink = `http://localhost:8080/views/create-new-password?token=${token}`;
+// * Función to delete inactive users
+export const inactiveUsers = (user) => {
+  const currentDate = new Date();
+  const lastConnectionDate = new Date(user.last_connection);
+  const timeDifference = currentDate.getTime() - lastConnectionDate.getTime();
+  const daysDifference = timeDifference / (1000 * 3600 * 24); // Convertir a días
 
-  await emailService.sendEmail(
-    user.email,
-    `¿Quieres recuperar tu contraseña, ${user.first_name}?`,
-    `<div>
-      <h1>Da click en el siguiente enlace para recuperar tu contraseña</h1>
-      <a href="${recoveryLink}" style="display: inline-block; padding: 10px 20px; background-color: #007bff; color: #ffffff; text-decoration: none; border-radius: 5px;">Recuperar Contraseña</a>
-    </div>`
-  );
+  // * Eliminar usuarios que no se han conectado en más de 30 días
+  if (daysDifference > 30) return user;
 };
 
 export const generateProduct = () => {

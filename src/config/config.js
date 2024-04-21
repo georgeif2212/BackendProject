@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 
 dotenv.config();
 export default {
-  port: process.env.PORT || 8080,
+  port: process.env.PORT || 3000,
   mongodbUri:
     process.env.NODE_ENV == "testing"
       ? process.env.MONGODB_URI_TEST
